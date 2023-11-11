@@ -493,7 +493,7 @@ Begin { Compute AC }
    Total_Plus:=0;
    If Character.No_of_Items>0 then  { If CHARACTER has items... }
       For ItemNo:=1 to Character.No_of_Items do  { For each item... }
-         If Character.Item[ItemNo].Equipted then { If equipped... }
+         If Character.Item[ItemNo].isEquipped then { If equipped... }
             Begin
                Item:=Item_List[Character.Item[ItemNo].Item_Num];
 
@@ -657,7 +657,7 @@ Begin { Regenerates }
 
    If Character.No_of_Items>0 then
       For Loop:=1 to Character.No_Of_Items do
-         If Character.Item[Loop].Equipted then
+         If Character.Item[Loop].isEquipped then
             Begin
                Temp:=Item_List[Character.Item[Loop].Item_Num].Regenerates;
                Plane_Difference (Temp,PosZ);

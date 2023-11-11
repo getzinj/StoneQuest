@@ -4,7 +4,7 @@ Type
    Long_Line = Varying [390] of Char;
 
 Var
-   Attacker           : [Global]Attacker_Type;
+   Attacker           : [Global]AttackerType;
    Delay_Constant     : [External]Real;
    Time_Stop_Monsters : [External]Boolean;
    Silenced           : [External]Party_Flag;
@@ -39,7 +39,7 @@ Value
 
 Function Weapon_Used (Character: Character_Type): Integer;
 
-{ This function returns the position of the equipted (sic) weapon. If none are (sic) equipted (sic), a zero is returned }
+{ This function returns the position of the equipped weapon. If none is equipped, a zero is returned }
 
 Var
    Temp,WeaponUsed: Integer;
@@ -48,7 +48,7 @@ Begin
    WeaponUsed:=0;
    If Character.No_of_Items>0 then
       For Temp:=1 to Character.No_of_Items do
-         If (Character.Item[Temp].Equipted) and (Item_List[Character.Item[Temp].Item_Num].Kind=Weapon) then
+         If (Character.Item[Temp].isEquipped) and (Item_List[Character.Item[Temp].Item_Num].Kind=Weapon) then
             WeaponUsed:=Temp;
    Weapon_Used:=WeaponUSed;
 End;
@@ -415,7 +415,7 @@ Begin
 
    If Character.No_of_Items > 0 then
       For ItemNum := 1 to Character.No_of_Items do
-         If Character.Item[ItemNum].Equipted then
+         If Character.Item[ItemNum].isEquipped then
             Begin
                Plus:=Item_List[Character.Item[ItemNum].Item_Num].Additional_Attacks;
 
@@ -522,7 +522,7 @@ End;
 
 (**********************************************************************************************************************)
 
-Procedure Switch_Items (Attacker_Record: Attacker_Type; Var Member: Party_Type);
+Procedure Switch_Items (Attacker_Record: AttackerType; Var Member: Party_Type);
 
 Var
   Character: Character_Type;
@@ -533,11 +533,11 @@ Begin
    T := Character.Name;
 
    If Attacker.Old_Item > 0 then
-      Character.Item[Attacker.Old_Item].Equipted := False;
+      Character.Item[Attacker.Old_Item].isEquipped := False;
 
    If Attacker.New_Item > 0 then
       Begin
-         Character.Item[Attacker.New_Item].Equipted := True;
+         Character.Item[Attacker.New_Item].isEquipped := True;
 
          If Item_List[Character.Item[Attacker.New_Item].Item_Num].Cursed then
             Character.Item[Attacker.New_Item].Cursed := True;
@@ -571,7 +571,7 @@ End;
 
 (**********************************************************************************************************************)
 
-[Global]Procedure Handle_Character_Attack(   Attacker_Record: Attacker_Type;
+[Global]Procedure Handle_Character_Attack(   Attacker_Record: AttackerType;
                                           Var MonsterGroup: Encounter_Group;
                                           Var Member: Party_Type;
                                           Var Current_Party_Size: Party_Size_Type);

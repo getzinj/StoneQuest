@@ -347,7 +347,7 @@ Begin { Select Item }
                Character.Item[Num].Item_Num:=ItemPtr^.Item_Num;
                Character.Item[Num].Ident:=ItemPtr^.Identified;
                Character.Item[Num].Cursed:=Item.cursed;
-               Character.Item[Num].Equipted:=True;
+               Character.Item[Num].isEquipped:=True;
 
                   { Check to see if it's cursed }
 
@@ -422,7 +422,7 @@ Begin { Store Item }
                Begin
                   Ident:=Item_Ptr^.Identified;
                   Cursed:=False;
-                  Equipted:=False;
+                  isEquipped:=False;
                   Item_Num:=Item_Ptr^.Item_Num;
                End;
             Done:=True; { We have found a place }
@@ -528,7 +528,7 @@ Begin { Special Occurances }
 
                Item:=Item_List[Character.Item[Item_No].Item_Num];  { Make a copy of the item }
 
-               If (Item.Special_Occurance_No>0) and (Character.Item[Item_No].Equipted) then
+               If (Item.Special_Occurance_No>0) and (Character.Item[Item_No].isEquipped) then
                  Begin { Can be invoked }
                     If Wants_to_Invoke (Character,Item_No) then  { Will he invoke? }
                        Begin { Character invokes item }
@@ -545,7 +545,7 @@ Begin { Special Occurances }
                                   New_Item:=Item_List[Item.Turns_Into];
                                   With Character.Item[Item_No] do
                                      Begin { Change Item }
-                                        Equipted:=False;  { No longer equipped }
+                                        isEquipped:=False;  { No longer equipped }
                                         Ident:=False;  { No longer knows what it is }
                                         Cursed:=False;  { Not cursed }
                                         Item_Num:=Item.Turns_Into;

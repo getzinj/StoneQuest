@@ -378,7 +378,7 @@ Begin
 
    With Character.Item[Num] do
       Begin
-         Equipted:=False;
+         isEquipped:=False;
          Ident:=False;
          Cursed:= False;
          Usable:=CharacterCanUseItem(Character, Item_No);
@@ -461,7 +461,7 @@ Begin
                Item_Num:=Traded_For;
                Ident:=False;
                Cursed:=False;
-               Equipted:=False;
+               isEquipped:=False;
                Usable:=CharacterCanUseItem(Member[Person], Traded_For);
             End;
 
@@ -956,7 +956,7 @@ Begin
    Num:=Character.No_of_Items;
    With Character.Item[Num] do
       Begin
-         Equipted:=False;
+         isEquipped:=False;
          Ident:=False;
          Cursed:=False;
          Usable:=CharacterCanUseItem(Character,Item_No);

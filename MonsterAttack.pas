@@ -45,7 +45,6 @@ Value
 [External]Function  Monster_Name (Monster: Monster_Record; Number: Integer; Identified: Boolean): Monster_Name_Type;External;
 [External]Function  Random_Number (Die: Die_Type): [Volatile]Integer;External;
 [External]Function  Roll_Die (Die_Type: Integer): [Volatile]Integer;External;
-[External]Function  Spell_Damage (Spell: Spell_Name;  Caster_Level: Integer:=0): Die_Type;External;
 [External]Function  String(Num: Integer;  Len: Integer:=0):Line;External;
 [External]Function  XP_Needed (Class: Class_Type; Level: Integer):Real;External;
 [External]Procedure Attack_Effects (Attack: Attack_Type; CharNum: Integer; Var Member: Party_Type; Var Can_Attack: Party_Flag);External;
@@ -53,8 +52,7 @@ Value
 [External]Procedure Delay (Seconds: Real);External;
 [External]Procedure Ring_Bell (Display_Id: Unsigned; Number_of_Times: Integer:=1);External;
 [External]Procedure Slay_Character (Var Character: Character_Type; Var Can_Attack: Flag);External;
-[Asynchronous,External]Function MTH$RANDOM (%Ref Seed: Unsigned): Real;external;
-[External]Procedure Monster_Spell (Attacker: Attacker_Type; Var Group: Encounter_Group; Var Member: Party_Type; Var Current_Party_Size: Party_Size_Type);External;
+[External]Procedure Monster_Spell (Attacker: AttackerType; Var Group: Encounter_Group; Var Member: Party_Type; Var Current_Party_Size: Party_Size_Type);External;
 
 (**********************************************************************************************************************)
 
@@ -72,7 +70,7 @@ Begin
 
   If Character.No_of_Items > 0 then
      For ItemNum:= 1 to Character.No_of_Items do
-        If Character.Item[ItemNum].Equipted and (Attack in Item_List[Character.Item[ItemNum].Item_Num].Resists) then
+        If Character.Item[ItemNum].isEquipped and (Attack in Item_List[Character.Item[ItemNum].Item_Num].Resists) then
            Sum_Damage := Sum_Damage / 2;
 
   If Made_Save (Character,Attack) then
@@ -133,7 +131,7 @@ End;
 
 (**********************************************************************************************************************)
 
-Procedure Monster_Gazes_or_Breathes (Attacker: Attacker_Type;  Encounter: Encounter_Group;  Var Member: Party_Type;
+Procedure Monster_Gazes_or_Breathes (Attacker: AttackerType;  Encounter: Encounter_Group;  Var Member: Party_Type;
                                      Var Current_Party_Size: Party_Size_Type;  Var Can_Attack: Party_Flag;
                                      Gaze: Boolean:=False);
 
@@ -404,7 +402,7 @@ Begin
 
   If Character.No_of_Items > 0 then
      For Item_No:=1 to Character.No_of_Items do
-        If Character.Item[Item_No].Equipted then
+        If Character.Item[Item_No].isEquipped then
            Resists := Resists + Item_List[Character.Item[Item_No].Item_Num].Resists; { TODO: Multiple items should stack }
 
   Character_Resists:=Resists;
@@ -750,7 +748,7 @@ End;
 
 (**********************************************************************************************************************)
 
-[Global]Procedure Handle_Monster_Attack (Attacker: Attacker_Type;  Var Monster_Group1: Encounter_Group;  Var Member: Party_Type;
+[Global]Procedure Handle_Monster_Attack (Attacker: AttackerType;  Var Monster_Group1: Encounter_Group;  Var Member: Party_Type;
                                          Var Current_Party_Size:  Party_Size_Type;  Party_Size: Integer;  Var Can_Attack: Party_Flag);
 
 Var

@@ -211,7 +211,7 @@ Type
 
   Equipment_Type = record
                       Item_Num: Item_Number_Type;                        { The item itself }
-                      Ident,Equipted,Usable,Cursed: Boolean;    { Identified? Equipted? Usable? Cursed? }
+                      Ident,isEquipped,Usable,Cursed: Boolean;    { Identified? isEquipped? Usable? Cursed? }
                    End;
 
   { The information concerning a character }

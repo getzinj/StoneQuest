@@ -4,7 +4,7 @@ Type
    Long_Line = Varying [390] of Char;
 
 Var
-   Attacker           : [External]Attacker_Type;
+   Attacker           : [External]AttackerType;
    Delay_Constant     : [External]Real;
    Time_Stop_Monsters : [External]Boolean;
    Silenced           : [External]Party_Flag;
@@ -906,7 +906,7 @@ Begin
          Begin
             Item_Num:=Item_List[Character.Item[Attacker.Old_Item].Item_Num].Turns_Into;
             Ident:=False;
-            Equipted:=False;
+            isEquipped:=False;
             Usable:=False;
             Cursed:=False;
          End;

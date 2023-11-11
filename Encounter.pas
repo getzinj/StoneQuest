@@ -79,9 +79,9 @@ Value
 [External]Procedure Dead_Character (Position: Integer; Var Member: Party_Type; Party_Size: Integer);External;
 [External]Function Empty (A: PriorityQueue): Boolean;External;
 [External]Procedure MakeNull (Var A: PriorityQueue);External;
-[External]Function P (A: Attacker_Type): Integer;External;
-[External]Procedure Insert (X: Attacker_Type; Var A: PriorityQueue);External;
-[External]Function DeleteMin (Var A: PriorityQueue): Attacker_Type;External;
+[External]Function P (A: AttackerType): Integer;External;
+[External]Procedure Insert (X: AttackerType; Var A: PriorityQueue);External;
+[External]Function DeleteMin (Var A: PriorityQueue): AttackerType;External;
 (******************************************************************************)
 
 Function Insane_Leader (Party: Party_Type; Var Name: Line): Boolean;
@@ -634,7 +634,7 @@ Var
 Begin
   Critical_Flag:=False;
   For Item_Num:=1 to Attacker.No_of_Items do
-     If Attacker.Item[Item_num].Equipted then
+     If Attacker.Item[Item_num].isEquipped then
         If Item_List[Attacker.Item[Item_Num].Item_Num].Auto_Kill then { TODO: Make the items stack so multiple items equals better chance of critical }
            Critical_Flag:=True;
 
@@ -740,7 +740,7 @@ Begin
    Temp:=0;
    If Character.No_of_Items>0 then
       For Item_No:=1 to Character.No_of_Items do
-          If Character.Item[Item_No].Equipted then
+          If Character.Item[Item_No].isEquipped then
              If (Attack in Item_List[Character.Item[Item_No].Item_Num].Resists) or
                 ((Attack in [Stoning,LvlDrain]) and (Magic in Item_List[Character.Item[Item_No].Item_Num].Resists)) then
                    Temp:=Temp+1;
@@ -879,7 +879,7 @@ Begin
    Weapon_Plus:=0;
    If Character.No_of_Items>0 then
       For Item_No:=1 to Character.No_of_Items do
-         If Character.Item[Item_No].Equipted then
+         If Character.Item[Item_No].isEquipped then
             Begin
                Temp_Item:=Item_List[Character.Item[Item_No].Item_Num];
                Plus:=Temp_Item.Plus_To_Hit;
@@ -1240,14 +1240,14 @@ End;
 
 (******************************************************************************)
 [External]Procedure Drain_Levels_from_Character (Var Character: Character_Type; Levels: Integer:=1);External;
-[External]Procedure Handle_Monster_Attack (Attacker: Attacker_Type;  Var Monster_Group1: Encounter_Group;
+[External]Procedure Handle_Monster_Attack (Attacker: AttackerType;  Var Monster_Group1: Encounter_Group;
                                                  Var Member: Party_Type; Var Current_Party_Size: Party_Size_Type;
                                                  Party_Size: Integer; Var Can_Attack: Party_Flag);external;
-[External]Procedure Handle_Character_Attack (Attacker_Record: Attacker_Type; Var MonsterGroup: Encounter_Group;
+[External]Procedure Handle_Character_Attack (Attacker_Record: AttackerType; Var MonsterGroup: Encounter_Group;
                                              Var Member: Party_Type; Var Current_Party_Size: Party_Size_Type);External;
 (******************************************************************************)
 
-Procedure Character_Attack (Attacker: Attacker_Type; Var Monster_Group: Encounter_Group; Var Member: Party_Type;
+Procedure Character_Attack (Attacker: AttackerType; Var Monster_Group: Encounter_Group; Var Member: Party_Type;
                        Var Current_Party_Size: Party_Size_Type; Var Can_Attack: Party_Flag);
 
 Var
@@ -1266,7 +1266,7 @@ End;
 
 (******************************************************************************)
 
-Procedure Monster_Attack (Attacker: Attacker_Type; Var Monster_Group: Encounter_Group; Var Member: Party_Type;
+Procedure Monster_Attack (Attacker: AttackerType; Var Monster_Group: Encounter_Group; Var Member: Party_Type;
                                                 Var Current_Party_Size: Party_Size_Type; Party_Size: Integer; Var Can_Attack: Party_Flag);
 
 Begin
@@ -1279,7 +1279,7 @@ End;
 
 (******************************************************************************)
 
-Procedure Handle_Attack (    Attacker: Attacker_Type;
+Procedure Handle_Attack (    Attacker: AttackerType;
                                  Var Monster_Group: Encounter_Group;
                                  Var Member: Party_Type;
                                  Var Current_Party_Size: Party_Size_Type;
@@ -1327,7 +1327,7 @@ Procedure One_Round (Var Attacks: PriorityQueue;  Var Monster_Group: Encounter_G
   him/her.  It will repeat until the heap is empty }
 
 Var
-   Next: Attacker_Type;
+   Next: AttackerType;
    Store_Delay_Constant: Real;
    Store_Bells: Boolean;
 
@@ -1457,7 +1457,7 @@ Begin
    Temp:=(Character.Class in Item_List[Stats.Item_Num].Usable_By) or
          (Character.PreviousClass in Item_List[Stats.Item_Num].Usable_By);
 
-   Temp:=Temp and (Stats.Equipted or (Item_List[Stats.Item_Num].Kind=Scroll));
+   Temp:=Temp and (Stats.isEquipped or (Item_List[Stats.Item_Num].Kind=Scroll));
                                    { If the item is equipped... }
 
    If Item_List[Stats.Item_Num].Alignment<>NoAlign then
@@ -1637,7 +1637,7 @@ End;
 
 (******************************************************************************)
 
-Procedure Character_Berserks (Var Stats: Attacker_Type; Var Flee: Boolean; Group: Encounter_Group);
+Procedure Character_Berserks (Var Stats: AttackerType; Var Flee: Boolean; Group: Encounter_Group);
 
 Begin
    Stats.Action:=Berserker_Rage;
@@ -1648,7 +1648,7 @@ End;
 
 (******************************************************************************)
 
-Procedure Character_Runs (Var Stats: Attacker_Type; Var Flee: Boolean);
+Procedure Character_Runs (Var Stats: AttackerType; Var Flee: Boolean);
 
 Begin
   Stats.Action:=Run;
@@ -1660,7 +1660,7 @@ End;
 
 (******************************************************************************)
 
-Procedure Character_Parries (Var Stats: Attacker_Type; Var Flee: Boolean);
+Procedure Character_Parries (Var Stats: AttackerType; Var Flee: Boolean);
 
 Begin
   Stats.Action:=Parry;
@@ -1671,7 +1671,7 @@ End;
 
 (******************************************************************************)
 
-Procedure Character_Fights (Var Stats: Attacker_Type; Group: Encounter_Group; Var Flee: Boolean;  Var Take_Back: Boolean);
+Procedure Character_Fights (Var Stats: AttackerType; Group: Encounter_Group; Var Flee: Boolean;  Var Take_Back: Boolean);
 
 Var
    T: Line;
@@ -1723,7 +1723,7 @@ End;
 
 (******************************************************************************)
 
-Procedure Character_Casts_a_Spell (Var Stats: Attacker_Type; Group: Encounter_Group; Var Member: Party_Type;
+Procedure Character_Casts_a_Spell (Var Stats: AttackerType; Group: Encounter_Group; Var Member: Party_Type;
                                            Var Current_Party_Size: Party_Size_Type;  Party_Size: Integer;
                                            Var Fee,Take_Back: Boolean; Character_Number: Integer);
 
@@ -1786,7 +1786,7 @@ End;
 
 (******************************************************************************)
 
-Procedure Character_Turns_Undead (Var Stats: Attacker_Type; Group: Encounter_Group; Var Flee,Take_Back: Boolean);
+Procedure Character_Turns_Undead (Var Stats: AttackerType; Group: Encounter_Group; Var Flee,Take_Back: Boolean);
 
 Var
    T: Line;
@@ -1817,7 +1817,7 @@ End;
 
 (******************************************************************************)
 
-Procedure Character_Uses_Item (Var Stats: Attacker_Type; Group: Encounter_Group; Var Member: Party_Type;
+Procedure Character_Uses_Item (Var Stats: AttackerType; Group: Encounter_Group; Var Member: Party_Type;
                                   Var Current_Party_Size: Party_Size_Type;  Party_Size: Integer;
                                   Var Flee,Take_Back: Boolean;  Character_Number: Integer);
 
@@ -1846,7 +1846,7 @@ End;
 
 (******************************************************************************)
 
-Procedure Character_Is_Berserk (Var Stats: Attacker_Type;  Group: Encounter_Group;  Var Flee: Boolean;  Number: Integer);
+Procedure Character_Is_Berserk (Var Stats: AttackerType;  Group: Encounter_Group;  Var Flee: Boolean;  Number: Integer);
 
 Begin
    Stats.WhatSpell:=NoSp;
@@ -1882,7 +1882,7 @@ End;
 
 (******************************************************************************)
 
-Procedure Unequipp_Ring (Var Stats: Attacker_Type; Character: Character_Type);
+Procedure Unequipp_Ring (Var Stats: AttackerType; Character: Character_Type);
 
 Var
    Item: Integer;
@@ -1898,7 +1898,7 @@ End;
 
 (******************************************************************************)
 
-Procedure Unequipp_Weapon (Var Stats: Attacker_Type; Character: Character_Type);
+Procedure Unequipp_Weapon (Var Stats: AttackerType; Character: Character_Type);
 
 Var
    Item: Integer;
@@ -1914,7 +1914,7 @@ End;
 
 (******************************************************************************)
 
-Procedure Character_Changes_Items (Var Stats: Attacker_Type; Character: Character_Type;  Var Redo: Boolean);
+Procedure Character_Changes_Items (Var Stats: AttackerType; Character: Character_Type;  Var Redo: Boolean);
 
 Var
   Choice: Integer;
@@ -1952,7 +1952,7 @@ Begin
                   T:=T+'     ';
                If Can_Equip (Character,Character.Item[Item],Classes) then
                   Begin
-                     If Character.Item[Item].Equipted then
+                     If Character.Item[Item].isEquipped then
                         T:=T+'*) '
                      Else
                         Begin
@@ -2147,7 +2147,7 @@ End;
 
 (******************************************************************************)
 
-Procedure Get_Character_Commands (Character_Number: Integer;  Var Stats: Attacker_Type;  Group: Encounter_Group;
+Procedure Get_Character_Commands (Character_Number: Integer;  Var Stats: AttackerType;  Group: Encounter_Group;
                                          Member: Party_Type;  Current_Party_Size: Party_Size_Type;  Party_Size: Integer;
                                          Var Flee: Boolean);
 
@@ -2334,7 +2334,7 @@ End;
 
 (******************************************************************************)
 
-Procedure Insert_Character_Action (Individual: Attacker_Type;  Var Attacks: PriorityQueue;  Group: Encounter_Group;
+Procedure Insert_Character_Action (Individual: AttackerType;  Var Attacks: PriorityQueue;  Group: Encounter_Group;
                                         Member: Party_Type;  Current_Party_Size: Party_Size_Type);
 
 Var
@@ -2404,7 +2404,7 @@ Var
   Mon_Group: Integer;
 Monster: Integer;
 Dex_Adj: Integer;
-  Individual: Attacker_Type;
+  Individual: AttackerType;
   Monster_Rec: Monster_Record;
 
 Begin

@@ -366,7 +366,6 @@ End;
 
 {********************************************************************************************************************}
 
-
 Procedure middle(leftRoom: NewISpot; centerRoom: NewISpot; rightRoom: NewISpot);
 
 Begin

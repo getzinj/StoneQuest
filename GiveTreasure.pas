@@ -633,7 +633,7 @@ Begin
          With Member[Person].Item[Num] do
             Begin
                 Ident:=false;
-                Equipted:=False;
+                isEquipped:=False;
                 Cursed:=False;
                 Usable:=(Member[Person].Class in Item_List[Item_No].Usable_By)
                     or (Member[Person].PreviousClass in Item_List[Item_No].Usable_By);

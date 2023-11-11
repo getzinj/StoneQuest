@@ -4,7 +4,7 @@ Type
   Group_Choice    = [Byte]1..5; { Group 5 is the party }
   Group_Type      = 0..4;
   Individual_Type = 0..6;
-  Attacker_Type = Record
+  AttackerType = Record
                      Priority: Integer;                           { order of attacks }
                      Attacker_Position: [Word]1..999;             { Which monsters }
                      Caster_Level: Integer;                       { For spell casting }
@@ -15,9 +15,9 @@ Type
                              WhatSpell: Spell_Name;
                              Old_Item,New_Item: Integer)
                   End;
-  Party_Commands_Type = Array [1..6] of Attacker_Type;
+  Party_Commands_Type = Array [1..6] of AttackerType;
   PriorityQueue = Record
-                     Contents: Array [1..4008] of Attacker_Type;
+                     Contents: Array [1..4008] of AttackerType;
                      Last:  Integer;
                   End;
 
@@ -41,7 +41,7 @@ End;
 
 (******************************************************************************)
 
-[Global]Function P (A: Attacker_Type): Integer;
+[Global]Function P (A: AttackerType): Integer;
 
 Begin
    P:=A.Priority;
@@ -49,12 +49,12 @@ End;
 
 (******************************************************************************)
 
-[Global]Procedure Insert (X: Attacker_Type; Var A: PriorityQueue);
+[Global]Procedure Insert (X: AttackerType; Var A: PriorityQueue);
 
 Var
    NotDone: Boolean;
    i: Integer;
-   Temp: Attacker_Type;
+   Temp: AttackerType;
 
 Begin
    If A.Last>4007 then
@@ -68,7 +68,7 @@ Begin
          Else        NotDone:=False;
          While NotDone do
             Begin { Push x up the tree by exchanging it with its parent of larger priority. Recall p computes the priority of a
-                    Attacker_Type element }
+                    AttackerType element }
                Temp:=A.Contents[i];
                A.Contents[i]:=A.Contents[i div 2];
                A.Contents[i div 2]:=Temp;
@@ -85,11 +85,11 @@ End;
 
 (******************************************************************************)
 
-[Global]Function DeleteMin (Var A: PriorityQueue): Attacker_Type;
+[Global]Function DeleteMin (Var A: PriorityQueue): AttackerType;
 
 Var
    i,j: Integer;
-   Temp,minimum: Attacker_Type;
+   Temp,minimum: AttackerType;
 
 Begin
   If A.last>0 then

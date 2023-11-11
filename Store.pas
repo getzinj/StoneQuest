@@ -63,7 +63,7 @@ Begin
    Character.Item[Character.No_of_Items].Ident:=True;
    Character.Item[Character.No_of_Items].Usable:=(Character.Class in Item.Usable_By) or (Character.PreviousClass in Item.Usable_By);
    Character.Item[Character.No_of_Items].Cursed:=False;
-   Character.Item[Character.No_of_Items].Equipted:=False;
+   Character.Item[Character.No_of_Items].isEquipped:=False;
    Character.Items_Seen[Character.No_of_Items]:=True;
 End;
 
@@ -331,7 +331,7 @@ Begin
          T:=T+'['+CHR(Loop+64)+']  ';
          If Seller.Item[Loop].Cursed then
             T:=T+'-'
-         Else if Seller.Item[Loop].Equipted then
+         Else if Seller.Item[Loop].isEquipped then
             T:=T+'*'
          Else if Not Seller.Item[Loop].Ident then
             T:=T+'?'

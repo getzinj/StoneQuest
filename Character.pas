@@ -122,7 +122,7 @@ Begin
          SMG$Put_Line (ScreenDisplay,'-----------------');
          SMG$Put_Line (ScreenDisplay,'C)ursed = '+Bool_String[Item.Cursed]);
          SMG$Put_Line (screenDisplay,'U)sable = '+Bool_String[Item.Usable]);
-         SMG$Put_Line (screenDisplay,'E)quipped = '+Bool_String[Item.Equipted]);
+         SMG$Put_Line (screenDisplay,'E)quipped = '+Bool_String[Item.isEquipped]);
          SMG$Put_Line (screenDisplay,'I)dentified = '+Bool_String[Item.Ident]);
          SMG$Put_Line (screenDisplay,'N)umber = '+String(Item.Item_Num)+' ('+Item_List[Item.Item_Num].True_Name+')');
          SMG$End_Display_Update (ScreenDisplay);
@@ -133,7 +133,7 @@ Begin
          Case Answer of
             'C':  Item.Cursed:=Not Item.Cursed;
             'U':  Item.Usable:=Not Item.Usable;
-            'E':  Item.Equipted:=Not Item.Equipted;
+            'E':  Item.isEquipped:=Not Item.isEquipped;
             'I':  Item.Ident:=Not Item.Ident;
             'N':  Item.Item_Num:=Get_Item_Number (Item.Item_Num);
             ' ': ;

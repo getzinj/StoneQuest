@@ -84,7 +84,7 @@ Var
 
 Begin { Can Use }
   Item:=Item_List[Stats.Item_Num];
-  Temp:=Stats.Equipted or (Item.kind=Scroll);
+  Temp:=Stats.isEquipped or (Item.kind=Scroll);
   Temp:=Temp and ((Item.Spell_Cast<>NoSp) or (Item.Special_Occurance_No>0));
   Temp:=Temp and ((Item.Alignment=NoAlign) or (Item.Alignment=Character.Alignment));
   Temp:=Temp and ((Character.Class in Item.Usable_By) or (Character.PreviousClass in Item.Usable_By));
@@ -148,11 +148,11 @@ Begin
          Begin
             Temp:=Character.Item[Position];
             Item:=Item_List[Temp.Item_num];
-            If (Temp.Equipted) and (Temp.Cursed) then
+            If (Temp.isEquipped) and (Temp.Cursed) then
                SMG$Put_Chars (ScreenDisplay,
                    '-')
             Else
-               If Temp.Equipted then
+               If Temp.isEquipped then
                   SMG$Put_Chars (ScreenDisplay,
                       '*')
                Else
@@ -315,7 +315,7 @@ Begin
            SMG$Put_Line (ScreenDisplay,'That item is cursed.',0);
            Delay(1);
         End
-     Else If Character.Item[Num].Equipted then
+     Else If Character.Item[Num].isEquipped then
         Begin
            SMG$Put_Line (ScreenDisplay,'That item is equipped.',0);
            Delay(1);
@@ -355,7 +355,7 @@ Begin
    Equipment.Item_num:=Old_Item.Turns_Into;
    Equipment.Cursed:=False;
    Equipment.Ident:=False;
-   Equipment.Equipted:=False;
+   Equipment.isEquipped:=False;
    Equipment.Usable:=Usable_Item (Character,Item_List[Equipment.Item_Num]);
 End;
 
@@ -392,7 +392,7 @@ Begin
       If Character.Item[Item_No].Cursed then
          Choices[Item.Kind]:=Nil
       Else
-        Character.Item[Item_No].Equipted:=False;
+        Character.Item[Item_No].isEquipped:=False;
 End;
 
 (******************************************************************************)
@@ -504,7 +504,7 @@ Begin
               Item:=Item_List[ItemPtr^.Item_Num];
               Character.Item[ItemPtr^.Position].Ident:=ItemPtr^.Identified;
               Character.Item[ItemPtr^.Position].Cursed:=Item.cursed;
-              Character.Item[ItemPtr^.Position].Equipted:=True;
+              Character.Item[ItemPtr^.Position].isEquipped:=True;
               If Character.Item[ItemPtr^.Position].Cursed then
                  Begin
                     SMG$Put_Line (ScreenDisplay,'Cursed!!!',1,1);
@@ -576,7 +576,7 @@ Begin
   For Item:=1 to Character.No_of_Items do
      Begin
         Character_Item:=Item_List[Character.Item[Item].Item_Num];
-        If (Character_Item.Special_Occurance_No>0) and (Character.Item[Item].Equipted) then
+        If (Character_Item.Special_Occurance_No>0) and (Character.Item[Item].isEquipped) then
            Begin
               T:='Dost thou wish to invoke the special power of thine ';
               If Character.Item[Item].Ident then
@@ -668,7 +668,7 @@ Begin
                  Begin
                     If Hold_Item.Cursed and Made_Roll (27) then
                        Begin
-                          Character.Item[Item].Equipted:=true;
+                          Character.Item[Item].isEquipped:=true;
                           Character.Item[Item].Cursed:=True;
                           Equip_Character (Character);
                           T:='';
@@ -863,19 +863,15 @@ Begin { Print Top Line }
           SexName[Character.Sex][1]
           +'-');
    If Character.Race=NoRace then
-      SMG$Put_Chars (ScreenDisplay,
-          '  ')
+      SMG$Put_Chars (ScreenDisplay, '  ')
    Else
-      SMG$Put_Chars (screenDisplay,
-          RaceName[Character.Race]
-          +' ');
+      SMG$Put_Chars (screenDisplay, RaceName[Character.Race] + '  ');
+
    If Character.Alignment=NoAlign then
-      SMG$Put_Chars (ScreenDisplay,
-          '  ')
+      SMG$Put_Chars (ScreenDisplay, '  ')
    Else
-      SMG$Put_Chars (ScreenDisplay,
-          AlignName[Character.Alignment][1]
-          +'-');
+      SMG$Put_Chars (ScreenDisplay, AlignName[Character.Alignment][1] + '-');
+
    If Character.Class<>NoClass then
       Begin
          SMG$Put_Chars (ScreenDisplay,
@@ -887,21 +883,14 @@ Begin { Print Top Line }
       End;
    If Character.Psionics then
       Begin
-         SMG$Put_Chars (ScreenDisplay,
-             '  (');
+         SMG$Put_Chars (ScreenDisplay, '  (');
          If Character.DetectTrap<>0 then
-            SMG$Put_Chars (ScreenDisplay,
-                'T');
+            SMG$Put_Chars (ScreenDisplay, 'T');
          If Character.DetectSecret<>0 then
-            SMG$Put_Chars (ScreenDisplay,
-                'S');
+            SMG$Put_Chars (ScreenDisplay, 'S');
          If Character.Regenerate<>0 then
-            SMG$Put_Chars (ScreenDisplay,
-                'R');
-         SMG$Put_Chars (ScreenDisplay,
-               ')');
-         SMG$Put_Line (ScreenDisplay,
-             '');
+            SMG$Put_Chars (ScreenDisplay, 'R');
+         SMG$Put_Chars (ScreenDisplay, ')');
       End;
       SMG$Put_Line (ScreenDisplay,
           '');
@@ -939,7 +928,7 @@ Begin { Print Gold }
    If Character.Age>0 then
       Begin
          SMG$Put_Chars (ScreenDisplay,
-             'Gold:      ');
+             'Gold:       ');
          SMG$Put_Chars (ScreenDisplay,
              String(Character.Gold,12));
       End;
@@ -973,7 +962,7 @@ Begin { Print Level and Age }
             'Level: ');
         SMG$Put_Chars (ScreenDisplay,
             String(Character.Level,3));
-        If Character.PreviousClass<>NoClass then
+        If Character.PreviousClass <> NoClass then
            SMG$Put_Chars (ScreenDisplay,
                '/'
                +String(Character.Previous_Lvl,3))
@@ -1126,7 +1115,7 @@ Begin { Trade Equipment }
                   Delay(2);
                End
             Else
-               If Character.Item[Item_Number].Equipted then
+               If Character.Item[Item_Number].isEquipped then
                   Begin
                      SMG$Put_Line (ScreenDisplay,
                         'That item is equipped.');
@@ -1301,7 +1290,9 @@ Var
    Choices: Char_Set;
 
 Begin { Character fully made }
+   SMG$Put_Line (ScreenDisplay,'');
    Print_The_Rest (Character,Choices,Party,Party_Size);
+
    if Answer=' ' then
       SMG$End_Pasteboard_Update(Pasteboard)              { End updating from main }
    Else
