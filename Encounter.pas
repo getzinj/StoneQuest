@@ -15,7 +15,8 @@ Const
 Type
    Place_Ptr   = ^Place_Node;
    Place_Node  = Record
-                    PosX,PosY: Horizontal_Type;
+                    PosX: Horizontal_Type;
+PosY: Horizontal_Type;
                     PosZ: Vertical_Type;
                     Next: Place_Ptr;
                  End;
@@ -183,8 +184,7 @@ Procedure Combat_Message;
 Begin { Combat Message }
    SMG$Begin_Display_Update (MessageDisplay);
    SMG$Erase_Display (MessageDisplay);
-   SMG$Put_Chars (MessageDisplay,
-       'An encounter...',2,1,,1);
+   SMG$Put_Chars (MessageDisplay, 'An encounter...',2,1,,1);
    SMG$End_Display_Update (MessageDisplay);
    Delay (2);
 End;  { Combat Message }
@@ -377,7 +377,8 @@ Function Number_Active (Group: Monster_Group): Integer;
 { This function determines how many monsters can attack in GROUP }
 
 Var
-   Temp,Loop: Integer;
+   Temp: Integer;
+Loop: Integer;
 
 Begin { Number Active }
    Temp:=0;
@@ -424,7 +425,8 @@ Procedure Switch_Monsters (Var Group: Monster_Group; One,Two: Integer);
 
 Var
    TempStat: Status_Type;
-   TempMax,TempCurr: Integer;
+   TempMax: Integer;
+   TempCurr: Integer;
 
 Begin
    TempStat:=Group.Status[One];
@@ -538,10 +540,7 @@ Procedure They_Advance (Name: Monster_Name_Type);
 Begin
    SMG$Begin_Display_Update (MessageDisplay);
    SMG$Erase_Display (MessageDisplay);
-   SMG$Put_Line (MessageDisplay,
-       'The '
-       +Name
-       +' advance!');
+   SMG$Put_Line (MessageDisplay, 'The ' + Name + ' advance!');
    SMG$End_Display_Update (MessageDisplay);
    Ring_Bell (MessageDisplay, 2);
    Delay (2*Delay_Constant);
@@ -583,7 +582,8 @@ Procedure Update_Monster_Box (Var Group: Encounter_Group);
 { This procedure will allow monsters groups to switch positions for more favorable attack advantages }
 
 Var
-   i,j: Integer;
+   i: Integer;
+   j: Integer;
    Name: Monster_Name_Type;
    Advance: Boolean;
 
@@ -667,7 +667,8 @@ End;
 [Global]Function Critical_hit (Attacker: Character_Type; Defender_Level: Integer): [Volatile]Boolean;
 
 Var
-   Base,Attacker_Level: Integer;
+   Base: Integer;
+   Attacker_Level: Integer;
 
 Begin
    Attacker_Level:=Max(Class_Attacker_Level(Attacker),Item_Attacker_Level(Attacker));
@@ -704,7 +705,8 @@ End;
 Function Natural_Adjustment (Character: Character_Type; Attack: Attack_Type): Integer;
 
 Var
-   Constitution,Luck: Integer;
+   Constitution: Integer;
+   Luck: Integer;
    Race: Race_Type;
    Temp: Integer;
 
@@ -731,7 +733,8 @@ End;
 Function Magical_Adjustment (Character: Character_Type; Attack: Attack_Type): Integer;
 
 Var
-   Temp,Item_No: Integer;
+   Temp: Integer;
+   Item_No: Integer;
 
 Begin
    Temp:=0;
@@ -753,11 +756,11 @@ Var
 
 Begin
    Case Class of
-       Cleric,Monk:                                Temp:=10- (((Level-1) div 3));
-       Fighter,Ranger,Samurai,Paladin,AntiPaladin: Temp:=10- (((Level-1) div 2));
-       Wizard:                                     Temp:=11- (((Level-1) div 5));
-       Thief,Ninja,Assassin,Bard:                  Temp:=11- (((Level-1) div 4));
-       Otherwise                                   Temp:=12- (((Level-1) div 5));
+       Cleric,Monk:                                Temp:=10 - (((Level - 1) div 3));
+       Fighter,Ranger,Samurai,Paladin,AntiPaladin: Temp:=10 - (((Level - 1) div 2));
+       Wizard:                                     Temp:=11 - (((Level - 1) div 5));
+       Thief,Ninja,Assassin,Bard:                  Temp:=11 - (((Level - 1) div 4));
+       Otherwise                                   Temp:=12 - (((Level - 1) div 5));
    End;
    Class_Save:=Temp;
 End;
@@ -782,12 +785,18 @@ Function Class_Adjustment (Class: Class_Type;  Attack: Attack_Type): Integer;
 Begin
   Class_Adjustment:=0;
   Case Attack of
-       Poison: If Class=Assassin then Class_Adjustment:=1;
-       Magic:  If Class=Wizard   then Class_Adjustment:=1;
-       Death:  If Class=AntiPaladin then Class_Adjustment:=1;
-       CauseFear: If Class=AntiPaladin then Class_Adjustment:=-3
-                  Else If Class=Barbarian then Class_Adjustment:=5;
-       Aging,Sleep: If Class=Monk then Class_Adjustment:=1;
+       Poison: If Class=Assassin then
+                  Class_Adjustment:=1;
+       Magic:  If Class=Wizard then
+                  Class_Adjustment:=1;
+       Death:  If Class=AntiPaladin then
+                  Class_Adjustment:=1;
+       CauseFear: If Class=AntiPaladin then
+                     Class_Adjustment:=-3
+                  Else If Class=Barbarian then
+                     Class_Adjustment:=5;
+       Aging,Sleep: If Class=Monk then
+                      Class_Adjustment:=1;
   End;
 End;
 
@@ -801,10 +810,10 @@ Var
 Begin
    Roll_Needed:=Base_Save (Character);
    Roll_Needed:=Roll_Needed
-       -Natural_Adjustment (Character,Attack)
-       -Magical_Adjustment (Character,Attack)
-       -Class_Adjustment (Character.Class,Attack)
-       -Class_Adjustment (Character.PreviousClass,Attack);
+       - Natural_Adjustment (Character,Attack)
+       - Magical_Adjustment (Character,Attack)
+       - Class_Adjustment (Character.Class,Attack)
+       - Class_Adjustment (Character.PreviousClass,Attack);
   Saving_Throw:=Max(Roll_Needed,2);
 End;
 
@@ -846,10 +855,10 @@ Function Class_Base_Chance (Class: Class_Type; Level: Integer): Integer;
 
 Begin
    Case Class of
-        Cleric:                                                    Class_Base_Chance:=10- (2*((level-1) div 3));
-        Fighter,Ranger,Monk,Samurai,Barbarian,Paladin,AntiPaladin: Class_Base_Chance:=10- (2*((level-1) div 2));
-        Wizard:                                                    Class_Base_Chance:=11- (2*((level-1) div 5));
-        Thief,Assassin,Bard:                                       Class_Base_Chance:=11- (2*((level-1) div 4));
+        Cleric:                                                    Class_Base_Chance:=10 - (2 * ((level - 1) div 3));
+        Fighter,Ranger,Monk,Samurai,Barbarian,Paladin,AntiPaladin: Class_Base_Chance:=10 - (2 * ((level - 1) div 2));
+        Wizard:                                                    Class_Base_Chance:=11 - (2 * ((level - 1) div 5));
+        Thief,Assassin,Bard:                                       Class_Base_Chance:=11 - (2 * ((level - 1) div 4));
         Otherwise                                                  Class_Base_Chance:= 0;
    End;
 End;
@@ -860,7 +869,9 @@ Function Weapon_Plus_To_Hit (Character: Character_Type; Kind: Monster_Type;  Pos
 
 Var
    Temp_Item: Item_Record;
-   Weapon_Plus,Item_No,Plus: Integer;
+   Weapon_Plus: Integer;
+   Item_No: Integer;
+   Plus: Integer;
 
 [External]Procedure Plane_Difference (Var Plus: Integer; PosZ: Integer);External; { TODO: Make this a function. }
 
@@ -873,7 +884,7 @@ Begin
                Temp_Item:=Item_List[Character.Item[Item_No].Item_Num];
                Plus:=Temp_Item.Plus_To_Hit;
                If Kind in Temp_Item.Versus then
-                  Plus:=Plus+(4 * Plus);
+                  Plus:=Plus + (4 * Plus);
                Plane_Difference (Plus,PosZ);
                Weapon_Plus:=Weapon_Plus+Plus;
             End;
@@ -908,7 +919,8 @@ End;
 [Global]Function To_hit_Roll (Character: Character_Type; AC: Integer; Monster: Monster_Record): Integer;
 
 Var
-   Weapon_Plus,Temp: Integer;
+   Weapon_Plus: Integer;
+   Temp: Integer;
    Cant_Hit: Boolean;
 
 Begin
@@ -975,7 +987,8 @@ End;
 [Global]Function Know_Monster (Monster_Number: Integer; Member: Party_Type; Current_Party_Size: Party_Size_Type): [Volatile]Boolean;
 
 Var
-   Chance,CharNo: Integer;
+   Chance: Integer;
+   CharNo: Integer;
    In_Partys_Set: Boolean;
 
 Begin
@@ -1011,6 +1024,7 @@ Begin
          If Character.Curr_HP>Character.Max_HP then
             Character.Curr_HP:=Character.Max_HP;
       End;
+
    If (Character.Status=Dead) or (Character.Status=Ashes) or (Character.Status=Deleted) then
       Character.Curr_HP:=0;
    If Character.Status=Deleted then
@@ -1031,64 +1045,51 @@ Begin
                    Change_Status (Character,Poisoned,Changed);
                    Character.Regenerates:=Regenerates (Character,PosZ);
                    If Changed then
-                      T:=T
-+' is poisoned!'
+                      T:=T + ' is poisoned!'
                    Else
-                      T:=T
-+' is unaffected!';
+                      T:=T + ' is unaffected!';
                 End;
         Stoning: Begin
                    Change_Status (Character,Petrified,Changed);
                    If Changed then
-                      T:=T
-+' is turned into stone!'
+                      T:=T + ' is turned into stone!'
                    Else
-                      T:=T
-+' is unaffected!';
+                      T:=T + ' is unaffected!';
                  End;
         Death:   Begin
                     Change_Status (Character,Dead,Changed);
                     If Changed then
                        Begin
                           Slay_Character (Character,Can_Attack[CharNum]);
-                          T:=
-'';
+                          T:='';
                        End
                     Else
-                       T:=T
-+' is unaffected';
+                       T:=T + ' is unaffected';
                   End;
         Insanity: Begin
                     Change_Status (Character,Insane,Changed);
                     If Changed then
-                       T:=T
-+' is driven mad!'
+                       T:=T + ' is driven mad!'
                     Else
-                       T:=T
-+' is unaffected!';
+                       T:=T + ' is unaffected!';
                   End;
         Aging:    Begin
                     Character.Age:=Character.Age+(Roll_Die (4) * 3650);
-                    T:=T
-+' is aged!';
+                    T:=T + ' is aged!';
                   End;
         Sleep:    Begin
                     Change_Status (Character,Asleep,Changed);
                     If Changed then
-                       T:=T
-+' is driven slept!'
+                       T:=T + ' is slept!'
                     Else
-                       T:=T
-+' is unaffected!';
+                       T:=T + ' is unaffected!';
                   End;
         CauseFear:Begin
                     Change_Status (Character,Afraid,Changed);
                     If Changed then
-                       T:=T
-+' is made afraid!'
+                       T:=T + ' is made afraid!'
                     Else
-                       T:=T
-+' is unaffected!';
+                       T:=T + ' is unaffected!';
                   End;
         Otherwise ;
    End;
@@ -1112,7 +1113,7 @@ Begin
    Else
       Check_Attack (Character,Attack,T,CharNum);
    SMG$Set_Cursor_ABS (MessageDisplay,2,1);
-   If T<>'' then
+   If T <> '' then
       SMG$Put_Line (MessageDisplay,T);
    Can_Attack[CharNum]:=(Character.Status in [Healthy,Poisoned,Zombie]);
    Member[CharNum]:=Character;
@@ -1211,7 +1212,8 @@ Function Uh_Oh (Group: Encounter_Group; Current_Party_Size: Party_Size_Type): [V
 
 Var
    GroupNum: Integer;
-   Orig,Curr: Integer;
+   Orig: Integer;
+   Curr: Integer;
    Chance: Integer;
 
 Begin
@@ -1221,13 +1223,17 @@ Begin
          Orig:=Orig+Group[GroupNum].Orig_Group_Size;
          Curr:=Curr+Group[GroupNum].Curr_Group_Size;
       End;
+
    If (Current_Party_Size=0) or (Curr=0) or (Curr>(Current_Party_Size*2)) then
       Uh_Oh:=False
    Else
       Begin
-         If Curr<(Orig*3/4) then Chance:=Chance+25;
-         If Curr<(Orig*1/2) then Chance:=Chance+25;
-         If Curr<(Orig*1/4) then Chance:=Chance+25;
+         If Curr < (Orig * 3 / 4) then
+            Chance:=Chance+25;
+         If Curr < (Orig * 1 / 2) then
+            Chance:=Chance+25;
+         If Curr < (Orig * 1 / 4) then
+            Chance:=Chance+25;
          Uh_Oh:=Made_Roll(Chance);
       End;
 End;
@@ -1267,7 +1273,7 @@ Begin
    If (Monster_Group[Attacker.Group].Status[Attacker.Attacker_Position]=Healthy) then
       Begin
          Handle_Monster_Attack (Attacker,Monster_Group,Member,Current_Party_Size,Party_Size,Can_Attack);
-         Delay ((3/2)*Delay_Constant)
+         Delay ((3/2) * Delay_Constant)
       End
 End;
 
@@ -1282,7 +1288,7 @@ Procedure Handle_Attack (    Attacker: Attacker_Type;
 
 Begin
    SMG$Erase_Display (MessageDisplay);
-   If (attacker.Group=5) and (Not Time_Stop_Players) then
+   If (attacker.Group = 5) and (Not Time_Stop_Players) then
       Character_Attack (Attacker,Monster_Group,Member,Current_Party_Size,Can_Attack)
    Else
       If Not Time_Stop_Monsters then
@@ -1375,10 +1381,10 @@ Begin
             Begin
               Done:=False;  Temp:=0;
               Zero_Through_Six (Temp);
-              Done:=(Temp<5); { TODO: This is lazy programming }
-              If Done and (Temp>0) then
+              Done:=(Temp < 5); { TODO: This is lazy programming }
+              If Done and (Temp > 0) then
                  Done:=Done and (Group[Temp].Curr_Group_Size>0);
-              If Done and (Temp>0) then
+              If Done and (Temp > 0) then
                  Group1:=Temp;
             End;
          Until Done;
@@ -1398,7 +1404,7 @@ Var
    Number: Integer;
 
 Begin
-   If Current_Party_Size>1 then
+   If Current_Party_Size > 1 then
       Begin
          SMG$Begin_Display_Update (OptionsDisplay);
          SMG$Erase_Display (OptionsDisplay);
@@ -1429,18 +1435,15 @@ Begin
          Group1:=5;
          Number:=Caster;
       End
-   Else
-      If Spell in Party_Spell+All_Monsters_Spell+Area_Spell then
-         Get_Group_Number (Group,Group1,Take_Back)
-      Else
-         If Spell in Group_Spell then
-            Get_Group_Number (Group,Group1,Take_Back)
-         Else
-            If Spell in Person_Spell then
-               Begin
-                  Group1:=5;
-                  Number:=Get_Character_Number (Current_Party_Size,Party_Size,Take_Back);
-               End;
+   Else If Spell in Party_Spell+All_Monsters_Spell+Area_Spell then
+      Get_Group_Number (Group,Group1,Take_Back)
+   Else If Spell in Group_Spell then
+      Get_Group_Number (Group,Group1,Take_Back)
+   Else If Spell in Person_Spell then
+      Begin
+         Group1:=5;
+         Number:=Get_Character_Number (Current_Party_Size,Party_Size,Take_Back);
+      End;
 End;
 
 (******************************************************************************)
@@ -1477,31 +1480,29 @@ Begin
    Options:=[CHR(13)];
    SMG$Begin_Display_Update (OptionsDisplay);
    SMG$Erase_Display (OptionsDisplay);
-   SMG$Label_Border (OptionsDisplay,
-       'Use which item? ([RETURN] exits)',
-       SMG$K_BOTTOM);
+   SMG$Label_Border (OptionsDisplay, 'Use which item? ([RETURN] exits)', SMG$K_BOTTOM);
+
    If Character.No_of_Items>0 then
       For Item:=1 to Character.No_of_Items do
          If Can_Use (Character,Character.Item[Item]) then
             Begin
                Options:=Options+[CHR(Item+ZeroOrd)];
                SMG$Set_Cursor_ABS (OptionsDisplay,((Item+1) div 2),23-(22*(Item Mod 2)));
-               SMG$Put_Chars (OptionsDisplay,
-                  String(Item,1)
-                  +') ');
+               SMG$Put_Chars (OptionsDisplay, String(Item,1) + ') ');
                If Character.Item[Item].Ident then
                   SMG$Put_Chars (OptionsDisplay,Item_List[Character.Item[Item].Item_Num].True_Name)
                Else
                   SMG$Put_Chars (OptionsDisplay,Item_List[Character.Item[Item].Item_Num].Name);
             End;
+
    SMG$End_Display_Update (OptionsDisplay);
+
    Answer:=Make_Choice (Options);
-   SMG$Label_Border (OptionsDisplay,
-      '');
-   If Answer=CHR(13) then
+   SMG$Label_Border (OptionsDisplay, '');
+   If Answer = CHR(13) then
       Choose_Item_Num:=0
    Else
-      Choose_Item_Num:=Ord(Answer)-ZeroOrd;
+      Choose_Item_Num:=Ord(Answer) - ZeroOrd;
 End;
 
 (******************************************************************************)
@@ -1510,7 +1511,9 @@ Procedure Print_List_of_Spells (Character: Character_Type; Spell_Type: Integer);
 
 Var
    Loop: Spell_Name;
-   Level,X,Y: Integer;
+   Level: Integer;
+   X: Integer;
+   Y: Integer;
    SpellList: Set of Spell_Name;
    Long_Spell: [External]Array [Spell_Name] of Varying[25] of Char;
 
@@ -1559,7 +1562,7 @@ Begin
                   SMG$Put_Chars (SpellListDisplay,Long_Spell[Loop],y,x);
                   SMG$Put_Chars (SpellListDisplay, ' (' +Spell[Loop] +')');
                   Y:=Y + 1;
-                  If Y>21 then
+                  If Y > 21 then
                      Begin
                         Y:=1;
                         X:=X + 33;
@@ -1578,6 +1581,7 @@ Begin
 
         We should do a Begin_Pasteboard_Update instead, or just move this code to the end of List_Spells(). }
    End;
+
    Wait_Key;
 End;
 
@@ -1588,6 +1592,7 @@ Procedure List_Spells (Character: Character_Type);
 Begin
    Print_List_of_Spells (Character,Cler_Spell);
    Print_List_of_Spells (Character,Wiz_Spell);
+
    SMG$Put_Chars (OptionsDisplay,' ',3,5); { Get rid of Question mark }
    SMG$Unpaste_Virtual_Display (SpellListDisplay,Pasteboard);
 End;
@@ -1599,7 +1604,8 @@ Procedure Select_Combat_Spell (Var SpellChosen: Spell_Name;  Character: Characte
 Var
    SpellName: Line;
    Done: Boolean;
-   Location,Loop: Spell_Name;
+   Location: Spell_Name;
+   Loop: Spell_Name;
    Long_Spell: [External]Array [Spell_Name] of Varying[25] of Char;
 
 Begin
@@ -1609,15 +1615,16 @@ Begin
   Repeat
      Begin
         SMG$Set_Cursor_ABS (OptionsDisplay,3,1);
+
         Cursor;
-        SMG$Read_String (Keyboard,SpellName,Display_Id:=OptionsDisplay,
-           Prompt_String:='--->');
+        SMG$Read_String (Keyboard,SpellName,Display_Id:=OptionsDisplay, Prompt_String:='--->');
         No_Cursor;
-        If SpellName<>'?' then
+
+        If SpellName <> '?' then
            Begin
               For Loop:=CrLt to DetS do
-                 If (STR$Case_Blind_Compare(Spell[Loop]+'',SpellName)=0) or
-                    (STR$Case_Blind_Compare(Long_Spell[Loop]+'',SpellName)=0) then
+                 If (STR$Case_Blind_Compare(Spell[Loop]+'',SpellName) = 0) or
+                    (STR$Case_Blind_Compare(Long_Spell[Loop]+'',SpellName) = 0) then
                        Location:=Loop;
               Done:=True;
            End
@@ -1723,7 +1730,8 @@ Procedure Character_Casts_a_Spell (Var Stats: Attacker_Type; Group: Encounter_Gr
 Var
   Spell_Chosen: Spell_Name;
   Character: Character_Type;
-  Class,Level: Integer;
+  Class: Integer;
+  Level: Integer;
 
 [External]Procedure Find_Spell_Group (Spell: Spell_Name; Character: Character_Type; Var Class,Level: Integer);external;
 [External]Function Caster_Level (Cls: Integer; Character: Character_Type):Integer;external;
@@ -1732,9 +1740,9 @@ Begin
    Character:=Member[Stats.Attacker_Position];
    SMG$Begin_Display_Update (OptionsDisplay);
    SMG$Erase_Display (OptionsDisplay);
-   SMG$Put_Chars (OptionsDisplay,
-       'Cast what spell? (''?'' lists)',2,1);
+   SMG$Put_Chars (OptionsDisplay, 'Cast what spell? (''?'' lists)',2,1);
    SMG$End_Display_Update (OptionsDisplay);
+
    Select_Combat_Spell (Spell_Chosen, Character);
 
    Stats.Action:=CastSpell;
@@ -1743,35 +1751,29 @@ Begin
    Stats.WhatSpell:=Spell_Chosen;
 
    If Spell_Chosen=NoSp then
-      Spell_Mistake (
-         '* * * What? * * *',
-         Take_Back)
+      Spell_Mistake ('* * * What? * * *', Take_Back)
+   Else If Spell_Chosen=ReDo then
+      Take_Back:=True
    Else
-      If Spell_Chosen=ReDo then
-         Take_Back:=True
-      Else
-         Begin
-            Find_Spell_Group (Spell_Chosen,Character,Class,Level);
-            Take_Back:=Not(Spell_Chosen in Character.Cleric_Spells+Character.Wizard_Spells);
-            Take_Back:=Take_Back or ((Class<>Cler_Spell) and (Class<>Wiz_Spell)) or (Level=0) or (Level=10);
-            If Take_Back then
-               Spell_Mistake (
-                  '* * * Thou don''t know that spell * * *',Take_Back)
-            Else
-               If Character.SpellPoints[Class,Level]<1 then
-               Spell_Mistake (
-                  '* * * Spell Points exhausted * * *',Take_Back)
-            Else
-               If Not (Spell_Chosen in Encounter_Spells) then
-                  Spell_Mistake (
-                     '* * * Thou can''t cast that now! * * *',Take_Back)
-               Else
-                  Begin
-                     Get_Spell_Info (Spell_Chosen,Group,Character_Number,Current_Party_Size,Party_Size,Stats.Target_Group,
-                                     Stats.Target_Individual,Take_Back);
-                     Stats.Caster_Level:=Caster_Level (Class,Character);
-                  End;
-         End;
+      Begin
+        Find_Spell_Group (Spell_Chosen,Character,Class,Level);
+
+        Take_Back:=Not(Spell_Chosen in Character.Cleric_Spells+Character.Wizard_Spells);
+        Take_Back:=Take_Back or ((Class <> Cler_Spell) and (Class <> Wiz_Spell)) or (Level = 0) or (Level = 10);
+
+        If Take_Back then
+           Spell_Mistake ('* * * Thou don''t know that spell * * *',Take_Back)
+        Else If Character.SpellPoints[Class,Level] < 1 then
+           Spell_Mistake ('* * * Spell Points exhausted * * *',Take_Back)
+        Else If Not (Spell_Chosen in Encounter_Spells) then
+           Spell_Mistake ('* * * Thou can''t cast that now! * * *',Take_Back)
+        Else
+           Begin
+              Get_Spell_Info (Spell_Chosen,Group,Character_Number,Current_Party_Size,Party_Size,Stats.Target_Group,
+                              Stats.Target_Individual,Take_Back);
+              Stats.Caster_Level:=Caster_Level (Class,Character);
+           End;
+      End;
 End;
 
 (******************************************************************************)
@@ -1781,7 +1783,6 @@ Function More_Than_One_Active_Group (Group: Encounter_Group): Boolean;
 Begin
    More_Than_One_Active_Group:=Group[2].Curr_Group_Size > 0;
 End;
-
 
 (******************************************************************************)
 
@@ -1829,7 +1830,7 @@ Begin { Use an item }
   Stats.WhatSpell:=NoSp;
   Character:=Member[Character_Number];
   Item_Choice:=Choose_Item_Num (Character);
-  If Item_Choice>0 then
+  If Item_Choice > 0 then
      Begin
         Stats.WhatSpell:=Item_List[Character.Item[Item_Choice].Item_Num].Spell_Cast;
         Get_Spell_Info (Stats.WhatSpell,Group,Character_Number,Current_Party_Size,Party_Size,Stats.Target_Group,
@@ -1926,9 +1927,9 @@ Var
 
 Begin
    Stats.Action:=SwitchItems;
-   Classes:=[Weapon,Ring];
+   Classes:=[ Weapon,Ring ];
    One_Usable:=False;
-   Options:=[CHR(13)];
+   Options:=[ CHR(13) ];
    If Character.No_of_items>0 then
       For Item:=1 to Character.No_of_items do
          If Character.Item[Item].Cursed then
@@ -1936,16 +1937,16 @@ Begin
 
    SMG$Begin_Display_Update (OptionsDisplay);
    SMG$Erase_Display (OptionsDisplay);
-   SMG$Label_Border (OptionsDisplay,
-      '[RETURN] exits',SMG$K_BOTTOM);
-   SMG$Put_Line (OptionsDisplay,
-       'Equip which item? (R=No Ring, W=No Weapon)');
+   SMG$Label_Border (OptionsDisplay,'[RETURN] exits',SMG$K_BOTTOM);
+
+   SMG$Put_Line (OptionsDisplay, 'Equip which item? (R=No Ring, W=No Weapon)');
+
    T:='';
    If Character.No_of_Items>0 then
       Begin
          For Item:=1 to Character.No_of_items do
             Begin
-               If (Item mod 2)<>0 then
+               If (Item mod 2) <> 0 then
                   T:=''  { Beginning of a new line }
                Else
                   T:=T+'     ';
@@ -1956,8 +1957,7 @@ Begin
                      Else
                         Begin
                            Options:=Options+[CHR(Item+ZeroOrd)];
-                           T:=T+String (Item,1)
-                              +') ';
+                           T:=T+String (Item,1) + ') ';
                            One_Usable:=True;
                         End;
                      If Character.Item[Item].Ident then
@@ -1983,28 +1983,29 @@ Begin
          SMG$Put_Line (OptionsDisplay,T);
       End;
    SMG$End_Display_Update (OptionsDisplay);
-   Options:=Options+['R','W'];
+
+   Options:=Options + [ 'R', 'W' ];
    Answer:=Make_Choice (Options);
+
    SMG$Label_Border (OptionsDisplay,'');
+
    ReDo:=False;
    If Answer=CHR(13) then
       ReDo:=True
+   Else If Answer='W' then
+      Unequipp_Weapon (Stats,Character)
+   Else If Answer='R' then
+      Unequipp_Ring (Stats,Character)
    Else
-      If Answer='W' then
-         Unequipp_Weapon (Stats,Character)
-      Else
-         If Answer='R' then
-            Unequipp_Ring (Stats,Character)
-         Else
-            Begin
-               Choice:=Ord(Answer)-ZeroOrd;
-               Stats.New_Item:=Choice;
-               If Character.No_of_Items>0 then
-                  For Item:=1 to Character.No_of_Items do
-                     If Item<>Choice then
-                        If Item_List[Character.Item[Choice].Item_Num].Kind=Item_List[Character.Item[Item].Item_Num].Kind then
-                           Stats.Old_Item:=Item;
-            End;
+      Begin
+           Choice:=Ord(Answer)-ZeroOrd;
+           Stats.New_Item:=Choice;
+           If Character.No_of_Items>0 then
+              For Item:=1 to Character.No_of_Items do
+                 If Item<>Choice then
+                    If Item_List[Character.Item[Choice].Item_Num].Kind = Item_List[Character.Item[Item].Item_Num].Kind then
+                       Stats.Old_Item:=Item;
+      End;
 End;
 
 (******************************************************************************)
@@ -2012,7 +2013,8 @@ End;
 Function Has_Spell_Points (Character: Character_Type): Boolean;
 
 Var
-  Y,X: Integer;
+  Y: Integer;
+  X: Integer;
   Temp: Boolean;
 
 Begin
@@ -2093,7 +2095,8 @@ End;
 Procedure Put_Options (Number: Integer; Var Options: Char_Set;  Member: Party_Type);
 
 Var
-  X,Y: Integer;
+  X: Integer;
+Y: Integer;
   Character: Character_Type;
   Classes: Set of Class_Type;
 
@@ -2376,7 +2379,8 @@ Function Successful_Flee_Chance (Group: Encounter_Group;  Current_Party_Size: Pa
                                       Party_Size: Integer): [Volatile]Integer;
 
 Var
-  Temp,Group_num: Integer;
+  Temp: Integer;
+Group_num: Integer;
 
 Begin { Successful Flee }
    Temp:=100-(5*(Party_Size-Current_Party_Size))+Party_Size;
@@ -2397,7 +2401,9 @@ End;  { Successful Flee }
 Procedure Insert_Monster_Attacks (Var Group: Encounter_Group; Var Attacks: PriorityQueue);
 
 Var
-  Mon_Group,Monster,Dex_Adj: Integer;
+  Mon_Group: Integer;
+Monster: Integer;
+Dex_Adj: Integer;
   Individual: Attacker_Type;
   Monster_Rec: Monster_Record;
 
@@ -2532,7 +2538,8 @@ End;
 Function Have_Monster_Item (Monster_Name: Monster_Name_Type; Member: Party_Type; Party_Size: Integer): Boolean;
 
 Var
-   Person,Item: Integer;
+   Person: Integer;
+Item: Integer;
 
 Begin
    For Person:=1 to Party_Size do
@@ -2548,8 +2555,10 @@ Function Reaction (Monster: Monster_Record; Member: Party_Type; Party_Size: Inte
                    Friends: Boolean:=False): Reaction_Type;
 
 Var
-   Chance,Person: Integer;
-   Best_Align,Worst_Align: Align_Type;
+   Chance: Integer;
+Person: Integer;
+   Best_Align: Align_Type;
+Worst_Align: Align_Type;
 
 Begin
    Best_Align:=Monster.Alignment;  Worst_Align:=Monster.Alignment;
@@ -2602,7 +2611,9 @@ End;
                                   Current_Party_Size: Party_Size_Type);
 
 Var
-  Chara,A_Monster,Group: Integer;
+  Chara: Integer;
+A_Monster: Integer;
+Group: Integer;
   Done: Boolean;
 
 [External]Function Get_Monster (Monster_Number: Integer): Monster_Record;External;
@@ -2693,7 +2704,8 @@ Procedure Award_Experience (Encounter: Encounter_Group; Var Member: Party_Type; 
 
 Var
   Character: Integer;
-  XP,XP_Sum: Real;
+  XP: Real;
+XP_Sum: Real;
 
 Begin
   XP_Sum:=Encounter_Experience (Encounter,Party_Size);
@@ -2815,7 +2827,8 @@ End;
 Procedure Alignment_Drift (Drift_Alignment: Align_Type; Var Member: Party_Type; Current_Party_Size: Integer);
 
 Var
-  Person,Chance: Integer;
+  Person: Integer;
+Chance: Integer;
 
 Begin
    For Person:=1 to Current_Party_Size do
@@ -2874,7 +2887,8 @@ Function Monsters_Left (Encounter: Encounter_Group): Integer;
 { This function returns the number of monsters left in the encounter }
 
 Var
-  MonstersRemaining,Group_Num: Integer;
+  MonstersRemaining: Integer;
+Group_Num: Integer;
 
 Begin
    MonstersRemaining:=0;
@@ -2946,7 +2960,8 @@ Procedure Time_Flies (Var Encounter: Encounter_Group; Var Member: Party_Type;  V
   spells. }
 
 Var
-   Individual,Group: Integer;
+   Individual: Integer;
+Group: Integer;
 
 Begin
    For Group:=1 to 4 do
@@ -2973,7 +2988,8 @@ Procedure Handle_Combat (Var Encounter: Encounter_Group; Var Member: Party_Type;
                                                  Party_Size: Integer; Var Flee: Boolean; Var Time_Delay: Integer; Var Can_Attack: Party_Flag);
 
 Var
-   Round_Count,MonstersRemaining: Integer;
+   Round_Count: Integer;
+MonstersRemaining: Integer;
    Finished: Boolean;
 
 Begin
@@ -3000,7 +3016,8 @@ End;
 Procedure Handle_Flight (Var Places: Place_Stack);
 
 Var
-  X,Num: Integer;
+  X: Integer;
+Num: Integer;
   P1,P2: Horizontal_Type;
   P3: Vertical_Type;
 
@@ -3029,7 +3046,8 @@ Procedure Fight (Var Encounter: Encounter_Group; Var Member: Party_Type; Var Cur
 
 Var
   Surprise_Status: Surprise_Type;
-  Friends,Flee: Boolean;
+  Friends: Boolean;
+Flee: Boolean;
 
 Begin
    SMG$Erase_Display (MessageDisplay);
