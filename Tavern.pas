@@ -84,7 +84,7 @@ Begin
             SMG$Put_Chars (RosterDisplay,
                 '   '
                 +String(Character.Level,3));
-            SMG$Put_Chars (RosterDisplay,
+            SMG$Put_Line (RosterDisplay,
                 '       '
                 +StatusName[Character.Status]);
          End;
