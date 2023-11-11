@@ -1,6 +1,7 @@
 [Inherit ('Ranges','Types','SMGRTL','LibRtl','STRRTL')]Module Files;
 
 Var
+   ScoresFile:                 [External]Score_File;
    MazeFile:                   [External]LevelFile;
    TreasFile:                  [External]Treas_File;
    Char_File:                  [External]Character_File;              { Character records }
@@ -825,4 +826,61 @@ Begin { Get Level }
    Else
       Get_Level:=Maze;  { Otherwise, return the current level }
 End;  { Get Level }
+
+
+
+
+
+
+
+(******************************************************************************)
+
+[Global]Function Read_Score_List: High_Score_List;
+
+Var
+  Score_List: High_Score_List;
+
+Begin
+   Open(ScoresFile,file_name:='SCORES.DAT',History:=UNKNOWN,Sharing:=READWRITE,Error:=Continue);
+
+   If (Status(ScoresFile)=PAS$K_SUCCESS) or (Status(ScoresFile)=PAS$K_EOF) then
+      Begin
+         Reset (ScoresFile);
+         If EOF (ScoresFile) then
+            Score_List:=Zero
+         Else
+            Read (ScoresFile, Score_List);
+         Close (ScoresFile);
+      End
+   Else
+      Score_List:=Zero;
+
+   Read_Score_List := Score_List;
+End;
+
+(******************************************************************************)
+
+[Global]Procedure Write_Score_List (Score_List: High_Score_List);
+
+Begin
+   Open(ScoresFile,file_name:='SCORES.DAT',History:=UNKNOWN,Sharing:=READWRITE,Error:=Continue);
+   If (Status(ScoresFile)=PAS$K_SUCCESS) or (Status(ScoresFile)=PAS$K_EOF) then
+      Begin
+        Rewrite (ScoresFile);
+        Write (ScoresFile,Score_List);
+        Close (ScoresFile);
+      End;
+End;
+
+(******************************************************************************)
+
+[Global]Procedure Clear_High_Scores;
+
+Var
+   Score_List: High_Score_List;
+
+Begin { Clear High Scores }
+  Score_List:=Zero;
+  Write_Score_List (Score_List);
+End;  { Clear High Scores }
 End.

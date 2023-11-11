@@ -4,7 +4,6 @@ Var
    ScoreDisplay: Unsigned;
    Roster:       [External]Roster_Type;
    Pasteboard:   [External]Unsigned;
-   ScoresFile:   [External]Score_File; { TODO: Put in Files.pas }
    ClassName:    [External]Array [Class_Type] of Varying [13] of char;
 
 
@@ -13,25 +12,10 @@ Var
 [External]Function  Alive (Character: Character_Type): Boolean;external;
 [External]Function String(Num: Integer; Len: Integer:=0):Line;external;
 [External]Function Get_Response (Time_Out: Integer:=-1;  Time_Out_Char: Char:=' '):[Volatile]Char;External;
+[External]Function Read_Score_List: High_Score_List;External;
+[External]Procedure Write_Score_List (Score_List: High_Score_List);External;
 (******************************************************************************)
 
-Procedure Read_Score_List (Var ScoresFile: Score_File; Var Score_List: High_Score_List);
-
-Begin
-   Open(ScoresFile,file_name:='SCORES.DAT',History:=UNKNOWN,Sharing:=READONLY,Error:=Continue);
-   If (Status(ScoresFile)=PAS$K_SUCCESS) or (Status(ScoresFile)=PAS$K_EOF) then
-      Begin
-         Reset (ScoresFile);
-         If EOF (ScoresFile) then
-            Score_List:=Zero
-         Else
-            Read (ScoresFile, Score_List);
-      End
-   Else
-      Score_List:=Zero;
-End;
-
-(******************************************************************************)
 
 Procedure Insert (Character: Character_Type;  Var Temp: Combined_List;  Username: Line);
 
@@ -165,15 +149,6 @@ End;
 
 (******************************************************************************)
 
-Procedure Write_Score_List (Var ScoresFile: Score_File;  Score_List: High_Score_List); { TODO: Move to Files.pas }
-
-Begin
-   Rewrite (ScoresFile);
-   Write (ScoresFile,Score_List);
-End;
-
-(******************************************************************************)
-
 [Global]Procedure Update_High_Scores (UserName: Line);
 
 Var
@@ -181,9 +156,10 @@ Var
    Score_List: High_Score_List;
 
 Begin
-   Read_Score_List (ScoresFile,Score_List);
+   Score_List := Read_Score_List;
    Combined_Score_List:=Make_Combined_Score_List (Score_List, Username);
    Sort_Combined_List (Combined_Score_List);
+   Write_Score_List (Top_Twenty(Combined_Score_List));
    { TODO: Is code missing? }
 End;
 
@@ -259,22 +235,9 @@ Var
 
 Begin { Print Scores }
   Initialize;
-  Read_Score_List (ScoresFile,Score_List);
-  Close (ScoresFile);
+
+  Score_List := Read_Score_List;
+
   Print_List (Score_List);
 End;  { Print Scores }
-
-(******************************************************************************)
-
-[Global]Procedure Clear_High_Scores;
-
-Var
-   Score_List: High_Score_List;
-
-Begin { Clear High Scores }
-  Score_List:=Zero;
-  Open (ScoresFile,'SCORES.DAT',History:=UNKNOWN,Sharing:=READONLY,Error:=Continue);
-  Write_Score_List (ScoresFile,Score_List);
-  Close (ScoresFile);
-End;  { Clear High Scores }
 End.  { High Score }
