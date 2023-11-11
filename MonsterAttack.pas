@@ -495,7 +495,7 @@ Begin
    BreathChance:=0;  SpellChance:=0;
    RunChance:=Flee_Chance(Group,Member,Current_Party_Size,Party_Size);
 
-   If Group.Monster.Breath_Weapon <> Charming then { let's not be silly }
+   If Group.Monster.Breath_Weapon <> NoAttack then
       BreathChance:=50;
 
    If (Group.Monster.Highest.Cleric_Spell>0) or (Group.Monster.Highest.Wizard_Spell>0) then
@@ -762,7 +762,7 @@ Begin { Handle Monster Attack }
 
    If (Monsters.Status[Individual] in [Zombie,Healthy,Poisoned,Afraid]) then
       Begin
-         If Monsters.Monster.Gaze_Weapon<>Charming then
+         If Monsters.Monster.Gaze_Weapon<>NoAttack then
             Monster_Gazes_or_Breathes (Attacker,Monster_Group1,Member,Current_Party_Size,Can_Attack,Gaze:=True);
 
          If Cause_Fear in Monsters.Monster.Properties then

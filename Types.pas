@@ -114,10 +114,9 @@ Type
   Monster_Type   = (Warrior,Mage,Priest,Pilferer,Karateka,Midget,Giant,Myth,Animal,Lycanthrope,Undead,Demon,Insect,Plant,
                     MultiPlanar,Dragon,ELEMENTAL,FEY,HUMANOID,MONSTROSITIES,Statue,Reptile,Enchanted);
 
-  { The different attack types in Stonequest.  Note: Some are not used.
-    In general, CHARMING is used as a null attack when one is needed.   }
+  { The different attack types in Stonequest.  Note: Some are not used. }
 
-  Attack_Type    = (Fire,Frost,Poison,LvlDrain,Stoning,Magic,Death,CauseFear,Electricity,Charming,Insanity,Aging,Sleep);
+  Attack_Type    = (NoAttack,Fire,Frost,Poison,LvlDrain,Stoning,Magic,Death,CauseFear,Electricity,Charming,Insanity,Aging,Sleep);
 
   { Classification of items }
 
@@ -195,14 +194,14 @@ Type
                       Protects_Against: Set of Monster_Type;
                       Resists: Set of Attack_Type;
 
-                       { What equiped, what properties does it have? }
+                       { When equipped, what properties does it have? }
 
                       Versus: Set of Monster_Type;      { What does it hate? }
                       Damage: Die_Type;                 { How much damage does it do? }
                       Additional_Attacks: Integer;      { Any additional attacks? }
                       Plus_to_hit: [Byte]-127..127;     { What plus to hit? }
                       AC_Plus: [Byte]-20..20;           { What adjustment to AC? }
-                      Auto_Kill: Boolean;               { Does it critical hit? }
+                      autoKill: Boolean;                { Does it critical hit? }
                    End;
 
   { A record for each item carried by a character }
@@ -210,8 +209,8 @@ Type
   Item_Number_Type = [Byte]0..250;
 
   Equipment_Type = record
-                      Item_Num: Item_Number_Type;                        { The item itself }
-                      Ident,isEquipped,Usable,Cursed: Boolean;    { Identified? isEquipped? Usable? Cursed? }
+                      Item_Num: Item_Number_Type;                  { The item itself }
+                      Ident,isEquipped,Usable,Cursed: Boolean;     { Identified? isEquipped? Usable? Cursed? }
                    End;
 
   { The information concerning a character }

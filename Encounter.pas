@@ -635,7 +635,7 @@ Begin
   Critical_Flag:=False;
   For Item_Num:=1 to Attacker.No_of_Items do
      If Attacker.Item[Item_num].isEquipped then
-        If Item_List[Attacker.Item[Item_Num].Item_Num].Auto_Kill then { TODO: Make the items stack so multiple items equals better chance of critical }
+        If Item_List[Attacker.Item[Item_Num].Item_Num].autoKill then { TODO: Make the items stack so multiple items equals better chance of critical }
            Critical_Flag:=True;
 
   If Critical_Flag then Item_Attacker_Level:=Max(Attacker.Level,Attacker.Previous_Lvl)

@@ -14,8 +14,8 @@ Begin
                          (Monster.Magic_Resistance>0)      or (Monster.Highest.Wizard_Spell>0)                                                   or
                          (Monster.Years_Ages>0)            or (Monster.No_of_Attacks>3)                                                          or
                          (Monster.Armor_Class<-1)          or (Monster.Resists<>[ ])                                                             or
-                         (Monster.Breath_Weapon<>Charming) or (Monster.Highest.Cleric_Spell>3)                                                   or
-                         (Monster.Regenerates>0)           or (Monster.Gaze_Weapon<>Charming);
+                         (Monster.Breath_Weapon<>NoAttack) or (Monster.Highest.Cleric_Spell>3)                                                   or
+                         (Monster.Regenerates>0)           or (Monster.Gaze_Weapon<>NoAttack);
 End;
 
 (******************************************************************************)

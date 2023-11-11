@@ -73,6 +73,7 @@ Value
    Propty[10]:='Can''t be turned'; Propty[11]:='Can''t escape';
    Propty[12]:='Causes Fear';
 
+   Attack_Name[NoAttack]:='No Attack';
    Attack_Name[Fire]:='Fire';
    Attack_Name[Frost]:='Cold';
    Attack_Name[Poison]:='Poison';
@@ -220,7 +221,7 @@ Begin (* Change_Attack_Set *)
          SMG$Erase_Display (ScreenDisplay);
          SMG$Put_Line (ScreenDisplay,T1);
          Pos:=1;
-         For Loop:=Fire to Sleep do
+         For Loop:=NoAttack to Sleep do
                  If Loop in AttackSet then
                          Begin
                             SMG$Put_Chars (ScreenDisplay,Pad(Attack_Name[Loop],' ',20));
@@ -236,7 +237,7 @@ Begin (* Change_Attack_Set *)
          SMG$Put_Line (ScreenDisplay,
              'Change which attack?');
          Pos:=1;
-         For Loop:=Fire to Sleep do
+         For Loop:=NoAttack to Sleep do
                  If Loop in AttackSet then
                          Begin
                             SMG$Put_Chars (ScreenDisplay,CHR(Ord(Loop)+65)
@@ -253,7 +254,7 @@ Begin (* Change_Attack_Set *)
          If Answer<>' ' then
                  Begin
                     AttackNum:=Ord(Answer)-65;
-                    Temp:=Fire;
+                    Temp:=NoAttack;
                     While Ord(Temp)<>AttackNum do Temp:=Succ(Temp);
                     If Temp in AttackSet then
                        AttackSet:=AttackSet-[Temp]
@@ -613,7 +614,7 @@ Begin (* List_Screen2_Properties *)
                         +String(Monsters[Number].Monster_Called)
                         +')'
                         +Monsters[Monsters[Number].Monster_Called].Real_Name;
-            21: If Monsters[Number].Breath_Weapon=Charming then
+            21: If Monsters[Number].Breath_Weapon=NoAttack then
                     T:=T+'None'
                 Else
                     T:=T+Attack_Name[Monsters[Number].Breath_Weapon];
@@ -638,8 +639,8 @@ Begin (* List_Screen2_Properties *)
                     T:=T+'Nobody'
                 Else
                     T:=T+'Type ''O'' to edit list';
-            28: If Monsters[Number].Gaze_Weapon=Charming then
-                    T:=T+'None' (* TODO: Vampires charm with their gaze, don't they? *)
+            28: If Monsters[Number].Gaze_Weapon=NoAttack then
+                    T:=T+'None'
                 Else
                     T:=T+Attack_Name[Monsters[Number].Gaze_Weapon];
             29: T:=T+String(Monsters[Number].Weapon_Plus_Needed);
@@ -685,7 +686,7 @@ Begin (* Edit_Screen2_Properties *)
              End; (* Case ord *)
              End;
         21:  If Monsters[Number].Breath_Weapon=Sleep then
-                Monsters[Number].Breath_Weapon:=Fire
+                Monsters[Number].Breath_Weapon:=NoAttack
              Else
                 Monsters[Number].Breath_Weapon:=Succ(Monsters[Number].Breath_Weapon);
         23:  Edit_Attacks (Monsters[Number].Damage);
@@ -695,7 +696,7 @@ Begin (* Edit_Screen2_Properties *)
         27: Change_Class_Set (Monsters[Number].Extra_Damage,
             'The monster does more damage on these classes');
         28:  If Monsters[Number].Gaze_Weapon=Sleep then
-                Monsters[Number].Gaze_Weapon:=Fire
+                Monsters[Number].Gaze_Weapon:=NoAttack
              Else
                 Monsters[Number].Gaze_Weapon:=Succ(Monsters[Number].Gaze_Weapon);
    End; (* Other case *)
@@ -739,7 +740,8 @@ Begin
       Begin
          SMG$Begin_Display_Update (ScreenDisplay);
          SMG$Erase_Display (ScreenDisplay);
-         If Monsters[Number].Monster_number<>Number then Monsters[Number].Breath_Weapon:=Charming;
+         If Monsters[Number].Monster_number<>Number then
+            Monsters[Number].Breath_Weapon:=NoAttack;
          SMG$Put_Line(ScreenDisplay,
              'Monster #'
              +String(Number,0)

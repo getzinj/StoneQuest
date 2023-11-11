@@ -348,7 +348,7 @@ Begin
           End;
       19: SMG$Put_Chars (ScreenDisplay,String(Item.Plus_to_hit));
       20: SMG$Put_Chars (ScreenDisplay,String(Item.AC_Plus));
-      21: If Item.Auto_Kill then
+      21: If Item.autoKill then
              SMG$Put_Chars (ScreenDisplay,
                  'Yes')
          Else
@@ -433,7 +433,7 @@ Begin
        16: Change_Attack_Set (Item.Resists,
                'The item is resistant to these attack forms');
        17: HatesP (Item.Versus);
-       21: Item.Auto_Kill:=Not (Item.Auto_Kill);
+       21: Item.autoKill:=Not (Item.autoKill);
    End;
 End;
 

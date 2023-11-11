@@ -36,7 +36,7 @@ Begin
    Temp:=Temp or (Item.Additional_Attacks>0);
    Temp:=Temp or (Item.Plus_to_Hit>0);
    Temp:=Temp or (Item.AC_plus<0);
-   Temp:=Temp or (Item.Auto_Kill);
+   Temp:=Temp or (Item.autoKill);
    Temp:=Temp AND (Item.Usable_By<>[]);
    Item_Has_Value:=Temp;
 End;
