@@ -378,8 +378,6 @@ Begin
                   If Form in Item_List[Character.Item[Loop].Item_Num].Resists then
                      Damage:=Trunc(Damage / 2);
 
-
-
          If Attacker.WhatSpell in [FiBl,MgFi] then
             Damage:=Round(Damage*(1 / i));
 
@@ -409,9 +407,6 @@ Begin
              T := T + ' is unaffected!';
 
          If Alive (Character) then
-            SMG$Put_Line (MessageDisplay, T);
-
-         If Alive(Character) then
             SMG$Put_Line (MessageDisplay, T);
 
          If Alive(Character) and (Character.Curr_HP<1) then

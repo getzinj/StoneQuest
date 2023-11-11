@@ -1519,49 +1519,35 @@ Var
 Begin
    SMG$Begin_Display_Update (SpellListDisplay);
    SMG$Erase_Display (SpellListDisplay);
+
    Case Spell_Type of
       Wiz_Spell: Begin
-                   SMG$Label_Border (SpellListDisplay,
-                      ' '
-                      +Character.Name
-                      +'''s available wizard spells ',
-                      SMG$K_TOP);
+                   SMG$Label_Border (SpellListDisplay, ' ' + Character.Name + '''s available wizard spells ', SMG$K_TOP);
                    SpellList:=Character.Wizard_Spells;
                  End;
       Cler_Spell: Begin
-                   SMG$Label_Border (SpellListDisplay,
-                      ' '
-                      +Character.Name
-                      +'''s available cleric spells ',
-                      SMG$K_TOP);
+                   SMG$Label_Border (SpellListDisplay, ' ' + Character.Name +'''s available cleric spells ', SMG$K_TOP);
                    SpellList:=Character.Cleric_Spells;
                  End;
-      Otherwise SpellList:=[];
+      Otherwise SpellList:=[ ];
    End;
    SpellList:=SpellList*Encounter_Spells;
+
    For Level:=1 to 9 do
       Begin
-         If (Spell_Type=Wiz_Spell) and (Character.SpellPoints[Wiz_Spell,Level]=0) then
-            Begin
-               { TODO: This was cut off in the printout. $$$ }
-               { SpellList:=SpellList-(WizSpells[Level]-Chara }
-            End;
-         If (Spell_Type=Cler_Spell) and (Character.SpellPoints[Cler_Spell,Level]=0) then
-            Begin
-               { TODO: This was cut off in the printout. $$$ }
-               { SpellList:=SpellList-(ClerSpells[Level]-Cha }
-            End;
+         If (Spell_Type = Wiz_Spell) and (Character.SpellPoints[Wiz_Spell,Level] = 0) then
+           SpellList:=SpellList - (WizSpells[Level] - Character.Cleric_Spells);
+         If (Spell_Type = Cler_Spell) and (Character.SpellPoints[Cler_Spell,Level] = 0) then
+           SpellList:=SpellList - (ClerSpells[Level] - Character.Wizard_Spells);
       End;
 
    { SpellList now contains a set of all usable spells }
 
-   If SpellList=[] then
+   If SpellList = [ ] then
       Begin
          Case Spell_Type of
-            Cler_Spell: SMG$Put_Chars (SpellListDisplay,
-               'Thou have no usable cleric spells.',,23);
-            Wiz_Spell: SMG$Put_Chars (SpellListDisplay,
-               'Thou have no usable wizard spells.',,23);
+            Cler_Spell: SMG$Put_Chars (SpellListDisplay,'Thou have no usable cleric spells.',,23);
+            Wiz_Spell:  SMG$Put_Chars (SpellListDisplay,'Thou have no usable wizard spells.',,23);
          End;
       End
    Else
@@ -1571,15 +1557,12 @@ Begin
             If Loop in SpellList then
                Begin
                   SMG$Put_Chars (SpellListDisplay,Long_Spell[Loop],y,x);
-                  SMG$Put_Chars (SpellListDisplay,
-                     ' ('
-                     +Spell[Loop]
-                     +')');
-                  Y:=Y+1;
+                  SMG$Put_Chars (SpellListDisplay, ' (' +Spell[Loop] +')');
+                  Y:=Y + 1;
                   If Y>21 then
                      Begin
                         Y:=1;
-                        X:=X+33;
+                        X:=X + 33;
                      End;
                End;
       End;
@@ -3152,6 +3135,8 @@ Begin { Init Combat Display }
 
    SMG$Paste_Virtual_Display (FightDisplay,Pasteboard,ViewY,ViewX);
    SMG$Paste_Virtual_Display (MonsterDisplay,Pasteboard,MonY,MonX);
+
+   Update_Monster_Box (Encounter);
 End;  { Init Combat Display }
 
 (******************************************************************************)
