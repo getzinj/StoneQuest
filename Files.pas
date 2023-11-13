@@ -11,9 +11,97 @@ Var
    Message_File:               [External]Text;                        { Game text }
    SaveFile:                   [External]Save_File_Type;
    AmountFile:                 [External]Number_File;
+   LogFile:                    [External]Packed file of Line;
 
 [External]Function Roll_Die (Die_Type: Integer): [Volatile]Integer;External;
 
+
+(**********************************************************************************************************************)
+(******************************************************** LOG *********************************************************)
+(**********************************************************************************************************************)
+
+[Global]Procedure Clear_Log_File;
+
+
+Begin
+   { Open the file }
+
+   Repeat
+      Open (LogFile,'Stone_Data:Stone_Log',History:=Unknown,Sharing:=READONLY,Error:=CONTINUE);
+   Until (Status(LogFile)=PAS$K_SUCCESS);
+
+   { Rewrite it }
+
+   Rewrite (LogFile,Error:=Continue);
+   Write (LogFile,'',Error:=Continue);
+   Close (LogFile,Error:=Continue);
+End;
+
+(**********************************************************************************************************************)
+
+[Global]Function View_log_File (ScenarioDisplay: Unsigned; Pasteboard: Unsigned): boolean;
+
+{ This procedure allows the user to view the log }
+
+Const
+   Length=20;                     { Maximum number of lines allowed }
+
+Var
+   FirstTime: Boolean;
+   LineCount: Integer;
+   L: Line;
+   Rendition: Unsigned;  { Rendition set for line }
+
+[External]Procedure Wait_Key (Time_Out: Integer:=-1);External;
+
+Begin { View Log File }
+
+   { Open the file }
+
+   Repeat
+      Open (LogFile,'Stone_Data:Stone_Log',History:=UNKNOWN,Sharing:=Readwrite,Error:=CONTINUE)
+   Until (Status(LogFile)=PAS$K_SUCCESS);
+   Reset (LogFile,Error:=Continue);
+   FirstTime:=True;
+
+   LineCount:=0;
+   SMG$Erase_Display (ScenarioDisplay);
+   SMG$Begin_Display_Update (ScenarioDisplay);
+   SMG$Erase_Display (ScenarioDisplay);
+   SMG$Home_Cursor (ScenarioDisplay);
+
+   { While there are still names on the list }
+
+   While Not EOF (LogFile) do
+      Begin
+
+         { Read a name and print it }
+
+         Read (LogFile,L,Error:=Continue);
+         SMG$Put_Line (ScenarioDisplay,L);
+         LineCount:=LineCount+1;
+         If LineCount=Length then
+            Begin
+                LineCount:=0;
+                Rendition:=1;  L:='Press a key for more';
+                SMG$Set_Cursor_ABS (ScenarioDisplay,22,39-(L.Length div 2));
+                SMG$Put_Line (ScenarioDisplay,L,0,Rendition);
+                SMG$End_Display_Update (ScenarioDisplay);
+                If FirstTime then
+                    SMG$Paste_Virtual_Display (ScenarioDisplay,Pasteboard,2,2);
+                FirstTime:=False;
+                Wait_Key;
+                SMG$Begin_Display_Update (ScenarioDisplay);
+                SMG$Erase_Display (ScenarioDisplay);
+            End;
+      End;
+   L:='Press a key to continue';
+   SMG$Put_Chars (ScenarioDisplay,L,22,39-(L.Length div 2),1,1);
+
+   Close (LogFile,Error:=Continue);
+
+   View_Log_File := FirstTime;
+End;  { View Log File }
 
 (**********************************************************************************************************************)
 (**************************************************** MESSAGES ********************************************************)
@@ -462,30 +550,45 @@ End;
 
 (******************************************************************************)
 
-[Global]Function Get_Store_Quantity(slot: Integer): Integer;
+[Global]Procedure Access_Item_Quantity_Record (N: Integer);
 
-Const
-  Filename = 'STORE.DAT;1';
+{ Finds the Nth item and hold it so that others can't access it until it is UPDATED or UNLOCKED }
 
 Begin
-    Open(AmountFile, file_name:=Filename,History:=READONLY, Access_Method:=DIRECT,Sharing:=READWRITE,Error:=CONTINUE);
-       If (Status(AmountFile) = 0) then
-         Begin
-            Find(AmountFile,slot+1);
-            Get_Store_Quantity:=AmountFile^;
-
-            Close(AmountFile);
-         End
-       Else
-         Begin
-            Create_New_Quantity_File (Filename);
-            Get_Store_Quantity:=0;
-         End;
+   Repeat
+     Find (AmountFile,N+1,Error:=CONTINUE)
+   Until Status(AmountFile)=PAS$K_SUCCESS;  { TODO: What if the file does not exist or is corrupted? }
 End;
 
 (******************************************************************************)
 
-Procedure Write_Store_Quantity_Aux(slot: Integer; amount: Integer);
+[Global]Function Item_Count (Item_Number: Integer): [Volatile]Integer;
+
+{ This function assumes that AMOUNTFILE has already been opened for DIRECT access. TODO: Move to Files.pas }
+
+Begin
+   Access_Item_Quantity_Record (Item_Number);
+
+   Item_Count:=AmountFile^;
+
+   { Unlock the record so that others can use it }
+
+   Unlock (AmountFile);
+End;
+
+(******************************************************************************)
+
+[Global]Function Get_Store_Quantity(slot: Integer): Integer;
+
+Begin
+   Find(AmountFile,slot+1);
+
+   Get_Store_Quantity:=AmountFile^;
+End;
+
+(******************************************************************************)
+
+[Global]Procedure Write_Store_Quantity_Aux(slot: Integer; amount: Integer);
 
 Begin
     Find(AmountFile,slot+1);
@@ -497,26 +600,80 @@ End;
 
 (******************************************************************************)
 
-[Global]Procedure Write_Store_Quantity(slot: Integer; amount: Integer);
+[Global]Procedure Open_Quantity_File_For_Write;
 
 Const
   Filename = 'STORE.DAT;1';
 
 Begin
     Open(AmountFile, file_name:=Filename,History:=Unknown, Access_Method:=DIRECT,Sharing:=READWRITE,Error:=CONTINUE);
-    If (Status(AmountFile) = 0) then
-      Begin
-        Write_Store_Quantity_Aux(slot, amount);
-        Close(AmountFile);
-      End
-    Else
+    If (Status(AmountFile) <> 0) then
       Begin
         Create_New_Quantity_File (Filename);
 
         Open(AmountFile, file_name:=Filename,History:=Unknown, Access_Method:=DIRECT,Sharing:=READWRITE); { This time, crash on failure }
-        Write_Store_Quantity_Aux(slot, amount);
-        Close(AmountFile);
-      End
+      End;
+End;
+
+(******************************************************************************)
+
+[Global]Procedure Open_Quantity_File_For_Read;
+
+Const
+  Filename = 'STORE.DAT;1';
+
+Begin
+    Open(AmountFile, file_name:=Filename,History:=READONLY, Access_Method:=DIRECT,Sharing:=READWRITE,Error:=CONTINUE);
+    If (Status(AmountFile) <> 0) then
+      Begin
+        Create_New_Quantity_File (Filename);
+
+        Open(AmountFile, file_name:=Filename,History:=READONLY, Access_Method:=DIRECT,Sharing:=READWRITE); { This time, crash on failure }
+      End;
+End;
+
+(******************************************************************************)
+
+[Global]Procedure increment_item_quantity(slot: integer);
+
+Begin
+  Access_Item_Quantity_Record (slot);
+  If AmountFile^ <> -1 then
+    Begin
+       AmountFile^:=AmountFile^ + 1;
+       Update (AmountFile);
+    End;
+End;
+
+(******************************************************************************)
+
+[Global]Procedure Close_Quantity_File;
+
+Begin
+  Close (AmountFile);
+End;
+
+(******************************************************************************)
+
+[Global]Procedure Write_Store_Quantity(slot: Integer; amount: Integer);
+
+Begin
+  Open_Quantity_File_For_Write;
+  Write_Store_Quantity_Aux(slot, amount);
+  Close(AmountFile);
+End;
+
+(******************************************************************************)
+
+[Global]Procedure Decrement_Quantity (slot: Integer);
+
+Begin
+  Find(AmountFile,slot+1);
+
+  If AmountFile^>0 then
+      AmountFile^:=AmountFile^ - 1;
+
+  Update (AmountFile);
 End;
 
 (**********************************************************************************************************************)
@@ -699,6 +856,28 @@ Begin
    Open (SaveFile,file_name:=filename,History:=Unknown);
    ReWrite (SaveFile);
    Close (SaveFile);
+End;
+
+(******************************************************************************)
+
+[Global]Function Write_Save_File (saveRecord: Save_Record): Boolean;
+
+Var
+   Error: Boolean;
+
+Begin
+   Open (SaveFile,'SYS$LOGIN:STONE_SAVE.DAT;1',HISTORY:=NEW,Error:=Continue);
+   Error:=(Status(SaveFile)<>PAS$K_SUCCESS);
+
+   ReWrite (SaveFile, Error:=Continue);
+   Error:=Error or ((Status(SaveFile)<>PAS$K_SUCCESS) and (Status(SaveFile)<>PAS$K_EOF));
+
+   Write (SaveFile, saveRecord, Error:=Continue);
+   Error:=Error or ((Status(SaveFile)<>PAS$K_SUCCESS) and (Status(SaveFile)<>PAS$K_EOF));
+
+   Close (SaveFile,Error:=Continue);
+
+   Write_Save_File:=Error or ((Status(SaveFile) <> PAS$K_SUCCESS) and (Status(SaveFile) <> PAS$K_EOF));
 End;
 
 (**********************************************************************************************************************)

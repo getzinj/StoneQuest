@@ -28,6 +28,7 @@ Var { External }
    Rounds_Left:                         [External]Array [Spell_Name] of Unsigned;
 
 (******************************************************************************)
+[External]Function Write_Save_File (saveRecord: Save_Record): Boolean;External;
 [External]Procedure Party_Box (Var Member: Party_Type; Var Current_Party_Size: Party_Size_Type;  Party_Size: Integer;
                              Var Leave_Maze: Boolean);External;
 [External]Procedure Error_Window (FileType: Line);External;
@@ -850,6 +851,8 @@ Begin
    Minute_Counter:=Minute_Counter-(100* (Trunc (Minute_Counter / 100)));
 End;
 
+
+
 (******************************************************************************)
 
 Procedure Save_the_Game (Member: Party_Type;  Current_Party_Size: Party_Size_Type; Party_Size: Integer;
@@ -858,7 +861,6 @@ Procedure Save_the_Game (Member: Party_Type;  Current_Party_Size: Party_Size_Typ
 { This procedure will save the current game for use later }
 
 Var
-   SaveFile: [External]Save_File_Type;
    Temp: Save_Record;
    Error: Boolean;
 
@@ -892,17 +894,8 @@ Begin { Save The Game }
    { Write the save record to STONE_SAVE.DAT }
 
    No_ControlY;
-   Open (SaveFile,'SYS$LOGIN:STONE_SAVE.DAT',HISTORY:=NEW,Error:=Continue);
-   Error:=(Status(SaveFile)<>PAS$K_SUCCESS);
 
-   ReWrite (SaveFile,Error:=Continue);
-   Error:=Error or ((Status(SaveFile)<>PAS$K_SUCCESS) and (Status(SaveFile)<>PAS$K_EOF));
-
-   Write (SaveFile,Temp,Error:=Continue);
-   Error:=Error or ((Status(SaveFile)<>PAS$K_SUCCESS) and (Status(SaveFile)<>PAS$K_EOF));
-
-   Close (SaveFile,Error:=Continue);
-   Error:=Error or ((Status(SaveFile)<>PAS$K_SUCCESS) and (Status(SaveFile)<>PAS$K_EOF));
+   Error := Write_Save_File(Temp);
 
    ControlY;
 

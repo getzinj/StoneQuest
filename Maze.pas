@@ -36,7 +36,6 @@ Var
    PosX,PosY,PosZ:                                  [Byte,External]0..20;
    Minute_Counter:                                  [External]Real;
    DirectionName:                                   Array [Direction_Type] of Line;
-   SaveFile:                                        [External]Save_File_Type;
    Item_List:                                       [External]List_of_Items;
    Messages:                                        [Global]Message_Group;
 

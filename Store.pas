@@ -6,7 +6,7 @@ Type
 Var
    BottomDisplay: [External]Unsigned;
    Item_List:     [External]List_of_Items;
-   AmountFile:    [External]Number_File;  { TODO: Move to Files.pas }
+
 
 (******************************************************************************)
 [External]Function Roll_Die (Die_Type: Integer): [Volatile]Integer;External;
@@ -16,7 +16,8 @@ Var
 [External]Procedure Delay (Seconds: Real);External;
 [External]Procedure Ring_Bell (Display_Id: Unsigned; Number_of_Times: Integer:=1);External;
 [External]Function  String(Num: Integer;  Len: Integer:=0):Line;External;
-
+[External]Procedure increment_item_quantity(slot: integer);External;
+[External]Procedure Close_Quantity_File;External;
 (******************************************************************************)
 
 Function Item_Has_Value (Item: Item_Record): Boolean;
@@ -77,6 +78,12 @@ Begin
 End;
 
 (******************************************************************************)
+[External]Procedure Access_Item_Quantity_Record (N: Integer);External;
+[External]Function Item_Count (Item_Number: Integer): [Volatile]Integer;External;
+[External]Procedure Decrement_Quantity (slot: Integer);External;
+[External]Function Get_Store_Quantity(slot: Integer): Integer;External;
+[External]Procedure Open_Quantity_File_For_Write;External;
+(******************************************************************************)
 
 Procedure Get_Item (Var Character: Character_Type; Item: Item_Record);
 
@@ -87,7 +94,7 @@ Begin
 
    Attach_Item_to_Character (Item,Character);
 
-   If AmountFile^=1 then    { TODO: Move this to Files.pas }
+   If Get_Store_Quantity(Item.Item_Number) = 1 then
       Begin
          Print_Message ('* * * That was the last one we had in stock * * *');
          Delay(1);
@@ -102,8 +109,7 @@ Begin
 
    { If the item is not in unlimited supply, decrement the amount available }
 
-   If AmountFile^>0 then
-      AmountFile^:=AmountFile^ - 1;  { TODO: Move this to Files.pas }
+   Decrement_Quantity(item.Item_Number);
 End;
 
 (******************************************************************************)
@@ -141,7 +147,7 @@ Procedure Add_Item (Item: Item_Record; Var Character: Character_Type);
 { This procedure assumes AMOUNTFILE has been oppened for DIRECT access. TODO: Move to Files.pas }
 
 Begin
-   If AmountFile^=0 then
+   If Get_Store_Quantity(Item.Item_Number) = 0 then
       Sold_Out
    Else if Character.Gold<Item.Current_Value then
       Too_Expensive
@@ -151,33 +157,6 @@ Begin
       Get_Item (Character,Item);
 End;
 
-(******************************************************************************)
-
-Procedure Access_Record (N: Integer);  { TODO: Move to Files.pas }
-
-{ Finds the Nth item and hold it so that others can't access it until it is UPDATED or UNLOCKED }
-
-Begin
-   Repeat
-     Find (AmountFile,N+1,Error:=CONTINUE)
-   Until Status(AmountFile)=PAS$K_SUCCESS;  { TODO: What if the file does not exist or is corrupted? }
-End;
-
-(******************************************************************************)
-
-Function Item_Count (Item_Number: Integer): [Volatile]Integer;
-
-{ This function assumes that AMOUNTFILE has already been opened for DIRECT access. TODO: Move to Files.pas }
-
-Begin
-   Access_Record (Item_Number);
-
-   Item_Count:=AmountFile^;
-
-   { Unlock the record so that others can use it }
-
-   Unlock (AmountFile);
-End;
 
 (******************************************************************************)
 
@@ -216,7 +195,7 @@ Begin
       Begin
          INum:=Ord(Answer)-64;
 
-         Access_Record (Choices[INum].Item_Number);
+         Access_Item_Quantity_Record (Choices[INum].Item_Number);
 
          If Not ((Buyer.Class in Choices[INum].Usable_By) or (Buyer.PreviousClass in Choices[INum].Usable_By)) then
             Begin
@@ -226,8 +205,6 @@ Begin
             End
          Else
             Add_Item (Choices[INum],Buyer);
-
-         Update (AmountFile);
       End;
 End;
 
@@ -287,8 +264,7 @@ Var
 Begin
    First:=1;  Choices:=Zero;
 
-   { TODO: This will crash if store file does not exist. }
-   Open(AmountFile,'STORE.DAT;1',History:=OLD,Access_Method:=DIRECT,Sharing:=READWRITE,Error:=Continue);
+   Open_Quantity_File_For_Write;
 
    Repeat
       Begin
@@ -312,7 +288,7 @@ Begin
       End;
    Until (Answer='E');
 
-   Close (AmountFile);
+   Close_Quantity_File;
 End;
 
 (******************************************************************************)
@@ -394,15 +370,10 @@ Begin
                NumItems:=NumItems-1;
             End;
 
-         Access_Record (TempItem.Item_Number); { TODO: Move to Files.pas }
-         If AmountFile^<>-1 then
-            Begin
-               AmountFile^:=AmountFile^+1;
-               Update (AmountFile);
-            End;
+         increment_item_quantity(TempItem.Item_Number);
 
-            Seller.Gold:=Min(Seller.Gold+(Current_Value div 2),MaxInt);
-            Its_Been_A_Pleasure;
+         Seller.Gold:=Min(Seller.Gold+(Current_Value div 2),MaxInt);
+         Its_Been_A_Pleasure;
       End
    Else
       Begin
@@ -420,7 +391,7 @@ Var
   Answer: Char;
 
 Begin
-   Open (AmountFile,'STORE.DAT;1',History:=OLD,Access_Method:=DIRECT,Sharing:=READWRITE,Error:=CONTINUE);
+   Open_Quantity_File_For_Write;
 
    Repeat
       Begin
@@ -441,7 +412,7 @@ Begin
       End;
    Until Answer in [CHR(13),CHR(32)];
 
-   Close (AmountFile);
+   Close_Quantity_File;
 End;
 
 (******************************************************************************)

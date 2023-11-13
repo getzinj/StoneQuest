@@ -59,6 +59,8 @@ Value
         Monster_T[Reptile]:='Reptile';
         Monster_T[Enchanted]:='Enchanted';
 
+[External]Procedure Open_Quantity_File_For_Read;External;
+[External]Procedure Open_Quantity_File_For_Write;External;
 [External]Function Get_Num (Display: Unsigned): Integer;External;
 [External]Procedure Change_Class_Set (Var ClassSet: Class_Set; T1: Line);external;
 [External]Procedure Change_Attack_Set (Var AttackSet: Attack_Set; T1: Line);External;
@@ -70,7 +72,8 @@ Value
 [External]Function Yes_or_No (Time_Out: Integer:=-1;
     Time_Out_Char: Char:=' '): [Volatile]Char;External;
 [External]Function Get_Store_Quantity(slot: Integer): Integer;External;
-[External]Procedure Write_Store_Quantity(slot: Integer; amount: Integer);External;
+[External]Procedure Write_Store_Quantity_Aux(slot: Integer; amount: Integer);External;
+[External]Procedure Close_Quantity_File;External;
 (******************************************************************************)
 
 Procedure Select_Item_Spell (Var SpellChosen: Spell_Name);
@@ -294,7 +297,9 @@ Begin
       9: SMG$Put_Chars (ScreenDisplay,Items[Item.Turns_Into].True_Name);
       10: SMG$Put_Chars (ScreenDisplay,String(Item.GP_Value));
       11: Begin
+            Open_Quantity_File_For_Read;
             amount:=Get_Store_Quantity(Number);
+            Close_Quantity_File;
             If amount=0 then
                SMG$Put_Chars (ScreenDisplay,
                    'None')
@@ -406,7 +411,11 @@ Begin
                    Item.Turns_Into:=Num;
                10: Item.GP_Value:=Num;
                11: If Allow_Number_Change then
-                      Write_Store_Quantity(Item_Number, Num);
+                      Begin
+                         Open_Quantity_File_For_Write;
+                         Write_Store_Quantity_Aux(Item_Number, Num);
+                         Close_Quantity_File;
+                      End;
                14:  Item.Regenerates:=Num;
                19: If (Num>-128) and (Num<128) then
                       Item.Plus_to_hit:=Num;
@@ -562,11 +571,13 @@ Begin
    Answer:=Yes_or_No;
    If Answer='Y' then
       Begin
+         Open_Quantity_File_For_Write;
          Old_num:=Get_Store_Quantity(Old_Slot);
          New_num:=Get_Store_Quantity(New_Slot);
 
-         Write_Store_Quantity(New_Slot,Old_Num);
-         Write_Store_Quantity(Old_Slot,New_Num);
+         Write_Store_Quantity_Aux(New_Slot,Old_Num);
+         Write_Store_Quantity_Aux(Old_Slot,New_Num);
+         Close_Quantity_File;
 
          Temp_Record:=Item_List[Old_Slot];
          Item_List[Old_Slot]:=Item_List[New_Slot];
