@@ -1,5 +1,8 @@
 [Inherit ('Ranges','Types','SMGRTL','LibRtl','STRRTL')]Module Files;
 
+Const
+  Items_Filename = 'Items.dat;1';
+
 Var
    ScoresFile:                 [External]Score_File;
    MazeFile:                   [External]LevelFile;
@@ -338,20 +341,17 @@ Var
 Begin { failed to read; create a new one }
     returnValue:=Zero;
     For Loop:=MIN_TREASURE_NUMBER to MAX_TREASURE_NUMBER do
-        returnValue[Loop]:=Zero;
+        Begin
+           returnValue[Loop]:=Zero;
+        End;
 
-    Open (TreasFile,file_name:=Filename,History:=NEW,Error:=CONTINUE,Sharing:=READONLY);
-    If (Status(TreasFile) = 0) then
-       Begin
-          ReWrite (TreasFile);
-          For Loop:=MIN_TREASURE_NUMBER to MAX_TREASURE_NUMBER do
-              Write (TreasFile,returnValue[Loop]);
-          Close (TreasFile);
+    Open (TreasFile,file_name:=Filename,History:=NEW);
+    ReWrite (TreasFile);
+    For Loop:=MIN_TREASURE_NUMBER to MAX_TREASURE_NUMBER do
+          Write (TreasFile,returnValue[Loop]);
+    Close (TreasFile);
 
-          Create_New_Treasure_File:=returnValue;
-       End
-    Else
-       Create_New_Treasure_File:=returnValue;
+   Create_New_Treasure_File:=returnValue;
 End;
 
 {**********************************************************************************************************************************}
@@ -392,23 +392,23 @@ End;  { Read Treasures }
 
 { This procedure will save the updated item records if the current user is authorized to do so. }
 
-Const
-  Filename = 'Items.Dat;1';
-
 Var
    Loop: Integer;
 
 Begin { Save Items }
-   Open (Item_File, file_name:=Filename, History:=OLD, Sharing:=READONLY);
+   Open (Item_File, file_name:=Items_Filename, History:=UNKNOWN);
    ReWrite (Item_File);
    For Loop:=MIN_ITEM_NUMBER to MAX_ITEM_NUMBER do
-       Write (Item_File,Item_List[Loop]);
+      Begin
+         Item_List[Loop].Item_Number := Loop;
+         Write (Item_File,Item_List[Loop]);
+      End;
    Close (Item_File);
 End;  { Save Items }
 
 (******************************************************************************)
 
-Function Create_New_Items_File(Filename: Line): List_of_Items;
+Function Create_New_Items_File: List_of_Items;
 
 Var
    Loop: Integer;
@@ -417,93 +417,72 @@ Var
 Begin
    returnValue:=Zero;
    For Loop:=MIN_ITEM_NUMBER to MAX_ITEM_NUMBER do
-      returnValue[Loop]:=Zero;
+      Begin
+         returnValue[Loop]:=Zero;
+         returnValue[Loop].Item_Number := Loop;
+      End;
 
-    Open (Item_File, file_name:=Filename, History:=NEW,  Error:=CONTINUE,  Sharing:=READONLY);
-    If (Status(Item_File) = 0) then
-       Begin
-          ReWrite (Item_File);
-          For Loop:=MIN_ITEM_NUMBER to MAX_ITEM_NUMBER do
-              Write (Item_File,returnValue[Loop]);
+    Open (Item_File, file_name:=Items_Filename, History:=NEW, Organization:=SEQUENTIAL, Access_Method:=SEQUENTIAL, Sharing:=READONLY);
+    ReWrite (Item_File);
 
-          Close (Item_File);
+    For Loop:=MIN_ITEM_NUMBER to MAX_ITEM_NUMBER do
+       Write (Item_File,returnValue[Loop]);
 
-          Create_New_Items_File:=returnValue;
-       End
-    Else
-        Create_New_Items_File:=returnValue;
+    Close (Item_File);
+
+    Create_New_Items_File:=returnValue;
 End;
 
 (******************************************************************************)
 
-[Global]Function Read_Items: List_of_Items;
+[Global]Function Read_Items: [Volatile]List_of_Items;
 
 { This procedure will read in the items from the file, and then randomly adjust their prices to simulate increasing and decreasing
   values of items in a market place. }
 
-Const
-  Filename = 'Items.dat;1';
-
 Var
    Flux: Real;  { Some times you just have to say, "what's the flux?" }
-   Max_Items: Integer;
+   Max_Items,Loop: Integer;
    returnValue: List_of_Items;
 
 Begin { Read Items }
    returnValue:=Zero;
 
-   Open (Item_File,
-         file_name:=Filename,
-         History:=READONLY,
-         Error:=CONTINUE,
-         Sharing:=READWRITE);
-
-  If (Status(Item_File) = 0) then
+   Open (Item_File, file_name:=Items_Filename, ACCESS_METHOD:=SEQUENTIAL, History:=READONLY, Error:=CONTINUE, Sharing:=READWRITE);
+   If (Status(Item_File) = 0) then
      Begin { successful read }
-         Reset (PicFile,Error:=Continue);
+         Reset (Item_File);
 
-         Max_Items:=-1;  { So far, no items read }
-         While Not EOF(Item_File) do
+         For Loop:=MIN_ITEM_NUMBER to MAX_ITEM_NUMBER do
             Begin { More data }
 
                { Increase counter and read item }
 
-               Max_Items:=Max_Items+1;
-               Read (Item_File,returnValue[Max_Items]);
-               STR$TRIM (returnValue[Max_Items].Name,returnValue[Max_Items].Name);
-               STR$TRIM (returnValue[Max_Items].True_Name,returnValue[Max_Items].True_Name);
+               Read (Item_File, returnValue[Loop]);
+               STR$TRIM (returnValue[Loop].Name, returnValue[Loop].Name);
+               STR$TRIM (returnValue[Loop].True_Name, returnValue[Loop].True_Name);
 
                { Calculate the price fluctuation, FLUX }
 
-               Flux:=returnValue[Max_Items].Gp_Value;
+               Flux:=returnValue[Loop].Gp_Value;
                Flux:=Flux * Roll_Die(10) / 100;
                If Roll_Die(2)=2 then Flux:=Flux*(-1);
 
                { Add flux to the current price }
 
-               returnValue[Max_Items].Current_Value:=Round(returnValue[Max_Items].GP_Value+Flux);
+               returnValue[Loop].Current_Value:=Round(returnValue[Loop].GP_Value + Flux);
 
                { Making sure items aren't given away... }
 
-               If returnValue[Max_Items].Current_Value<1 then returnValue[Max_Items].Current_Value:=1;
+               If returnValue[Loop].Current_Value < 1 then
+                  returnValue[Loop].Current_Value:=1;
             End;  { More Data }
          Close (Item_File);
-         Save_Items (returnValue);
          Read_Items:=returnValue;
      End { successful read }
   Else
-     Read_Items:=Create_New_Items_File(Filename);
+     Read_Items:=Create_New_Items_File;
 End;  { Read Items }
-
-{**********************************************************************************************************************************}
-
-Procedure Access_Item_Record (N: Integer);
-
-{ This function finds the Nth record in the already opened item_file }
-
-Begin { Access Item Record }
-   Find (Item_File,N+1,Error:=CONTINUE)
-End;  { Access Item Record }
 
 {**********************************************************************************************************************************}
 
@@ -511,20 +490,17 @@ End;  { Access Item Record }
 
 { This function returns the Item_Number'th item from the item_file }
 
-Const
-  Filename = 'ITEMS.DAT;1';
-
 Begin { Get Item }
-   Open (Item_File,Filename,History:=READONLY,Access_Method:=DIRECT,Sharing:=READWRITE,Error:=Continue);
+   Open (Item_File,File_Name:=Items_Filename,History:=READONLY,Access_Method:=DIRECT,Sharing:=READWRITE,Error:=Continue);
    If (Status(Item_File) = 0) then
       Begin
-        Access_Item_Record (Item_Number);
+        Find (Item_File,Item_Number + 1);
         Get_Item:=Item_File^;
         Unlock (Item_File);
         Close (Item_File);
       End
    Else
-      Get_Item:=Create_New_Items_File (Filename)[Item_Number];
+      Get_Item:=Create_New_Items_File[Item_Number];
 End;  { Get Item }
 
 (**********************************************************************************************************************)

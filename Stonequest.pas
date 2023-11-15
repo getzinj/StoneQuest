@@ -1070,7 +1070,7 @@ Begin { Draw Menu }
 End;  { Draw Menu }
 
 [External]Procedure Utilities (Var Pics: Pic_List;  Var MazeFile: LevelFile;  Var Roster: Roster_Type;
-                     Var Treasure: List_of_Treasures;  Var Item_List: List_of_Items);External;
+                     Var Treasure: List_of_Treasures);External;
 
 {**********************************************************************************************************************************}
 
@@ -1244,7 +1244,7 @@ Begin { Handle Response }
       'R': Restore_Game;                                                                  { Restore the saved game }
       'V': View_Scenario;                                                                 { See what the game's all about }
       'S': Start_Game;                                                                    { Play the game }
-      'U': Utilities (Pics,MazeFile,Roster,Treasure,Item_List);                           { Go to Utilities sub-menu }
+      'U': Utilities (Pics,MazeFile,Roster,Treasure);                                     { Go to Utilities sub-menu }
       'Q': ;                                                                              { Quit }
       Otherwise ;
    End;

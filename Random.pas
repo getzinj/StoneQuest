@@ -10,6 +10,8 @@ Type
 Var
   Seed:                   [External,Volatile]Unsigned;                           { Seed for random number }
 
+[External]Function  String(Num: Integer;  Len: Integer:=0):Line;External;
+
 
 [Global]Function Roll_Die (Die_Type: Integer): [Volatile]Integer;
 
@@ -64,4 +66,24 @@ Begin { Get Seed }
 
    Get_Seed:=Seed mod Maxint;
 End;  { Get Seed }
+
+(******************************************************************************)
+
+[Global]Function GetDieString (die: Die_Type): Line;
+
+Var
+   T: Line;
+
+Begin
+  T:=String(die.X) + 'D' + String(die.Y);
+
+  if die.Z<0 then
+     T:=T + '-'
+  Else
+     T:=T + '+';
+
+  T:=T + String(die.Z);
+
+  GetDieString := T;
+End;
 End.

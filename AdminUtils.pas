@@ -57,7 +57,7 @@ End;  { View Log }
 {**********************************************************************************************************************************}
 
 Procedure Handle_Key (Var Exit: Boolean;              Var Pics: Pic_List;                   Var MazeFile: LevelFile;
-                      Var Roster: Roster_Type;        Var Treasure: List_of_Treasures;      Var Item_list: List_of_Items);
+                      Var Roster: Roster_Type;        Var Treasure: List_of_Treasures);
 
 { This procedure gets and handles a key and runs the selected utility }
 
@@ -117,7 +117,7 @@ End;  { Handle Key }
 {**********************************************************************************************************************************}
 
 [Global]Procedure Utilities (Var Pics: Pic_List;  Var MazeFile: LevelFile;  Var Roster: Roster_Type;
-                     Var Treasure: List_of_Treasures;  Var Item_List: List_of_Items);
+                     Var Treasure: List_of_Treasures);
 
 { This procedure runs the main utility menu }
 
@@ -148,7 +148,7 @@ Begin { Utilities }
            SMG$Put_Chars (ScreenDisplay,' U)tilities (player)',18,28);
            SMG$Put_Chars (ScreenDisplay,' Which?',20,28);
            SMG$End_Display_Update (ScreenDisplay);
-           Handle_Key (Done,Pics,MazeFile,Roster,Treasure,Item_List);
+           Handle_Key (Done,Pics,MazeFile,Roster,Treasure);
         End;
    Until Done
 End;  { Utilities }

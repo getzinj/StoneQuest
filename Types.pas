@@ -173,20 +173,20 @@ Type
 
 
   Item_Record    = Record { Item Record }
-                      Item_Number: [Byte]0..250;        { Its # }
+                      Item_Number: Integer;             { Its # }
                       Name: Name_Type;                  { Unidentified name }
                       True_Name: Name_Type;             { Identified name }
                       Alignment: Align_Type;            { It's alignment if any }
                       Kind: Item_Type;                  { What classification is it in? }
                       Cursed: boolean;                  { Is it a cursed item? }
                       Special_Occurance_No: Integer;    { Have a purpose? }
-                      Percentage_Breaks: [Byte]0..100;  { Can it break? }
-                             Turns_Into: [Byte]0..250;  { to what result? }
+                      Percentage_Breaks: Integer;       { Can it break? }
+                             Turns_Into: Integer;       { to what result? }
                       GP_Value: Integer;                { how much is it worth? }
                       Current_Value: Integer;           { ...currently? }
                       Spell_Cast: Spell_Name;           { Does it cast a spell? }
                       Usable_By: Class_Set;             { Who can use it? }
-                      Regenerates: [Word]-16383..16383; { How much does it heal? }
+                      Regenerates: Integer; { How much does it heal? }
 
                       { What monsters or attack-types does it protect
                         against? }
@@ -199,8 +199,8 @@ Type
                       Versus: Set of Monster_Type;      { What does it hate? }
                       Damage: Die_Type;                 { How much damage does it do? }
                       Additional_Attacks: Integer;      { Any additional attacks? }
-                      Plus_to_hit: [Byte]-127..127;     { What plus to hit? }
-                      AC_Plus: [Byte]-20..20;           { What adjustment to AC? }
+                      Plus_to_hit: Integer;     { What plus to hit? }
+                      AC_Plus: Integer;           { What adjustment to AC? }
                       autoKill: Boolean;                { Does it critical hit? }
                    End;
 
@@ -489,6 +489,12 @@ Type
 
 Var
    Pas_Errors: [Global]Array [-1..128] of Line;
+   MIN_MONSTER_TYPE: Monster_Type;
+   MAX_MONSTER_TYPE: Monster_Type;
+
+Value
+     MIN_MONSTER_TYPE := Warrior;
+     MAX_MONSTER_TYPE := Enchanted;
 
 {
 Value
