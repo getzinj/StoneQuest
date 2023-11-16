@@ -82,6 +82,7 @@ Value
 [External]Function P (A: AttackerType): Integer;External;
 [External]Procedure Insert (X: AttackerType; Var A: PriorityQueue);External;
 [External]Function DeleteMin (Var A: PriorityQueue): AttackerType;External;
+[External]Function Read_Items: [Volatile]List_of_Items;External;
 (******************************************************************************)
 
 Function Insane_Leader (Party: Party_Type; Var Name: Line): Boolean;
@@ -3223,6 +3224,8 @@ Var
    Can_Attack: Party_Flag;
 
 Begin { Run Encounter }
+   Item_List := Read_Items;
+
    Homicidal_Party:=False;
    Initialize (Member,Current_Party_Size,Party_Size,Can_Attack,Alarm_Off,Time_Delay);
    Init_Encounter (Monster_Number,Encounter,Member,Current_Party_Size);

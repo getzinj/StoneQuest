@@ -935,7 +935,7 @@ Begin { Initialize }
    Pics:=Read_Pictures;     Add_Dot(X);    { Read in the picture images }
    Roster:=Read_Roster;     Add_Dot(X);    { Read in the characters }
    Treasure:=Read_Treasures;Add_Dot(X);    { Read in the treasure types }
-   Read_Items;              Add_Dot(X);    { Read in items }
+   Item_List := Read_Items; Add_Dot(X);    { Read in items }
    Initialize_Displays;     Add_Dot(X);    { Create and initialize displays }
    Initialize_Globals;      Add_Dot(X);    { Initialize external variables }
    Broadcast_On:=True;      Add_Dot(X);

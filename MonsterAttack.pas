@@ -598,7 +598,7 @@ Begin
                If Hits = 1 then
                   T:=T + 'once'
                Else
-                  T:=T + String(hits) + ' times ';
+                  T:=T + String(hits) + ' times';
                T:=T + 'for ' + String(Damage) + ' damage!';
 
                SMG$Put_Line (MessageDisplay, T, Wrap_Flag:=SMG$M_WRAP_WORD);
