@@ -2,6 +2,10 @@
 
 Const
   Items_Filename = 'Items.dat;1';
+  Log_Filename = 'Stone_Data:Stone_Log.dat;1';
+  Messages_Filename = 'Messages.dat;1';
+  Monsters_Filename = 'Monsters.Dat;1';
+  Treasure_Filename = 'Treasure.Dat;1';
 
 Var
    ScoresFile:                 [External]Score_File;
@@ -30,14 +34,14 @@ Begin
    { Open the file }
 
    Repeat
-      Open (LogFile,'Stone_Data:Stone_Log',History:=Unknown,Sharing:=READONLY,Error:=CONTINUE);
+      Open (LogFile, Log_Filename, History:=Unknown, Sharing:=READONLY, Error:=CONTINUE);
    Until (Status(LogFile)=PAS$K_SUCCESS);
 
    { Rewrite it }
 
-   Rewrite (LogFile,Error:=Continue);
-   Write (LogFile,'',Error:=Continue);
-   Close (LogFile,Error:=Continue);
+   Rewrite (LogFile, Error:=Continue);
+   Write (LogFile, '',Error:=Continue);
+   Close (LogFile ,Error:=Continue);
 End;
 
 (**********************************************************************************************************************)
@@ -62,9 +66,9 @@ Begin { View Log File }
    { Open the file }
 
    Repeat
-      Open (LogFile,'Stone_Data:Stone_Log',History:=UNKNOWN,Sharing:=Readwrite,Error:=CONTINUE)
+      Open (LogFile, Log_Filename, History:=UNKNOWN, Sharing:=Readwrite, Error:=CONTINUE)
    Until (Status(LogFile)=PAS$K_SUCCESS);
-   Reset (LogFile,Error:=Continue);
+   Reset (LogFile);
    FirstTime:=True;
 
    LineCount:=0;
@@ -80,18 +84,18 @@ Begin { View Log File }
 
          { Read a name and print it }
 
-         Read (LogFile,L,Error:=Continue);
-         SMG$Put_Line (ScenarioDisplay,L);
+         Read (LogFile, L, Error:=Continue);
+         SMG$Put_Line (ScenarioDisplay, L);
          LineCount:=LineCount+1;
          If LineCount=Length then
             Begin
                 LineCount:=0;
                 Rendition:=1;  L:='Press a key for more';
-                SMG$Set_Cursor_ABS (ScenarioDisplay,22,39-(L.Length div 2));
-                SMG$Put_Line (ScenarioDisplay,L,0,Rendition);
+                SMG$Set_Cursor_ABS (ScenarioDisplay, 22, 39 - (L.Length div 2));
+                SMG$Put_Line (ScenarioDisplay, L, 0, Rendition);
                 SMG$End_Display_Update (ScenarioDisplay);
                 If FirstTime then
-                    SMG$Paste_Virtual_Display (ScenarioDisplay,Pasteboard,2,2);
+                    SMG$Paste_Virtual_Display (ScenarioDisplay, Pasteboard, 2, 2);
                 FirstTime:=False;
                 Wait_Key;
                 SMG$Begin_Display_Update (ScenarioDisplay);
@@ -99,9 +103,9 @@ Begin { View Log File }
             End;
       End;
    L:='Press a key to continue';
-   SMG$Put_Chars (ScenarioDisplay,L,22,39-(L.Length div 2),1,1);
+   SMG$Put_Chars (ScenarioDisplay, L, 22, 39 - (L.Length div 2), 1, 1);
 
-   Close (LogFile,Error:=Continue);
+   Close (LogFile, Error:=Continue);
 
    View_Log_File := FirstTime;
 End;  { View Log File }
@@ -110,7 +114,7 @@ End;  { View Log File }
 (**************************************************** MESSAGES ********************************************************)
 (**********************************************************************************************************************)
 
-Function Create_New_Messages_File (Filename: Line): Message_Group;
+Function Create_New_Messages_File: Message_Group;
 
 Var
    Loop: Integer;
@@ -121,22 +125,13 @@ Var
     For Loop:=MIN_MESSAGE_NUMBER to MAX_MESSAGE_NUMBER do
         returnValue[Loop]:='';
 
-    Open (Message_File,
-          file_name:=Filename,
-          History:=NEW,
-          Error:=CONTINUE,
-          Sharing:=READONLY);
-    If (Status(Message_File) = 0) then
-       Begin
-          Rewrite (Message_File);
-          For Loop:=MIN_MESSAGE_NUMBER to MAX_MESSAGE_NUMBER do
-               Writeln (Message_File,returnValue[Loop]);
-          Close (Message_File);
+    Open (Message_File, file_name:=Messages_Filename, History:=NEW);
+    Rewrite (Message_File);
+    For Loop:=MIN_MESSAGE_NUMBER to MAX_MESSAGE_NUMBER do
+       Writeln (Message_File, returnValue[Loop]);
+    Close (Message_File);
 
-          Create_New_Messages_File:=returnValue;
-       End
-    Else
-       Create_New_Messages_File:=returnValue;
+    Create_New_Messages_File:=returnValue;
  End;
 
 (******************************************************************************)
@@ -145,9 +140,6 @@ Var
 
 { This procedure reads in the text from the message file }
 
-Const
-  Filename = 'Messages.dat;1';
-
 Var
    Loop: Integer;
    returnValue: Message_Group;
@@ -155,27 +147,23 @@ Var
 Begin { Read Messages }
    returnValue:=Zero;
 
-   Open (Message_File,
-         file_name:=Filename,
-         History:=READONLY,
-         Error:=CONTINUE,
-         Sharing:=READWRITE);
-  If (Status(Message_File) = 0) then
-     Begin { successful read }
-         Reset (Message_File,Error:=Continue);
-         For Loop:=MIN_MESSAGE_NUMBER to MAX_MESSAGE_NUMBER do
-            Begin
-                 Readln (Message_File,returnValue[Loop],Error:=Continue);
-                 If Not ((Status(Message_File)=PAS$K_SUCCESS) or (Status(Message_File)=PAS$K_EOF)) then
-                    Begin
-                       returnValue[Loop]:='';
-                    End;
-            End;
-         Close (Message_File);
-         Read_Messages:=returnValue;
-     End { successful read }
-  Else
-     Read_Messages:=Create_New_Messages_File(Filename);
+   Open (Message_File, file_name:=Messages_Filename, History:=READONLY, Error:=CONTINUE, Sharing:=READWRITE);
+   If (Status(Message_File) = 0) then
+      Begin { successful read }
+          Reset (Message_File);
+          For Loop:=MIN_MESSAGE_NUMBER to MAX_MESSAGE_NUMBER do
+             Begin
+                  Readln (Message_File, returnValue[Loop],Error:=Continue);
+                  If Not ((Status(Message_File)=PAS$K_SUCCESS) or (Status(Message_File)=PAS$K_EOF)) then
+                     Begin
+                        returnValue[Loop]:='';
+                     End;
+             End;
+          Close (Message_File);
+          Read_Messages:=returnValue;
+      End { successful read }
+   Else
+      Read_Messages:=Create_New_Messages_File;
 End;  { Read Messages }
 
 {**********************************************************************************************************************}
@@ -184,17 +172,15 @@ End;  { Read Messages }
 
 { This procedure saves the messages to the disk }
 
-Const
-  Filename = 'Messages.dat;1';
-
 Var
    Loop: Integer;
 
 Begin { Save Messages }
-   Open (Message_File, file_name:=Filename, History:=Unknown, Sharing:=READONLY);
+   Open (Message_File, file_name:=Messages_Filename, History:=Unknown, Sharing:=READONLY);
+   { TODO: Error handling }
    Rewrite (Message_File);
    For Loop:=MIN_MESSAGE_NUMBER to MAX_MESSAGE_NUMBER do
-        Writeln (Message_File,Messages[Loop]);
+        Writeln (Message_File, Messages[Loop]);
    Close (Message_File);
 End;  { Save Messages }
 
@@ -206,24 +192,22 @@ End;  { Save Messages }
 
 { This procedure will save the updates monster records if the current user is authorized to do so. }
 
-Const
-  Filename = 'Monsters.Dat;1';
-
 Var
    Loop: Integer;
 
 Begin { Save Monsters }
-   Open (Monster_File, file_name:=Filename, History:=OLD, Sharing:=READONLY);
-   ReWrite (Monster_File,Error:=Continue);
+   Open (Monster_File, file_name:=Monsters_Filename, History:=OLD, Sharing:=READONLY); { TODO: Error handling }
+   ReWrite (Monster_File);
+
    For Loop:=MIN_MONSTER_NUMBER to MAX_MONSTER_NUMBER do
-         Write (Monster_File,Monster[Loop]);
+         Write (Monster_File, Monster[Loop]);
 
    Close (Monster_File);
 End;  { Save Monsters }
 
 {**********************************************************************************************************************************}
 
-Function Create_New_Monster_file(filename: Line): List_of_monsters;
+Function Create_New_Monster_file: List_of_monsters;
 
 Var
    Loop: Integer;
@@ -234,17 +218,15 @@ Begin
     For Loop:=MIN_MONSTER_NUMBER to MAX_MONSTER_NUMBER do
         returnValue[Loop]:=Zero;
 
-    Open (Monster_File, file_name:=Filename, History:=NEW, Error:=CONTINUE, Sharing:=READONLY);
-    If (Status(Monster_File) = 0) then
-       Begin
-          ReWrite (Monster_File,Error:=Continue);
-          For Loop:=MIN_MONSTER_NUMBER to MAX_MONSTER_NUMBER do
-              Write (Monster_File,returnValue[Loop]);
-          Close (Monster_File);
-          Create_New_Monster_file:=returnValue;
-       End
-    Else
-       Create_New_Monster_file:=returnValue;
+    Open (Monster_File, file_name:=Monsters_Filename, History:=NEW, Sharing:=READONLY);
+    ReWrite (Monster_File);
+
+    For Loop:=MIN_MONSTER_NUMBER to MAX_MONSTER_NUMBER do
+          Write (Monster_File, returnValue[Loop]);
+
+    Close (Monster_File);
+
+    Create_New_Monster_file:=returnValue;
 End;
 
 (******************************************************************************)
@@ -253,9 +235,6 @@ End;
 
 { This procedure will read in the monsters from the file into the array, MONSTERS }
 
-Const
-  Filename = 'Monsters.dat;1';
-
 Var
    Max_Monsters: Integer;
    returnValue: List_of_monsters;
@@ -263,26 +242,21 @@ Var
 Begin { Read Monsters }
    returnValue:=Zero;
 
-   Open (Monster_File, file_name:=Filename, History:=READONLY, Error:=CONTINUE, Sharing:=READWRITE);
+   Open (Monster_File, file_name:=Monsters_Filename, History:=READONLY, Error:=CONTINUE, Sharing:=READWRITE);
    If (Status(Monster_File) = 0) then
      Begin { successful read }
-         Reset (Monster_File,Error:=Continue);
+         Reset (Monster_File);
+
          For Max_Monsters:=MIN_MONSTER_NUMBER to MAX_MONSTER_NUMBER do
-             Read (Monster_File,returnValue[Max_Monsters]);
+             Read (Monster_File, returnValue[Max_Monsters]);
+
          Close (Monster_File);
+
          Read_Monsters:=returnValue;
      End { successful read }
    Else
-     Read_Monsters:=Create_New_Monster_file(Filename);
+     Read_Monsters:=Create_New_Monster_file;
 End;  { Read_Monsters }
-
-{**********************************************************************************************************************************}
-
-Procedure Access_Monster_Record (N: Integer);
-
-Begin { Access Monster Record }
-    Find (Monster_File,N,Error:=CONTINUE)
-End;  { Access Monster Record }
 
 {**********************************************************************************************************************************}
 
@@ -291,20 +265,17 @@ End;  { Access Monster Record }
 { This function returns the Monster_Number'th monster from the
   Monster_File. }
 
-Const
-   Filename = 'MONSTERS.DAT;1';
-
 Begin { Get Monster }
-   Open (Monster_File,Filename,History:=READONLY,Access_Method:=DIRECT,Sharing:=READWRITE,Error:=CONTINUE);
+   Open (Monster_File, Monsters_Filename, History:=READONLY, Access_Method:=DIRECT, Sharing:=READWRITE, Error:=CONTINUE);
    If (Status(Monster_File) = 0) then
      Begin
-       Access_Monster_Record (Monster_Number);
+       Find (Monster_File, Monster_Number);
        Get_Monster:=Monster_File^;
        Unlock (Monster_File);
        Close (Monster_File);
      End
    Else
-     Get_Monster:=Create_New_Monster_file (Filename)[Monster_Number];
+     Get_Monster:=Create_New_Monster_file[Monster_Number];
 End;  { Get Monster }
 
 (**********************************************************************************************************************)
@@ -315,43 +286,43 @@ End;  { Get Monster }
 
 { This procedure will save the updated treasure list if the current user is authorized to do so. }
 
-Const
-  Filename = 'Treasure.Dat;1';
-
 Var
    Loop: Integer;
 
 Begin { Save Treasure }
-   Open (TreasFile, file_name:=Filename, History:=OLD);
+   Open (TreasFile, file_name:=Treasure_Filename, History:=OLD); { TODO: Error handling }
    ReWrite (TreasFile);
+
    For Loop:=MIN_TREASURE_NUMBER to MAX_TREASURE_NUMBER do
-       Write (TreasFile,Treasure[Loop]);
+       Write (TreasFile, Treasure[Loop]);
 
    Close (TreasFile);
 End;  { Save_Treasure }
 
 {**********************************************************************************************************************************}
 
-Function Create_New_Treasure_File (Filename: String): List_of_Treasures;
+Function Create_New_Treasure_File: List_of_Treasures;
 
 Var
    Loop: Integer;
    returnValue: List_of_Treasures;
 
-Begin { failed to read; create a new one }
+Begin
     returnValue:=Zero;
     For Loop:=MIN_TREASURE_NUMBER to MAX_TREASURE_NUMBER do
         Begin
            returnValue[Loop]:=Zero;
         End;
 
-    Open (TreasFile,file_name:=Filename,History:=NEW);
+    Open (TreasFile, file_name:=Treasure_Filename, History:=NEW);
     ReWrite (TreasFile);
+
     For Loop:=MIN_TREASURE_NUMBER to MAX_TREASURE_NUMBER do
-          Write (TreasFile,returnValue[Loop]);
+          Write (TreasFile, returnValue[Loop]);
+
     Close (TreasFile);
 
-   Create_New_Treasure_File:=returnValue;
+    Create_New_Treasure_File:=returnValue;
 End;
 
 {**********************************************************************************************************************************}
@@ -360,9 +331,6 @@ End;
 
 { This procedure will read in the treasure types }
 
-Const
-  Filename = 'Treasure.Dat;1';
-
 Var
    Loop: Integer;
    returnValue: List_of_Treasures;
@@ -370,18 +338,18 @@ Var
 Begin { Read Treasures }
   returnValue:=Zero;
 
-  Open (TreasFile,File_Name:=Filename,History:=READONLY,Error:=CONTINUE,Sharing:=READONLY);
+  Open (TreasFile, File_Name:=Treasure_Filename, History:=READONLY, Error:=CONTINUE, Sharing:=READONLY);
   If (Status(TreasFile) = 0) then
      Begin { successful read }
-         Reset (TreasFile,Error:=Continue);
+         Reset (TreasFile);
          For Loop:=MIN_TREASURE_NUMBER to MAX_TREASURE_NUMBER do
-             Read (TreasFile,returnValue[Loop]);
+             Read (TreasFile, returnValue[Loop]);
          Close (TreasFile);
 
          Read_Treasures:=returnValue;
      End { successful read }
   Else
-     Read_Treasures:=Create_New_Treasure_File(Filename);
+     Read_Treasures:=Create_New_Treasure_File;
 End;  { Read Treasures }
 
 (**********************************************************************************************************************)
@@ -401,7 +369,7 @@ Begin { Save Items }
    For Loop:=MIN_ITEM_NUMBER to MAX_ITEM_NUMBER do
       Begin
          Item_List[Loop].Item_Number := Loop;
-         Write (Item_File,Item_List[Loop]);
+         Write (Item_File, Item_List[Loop]);
       End;
    Close (Item_File);
 End;  { Save Items }
@@ -426,7 +394,7 @@ Begin
     ReWrite (Item_File);
 
     For Loop:=MIN_ITEM_NUMBER to MAX_ITEM_NUMBER do
-       Write (Item_File,returnValue[Loop]);
+       Write (Item_File, returnValue[Loop]);
 
     Close (Item_File);
 
@@ -442,7 +410,7 @@ End;
 
 Var
    Flux: Real;  { Some times you just have to say, "what's the flux?" }
-   Max_Items,Loop: Integer;
+   Max_Items, Loop: Integer;
    returnValue: List_of_Items;
 
 Begin { Read Items }
@@ -491,10 +459,10 @@ End;  { Read Items }
 { This function returns the Item_Number'th item from the item_file }
 
 Begin { Get Item }
-   Open (Item_File,File_Name:=Items_Filename,History:=READONLY,Access_Method:=DIRECT,Sharing:=READWRITE,Error:=Continue);
+   Open (Item_File, File_Name:=Items_Filename, History:=READONLY, Access_Method:=DIRECT, Sharing:=READWRITE, Error:=Continue);
    If (Status(Item_File) = 0) then
       Begin
-        Find (Item_File,Item_Number + 1);
+        Find (Item_File, Item_Number + 1);
         Get_Item:=Item_File^;
         Unlock (Item_File);
         Close (Item_File);
@@ -518,7 +486,7 @@ Begin
        Begin
           ReWrite (AmountFile);
           For Loop:=MIN_QUANTITY_NUMBER to MAX_QUANTITY_NUMBER Do
-             Write (AmountFile,0);
+             Write (AmountFile, 0);
 
           Close (AmountFile);
        End;
@@ -532,7 +500,7 @@ End;
 
 Begin
    Repeat
-     Find (AmountFile,N+1,Error:=CONTINUE)
+     Find (AmountFile, N+1, Error:=CONTINUE)
    Until Status(AmountFile)=PAS$K_SUCCESS;  { TODO: What if the file does not exist or is corrupted? }
 End;
 
@@ -557,7 +525,7 @@ End;
 [Global]Function Get_Store_Quantity(slot: Integer): Integer;
 
 Begin
-   Find(AmountFile,slot+1);
+   Find(AmountFile, slot+1);
 
    Get_Store_Quantity:=AmountFile^;
 End;
@@ -567,7 +535,7 @@ End;
 [Global]Procedure Write_Store_Quantity_Aux(slot: Integer; amount: Integer);
 
 Begin
-    Find(AmountFile,slot+1);
+    Find(AmountFile, slot+1);
 
     AmountFile^:=amount;
 
@@ -582,12 +550,12 @@ Const
   Filename = 'STORE.DAT;1';
 
 Begin
-    Open(AmountFile, file_name:=Filename,History:=Unknown, Access_Method:=DIRECT,Sharing:=READWRITE,Error:=CONTINUE);
+    Open(AmountFile, file_name:=Filename, History:=Unknown, Access_Method:=DIRECT, Sharing:=READWRITE, Error:=CONTINUE);
     If (Status(AmountFile) <> 0) then
       Begin
         Create_New_Quantity_File (Filename);
 
-        Open(AmountFile, file_name:=Filename,History:=Unknown, Access_Method:=DIRECT,Sharing:=READWRITE); { This time, crash on failure }
+        Open(AmountFile, file_name:=Filename, History:=Unknown, Access_Method:=DIRECT, Sharing:=READWRITE); { This time, crash on failure }
       End;
 End;
 
@@ -599,12 +567,12 @@ Const
   Filename = 'STORE.DAT;1';
 
 Begin
-    Open(AmountFile, file_name:=Filename,History:=READONLY, Access_Method:=DIRECT,Sharing:=READWRITE,Error:=CONTINUE);
+    Open(AmountFile, file_name:=Filename, History:=READONLY, Access_Method:=DIRECT, Sharing:=READWRITE, Error:=CONTINUE);
     If (Status(AmountFile) <> 0) then
       Begin
         Create_New_Quantity_File (Filename);
 
-        Open(AmountFile, file_name:=Filename,History:=READONLY, Access_Method:=DIRECT,Sharing:=READWRITE); { This time, crash on failure }
+        Open(AmountFile, file_name:=Filename, History:=READONLY, Access_Method:=DIRECT, Sharing:=READWRITE); { This time, crash on failure }
       End;
 End;
 
@@ -644,7 +612,7 @@ End;
 [Global]Procedure Decrement_Quantity (slot: Integer);
 
 Begin
-  Find(AmountFile,slot+1);
+  Find(AmountFile, slot+1);
 
   If AmountFile^>0 then
       AmountFile^:=AmountFile^ - 1;
@@ -670,7 +638,7 @@ Begin { Save Pictures }
    Open (PicFile, file_name:=Filename, History:=OLD, Sharing:=READONLY);
    ReWrite (PicFile);
    For Loop:=MIN_PICTURE_NUMBER to MAX_PICTURE_NUMBER do
-       Write (PicFile,Pics[Loop]);
+       Write (PicFile, Pics[Loop]);
    Close (PicFile);
 End;  { Save Pictures }
 
@@ -693,7 +661,7 @@ Begin
               ReWrite (PicFile);
 
               For Loop:=MIN_PICTURE_NUMBER to MAX_PICTURE_NUMBER do
-                 Write(PicFile,ReturnValue[Loop]);
+                 Write(PicFile, ReturnValue[Loop]);
 
                Close (PicFile);
 
@@ -724,11 +692,11 @@ Begin { Read Pictures }
          Sharing:=READWRITE);
   If (Status(PicFile) = 0) then
      Begin { successful read }
-         Reset (PicFile,Error:=Continue);
+         Reset (PicFile, Error:=Continue);
          Loop:=MIN_PICTURE_NUMBER;
          While (Loop<=MAX_PICTURE_NUMBER) and Not EOF(PicFile) do
             Begin
-               Read(PicFile,returnValue[Loop]);
+               Read(PicFile, returnValue[Loop]);
                Loop:=Loop+1;
             End;
          Close (PicFile);
@@ -759,7 +727,7 @@ Begin { Write Roster }
     ReWrite (Char_File);
     For Loop:=MIN_ROSTER_NUMBER to MAX_ROSTER_NUMBER do
         Begin
-           Write (Char_File,Roster[Loop]);
+           Write (Char_File, Roster[Loop]);
         End;
     Close (Char_File);
 End;  { Write Roster }
@@ -777,12 +745,12 @@ Begin { failed to read; create a new one }
    For Loop:=MIN_ROSTER_NUMBER to MAX_ROSTER_NUMBER do
        Roster[Loop].Status:=Deleted;
 
-   Open (Char_File,file_name:=Filename,History:=NEW,Error:=CONTINUE,Sharing:=READONLY);
+   Open (Char_File, file_name:=Filename, History:=NEW, Error:=CONTINUE, Sharing:=READONLY);
    If (Status(Char_File) = 0) then
       Begin
          ReWrite (Char_File);
           For Loop:=MIN_ROSTER_NUMBER to MAX_ROSTER_NUMBER do
-             Write (Char_File,Roster[Loop]);
+             Write (Char_File, Roster[Loop]);
           Close (Char_File);
 
           Create_New_Character_File:=Roster;
@@ -805,12 +773,12 @@ Var
 Begin { Read Roster }
   Roster:=Zero;
 
-  Open (Char_File,File_Name:=Filename,History:=READONLY,Error:=CONTINUE,Sharing:=READONLY);
+  Open (Char_File, File_Name:=Filename, History:=READONLY, Error:=CONTINUE, Sharing:=READONLY);
   If (Status(Char_File) = 0) then
      Begin { successful read }
-         Reset (Char_File,Error:=Continue);
+         Reset (Char_File, Error:=Continue);
          For Loop:=MIN_ROSTER_NUMBER to MAX_ROSTER_NUMBER do
-             Read (Char_File,Roster[Loop]);
+             Read (Char_File, Roster[Loop]);
          Close (Char_File);
 
          Read_Roster:=Roster;
@@ -829,7 +797,7 @@ Const
   Filename = 'SYS$LOGIN:STONE_SAVE.DAT;1';
 
 Begin
-   Open (SaveFile,file_name:=filename,History:=Unknown);
+   Open (SaveFile, file_name:=filename, History:=Unknown);
    ReWrite (SaveFile);
    Close (SaveFile);
 End;
@@ -842,16 +810,16 @@ Var
    Error: Boolean;
 
 Begin
-   Open (SaveFile,'SYS$LOGIN:STONE_SAVE.DAT;1',HISTORY:=NEW,Error:=Continue);
+   Open (SaveFile, 'SYS$LOGIN:STONE_SAVE.DAT;1',HISTORY:=NEW, Error:=Continue);
    Error:=(Status(SaveFile)<>PAS$K_SUCCESS);
 
-   ReWrite (SaveFile, Error:=Continue);
+   ReWrite (SaveFile);
    Error:=Error or ((Status(SaveFile)<>PAS$K_SUCCESS) and (Status(SaveFile)<>PAS$K_EOF));
 
    Write (SaveFile, saveRecord, Error:=Continue);
    Error:=Error or ((Status(SaveFile)<>PAS$K_SUCCESS) and (Status(SaveFile)<>PAS$K_EOF));
 
-   Close (SaveFile,Error:=Continue);
+   Close (SaveFile, Error:=Continue);
 
    Write_Save_File:=Error or ((Status(SaveFile) <> PAS$K_SUCCESS) and (Status(SaveFile) <> PAS$K_EOF));
 End;
@@ -868,11 +836,11 @@ End;
 
 (******************************************************************************)
 
-Function createEmptyLevel(levelNumber: Integer): Level;
+Function createEmptyLevel (levelNumber: Integer): Level;
 
 Var
   returnValue: Level;
-  x,y: 1..20;
+  x, y: 1..20;
   encounterIndex: 1..3;
   specialNumber: 0..15;
 
@@ -919,12 +887,12 @@ Var
   returnValue: Level;
 
 Begin
-     Open (fileVar,file_name:=filename,History:=NEW,Error:=CONTINUE,Sharing:=READONLY);
+     Open (fileVar, file_name:=filename, History:=NEW, Error:=CONTINUE, Sharing:=READONLY);
      If (Status(fileVar) = 0) then
         Begin
            returnValue:=createEmptyLevel(levelNumber);
-           ReWrite(fileVar,error:=Continue);
-           Write (fileVar,returnValue);
+           ReWrite(fileVar);
+           Write (fileVar, returnValue);
            Close (fileVar);
 
            Create_New_Level_File:=returnValue;
@@ -943,11 +911,11 @@ Var
 
 Begin
   filename:=Get_Maze_File_Name(CHR(levelNumber + 64));
-  Open (fileVar,File_Name:=filename,History:=READONLY,Error:=CONTINUE,Sharing:=READONLY);
+  Open (fileVar, File_Name:=filename, History:=READONLY, Error:=CONTINUE, Sharing:=READONLY);
   If (Status(fileVar) = 0) then
      Begin { successful read }
         Reset (fileVar);
-        Read (fileVar,returnValue);
+        Read (fileVar, returnValue);
         Close (fileVar);
 
         Read_Level_from_Maze_File:=returnValue;
@@ -963,7 +931,7 @@ End;
 Begin
     Open (MazeFile, file_name:=filename, History:=OLD);
     ReWrite (MazeFile);
-    Write (MazeFile,Floor);
+    Write (MazeFile, Floor);
     Close (MazeFile);
 End;
 
@@ -976,19 +944,15 @@ End;
   as the one in memory }
 
 Begin { Get Level }
-   If (Level_Number<>PosZ) and (Level_Number>0) then
-      Get_Level:=Read_Level_from_Maze_File(MazeFile,Level_Number)
+   If (Level_Number <> PosZ) and (Level_Number > 0) then
+      Get_Level:=Read_Level_from_Maze_File(MazeFile, Level_Number)
    Else
       Get_Level:=Maze;  { Otherwise, return the current level }
 End;  { Get Level }
 
-
-
-
-
-
-
-(******************************************************************************)
+{**********************************************************************************************************************************}
+{****************************************************** HIGH SCORE LIST ***********************************************************}
+{**********************************************************************************************************************************}
 
 [Global]Function Read_Score_List: High_Score_List;
 
@@ -996,7 +960,7 @@ Var
   Score_List: High_Score_List;
 
 Begin
-   Open(ScoresFile,file_name:='SCORES.DAT',History:=UNKNOWN,Sharing:=READWRITE,Error:=Continue);
+   Open(ScoresFile, file_name:='SCORES.DAT', History:=UNKNOWN, Sharing:=READWRITE, Error:=Continue);
 
    If (Status(ScoresFile)=PAS$K_SUCCESS) or (Status(ScoresFile)=PAS$K_EOF) then
       Begin
@@ -1018,11 +982,11 @@ End;
 [Global]Procedure Write_Score_List (Score_List: High_Score_List);
 
 Begin
-   Open(ScoresFile,file_name:='SCORES.DAT',History:=UNKNOWN,Sharing:=READWRITE,Error:=Continue);
+   Open(ScoresFile, file_name:='SCORES.DAT',History:=UNKNOWN, Sharing:=READWRITE, Error:=Continue);
    If (Status(ScoresFile)=PAS$K_SUCCESS) or (Status(ScoresFile)=PAS$K_EOF) then
       Begin
         Rewrite (ScoresFile);
-        Write (ScoresFile,Score_List);
+        Write (ScoresFile, Score_List);
         Close (ScoresFile);
       End;
 End;

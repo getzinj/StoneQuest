@@ -1436,7 +1436,7 @@ Begin
          Number:=Caster;
       End
    Else If Spell in Party_Spell+All_Monsters_Spell+Area_Spell then
-      Get_Group_Number (Group,Group1,Take_Back)
+      Group1:=5
    Else If Spell in Group_Spell then
       Get_Group_Number (Group,Group1,Take_Back)
    Else If Spell in Person_Spell then

@@ -539,7 +539,7 @@ Begin
             Partially: T:=T+' partially';
             Fully:     T:=T+' fully';
          End;
-         T := T + 'healed!';
+         T := T + ' healed!';
       End
    Else If Attacker.WhatSpell = CrPs then
       T := T + ' unpoisoned!'

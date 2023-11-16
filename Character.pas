@@ -55,7 +55,7 @@ Value
 [External]Function Get_Num (Display: Unsigned): Integer;External;
 [External]Procedure No_Controly;External;
 [External]Procedure Controly;External;
-
+[External]Function Read_Items: [Volatile]List_of_Items;External;
 (******************************************************************************)
 
 Procedure Home;
@@ -196,7 +196,7 @@ End;
 
 (******************************************************************************)
 
-Procedure Change_Character_Items (Var Character: Character_Type);
+[Global]Procedure Change_Character_Items (Var Character: Character_Type);
 
 Var
   i: Integer;
@@ -206,6 +206,8 @@ Var
 Begin
   Repeat
     Begin
+       item_list := Read_Items; { Get the latest items }
+
        SMG$Begin_Display_Update (ScreenDisplay);
        SMG$Erase_Display (ScreenDisplay);
 
@@ -215,9 +217,11 @@ Begin
        For i:=1 to Character.No_of_Items do
           Print_Item_Line (Character, i);
 
+       SMG$Put_Line (ScreenDisplay,'1-' + CHR(Character.No_of_Items + ZeroOrd) + ', <SPACE> exits');
+
        SMG$End_Display_Update(ScreenDisplay);
 
-       Options:=['1'..CHR(Character.No_of_Items+ZeroOrd),CHR(13)];
+       Options:=['1'..CHR(Character.No_of_Items + ZeroOrd),CHR(32)];
        Answer:=Make_Choice (Options);
 
        If Answer<>CHR(32) then

@@ -1229,7 +1229,7 @@ End;  { Use Item }
 Procedure Show_Options (Character: Character_Type; Var Choices: Char_Set;  Party: Party_Type;  Party_Size: Integer);
 
 Var
-   T: Line;
+   T: Varying [390] of char;
 
 Begin { Show Options }
   Choices:=[];

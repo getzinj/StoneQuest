@@ -779,7 +779,7 @@ End;  { Reorder party }
 Procedure View_Character (Character_Number: Integer; Var Member: Party_Type; Var Current_Party_Size: Party_Size_Type;
                                   Party_Size: Integer);
 
-{ This procedure allows a player to view his/her character via PRINT_CHARACTER.  A call to DEAD_CHARACTRS is made afterwords, since
+{ This procedure allows a player to view his/her character via PRINT_CHARACTER.  A call to DEAD_CHARACTERS is made afterwords, since
   the number of living characters may increase or decrease depending on what happens in PRINT_CHARACTER. }
 
 [External]Procedure Print_Character (Var Party: Party_Type;  Party_Size: Integer;  Var Characters: Character_Type;

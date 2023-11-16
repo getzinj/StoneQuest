@@ -539,7 +539,7 @@ Begin
             Saved := Saved or Not(Affected);
 
             If Saved then
-               T:=T + 'not';
+               T:=T + 'not ';
 
             T:=T + verb + '!';
 
