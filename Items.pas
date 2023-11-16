@@ -75,8 +75,6 @@ Value
 [External]Function Get_Store_Quantity(slot: Integer): Integer;External;
 [External]Procedure Write_Store_Quantity_Aux(slot: Integer; amount: Integer);External;
 [External]Procedure Close_Quantity_File;External;
-[External]Procedure Save_Items(Item_List: List_of_Items);External;
-[External]Function Read_Items: [Volatile]List_of_Items;External;
 [External]Function GetDieString (die: Die_Type): Line;External;
 (******************************************************************************)
 
@@ -643,8 +641,6 @@ Begin { Edit Item }
    Number:=0;
    Repeat
       Begin
-         item_list := Read_Items;
-
          SMG$Begin_Display_Update (ScreenDisplay);
          SMG$Erase_Display (ScreenDisplay);
          SMG$Home_Cursor (ScreenDisplay);
@@ -661,8 +657,6 @@ Begin { Edit Item }
 {        If Number=-4 then Insert_Item; }
          If Number=-3 then Swap_Record;
          If Number=-2 then Print_Table;
-
-         Save_Items (item_list);
       End;
    Until Number = -1;
 End;  { Edit Item }
