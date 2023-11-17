@@ -492,9 +492,21 @@ Var
    MIN_MONSTER_TYPE: Monster_Type;
    MAX_MONSTER_TYPE: Monster_Type;
 
+   MIN_CLASS_TYPE: Class_Type;
+   MAX_CLASS_TYPE: Class_Type;
+
+   MIN_ATTACK_TYPE: Attack_Type;
+   MAX_ATTACK_TYPE: Attack_Type;
+
 Value
      MIN_MONSTER_TYPE := Warrior;
      MAX_MONSTER_TYPE := Enchanted;
+
+     MIN_CLASS_TYPE:=NoClass;
+     MAX_CLASS_TYPE:=Barbarian;
+
+     MIN_ATTACK_TYPE := NoAttack;
+     MAX_ATTACK_TYPE := Sleep;
 
 {
 Value

@@ -364,7 +364,7 @@ Var
    Loop: Integer;
 
 Begin { Save Items }
-   Open (Item_File, file_name:=Items_Filename, History:=UNKNOWN);
+   Open (Item_File, file_name:=Items_Filename, History:=UNKNOWN, Sharing:=READONLY);
    ReWrite (Item_File);
    For Loop:=MIN_ITEM_NUMBER to MAX_ITEM_NUMBER do
       Begin
@@ -390,7 +390,7 @@ Begin
          returnValue[Loop].Item_Number := Loop;
       End;
 
-    Open (Item_File, file_name:=Items_Filename, History:=NEW, Organization:=SEQUENTIAL, Access_Method:=SEQUENTIAL, Sharing:=READONLY);
+    Open (Item_File, file_name:=Items_Filename, History:=NEW, Organization:=SEQUENTIAL, Access_Method:=SEQUENTIAL);
     ReWrite (Item_File);
 
     For Loop:=MIN_ITEM_NUMBER to MAX_ITEM_NUMBER do
@@ -423,9 +423,6 @@ Begin { Read Items }
 
          For Loop:=MIN_ITEM_NUMBER to MAX_ITEM_NUMBER do
             Begin { More data }
-
-               { Increase counter and read item }
-
                Read (Item_File, returnValue[Loop]);
                STR$TRIM (returnValue[Loop].Name, returnValue[Loop].Name);
                STR$TRIM (returnValue[Loop].True_Name, returnValue[Loop].True_Name);
@@ -434,16 +431,12 @@ Begin { Read Items }
 
                Flux:=returnValue[Loop].Gp_Value;
                Flux:=Flux * Roll_Die(10) / 100;
-               If Roll_Die(2)=2 then Flux:=Flux*(-1);
+               If Roll_Die(2)=2 then
+                   Flux:=Flux*(-1);
 
                { Add flux to the current price }
 
-               returnValue[Loop].Current_Value:=Round(returnValue[Loop].GP_Value + Flux);
-
-               { Making sure items aren't given away... }
-
-               If returnValue[Loop].Current_Value < 1 then
-                  returnValue[Loop].Current_Value:=1;
+               returnValue[Loop].Current_Value:=Max(Round(returnValue[Loop].GP_Value + Flux), 1);
             End;  { More Data }
          Close (Item_File);
          Read_Items:=returnValue;

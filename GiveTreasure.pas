@@ -252,7 +252,6 @@ Begin
 
             Chance:=Detect_Trap_Chance (Member[Looker],Trap);
 
-            SMG$Begin_Display_Update (OptionsDisplay);
             SMG$Erase_Display (OptionsDisplay);
 
             TS:=[Trapless .. Stunner]-[Trap];
@@ -443,9 +442,7 @@ Var
 [External]Procedure No_Cursor;External;
 
 Begin
-   SMG$Begin_Display_Update (OptionsDisplay);
    SMG$Erase_Display (OptionsDisplay);
-   SMG$End_Display_Update (OptionsDisplay);
    SMG$Put_Chars (OptionsDisplay,'Disarm what trap? >',3,2);
 
    Cursor;
@@ -662,7 +659,7 @@ Begin
       Begin
          Money:=Treasure.Initial_Base+Random_Number(Treasure.Initial_Random);
          Temp:=Random_Number(Treasure.Multiplier);
-         If Temp<>0 then
+         If Temp <> 0 then
             Money:=Money * Temp;
          Give_Money (Money,Member,Current_Party_Size);
       End
@@ -703,7 +700,7 @@ Begin { Deliver Treasure }
   If (Not CantHave) and (Treasure[Number].Max_No_of_Treasures > 0) then
      Begin
         Show_Monster_Image (Gold_Picture_Number,FightDisplay);
-        For Group:=1 to Treasure[Number].Max_no_of_Treasures do
+        For Group:=1 to Min(Treasure[Number].Max_no_of_Treasures, Lower(Treasure[Number].Treasure)) do
           Deliver_Gold_And_Money (Treasure[Number].Treasure[Group],Member,Current_Party_Size);
      End;
 End;

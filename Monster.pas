@@ -2,6 +2,7 @@
 
 Type
    Attack_Set = Set of Attack_Type;
+   TreasureSet = Set of T_Type;
 
 Var
    Number:        Integer;
@@ -53,17 +54,21 @@ Value
    MonsterType[Midget]:='Midgets';
    MonsterType[Giant]:='Giants';
    MonsterType[Myth]:='Myths';
-   MonsterType[Reptile]:='Reptiles';
    MonsterType[Animal]:='Animals';
    MonsterType[Lycanthrope]:='Lycanthropes';
    MonsterType[Undead]:='Undead';
    MonsterType[Demon]:='Demons';
    MonsterType[Insect]:='Insects';
-   MonsterType[Enchanted]:='Magical';
    MonsterType[Plant]:='Plant';
    MonsterType[Multiplanar]:='Multi-planar';
    MonsterType[Dragon]:='Dragon';
+   MonsterType[Elemental]:='Elemental';
+   MonsterType[Fey]:='Fey';
+   MonsterType[Humanoid]:='Humanoid';
+   MonsterType[Monstrosities]:='Monstrosities';
    MonsterType[Statue]:='Statue';
+   MonsterType[Reptile]:='Reptiles';
+   MonsterType[Enchanted]:='Magical';
 
    Propty[0]:='Stones';            Propty[1]:='Poisons';
    Propty[2]:='Paralyzes';         Propty[3]:='AutoKills';
@@ -91,14 +96,12 @@ Value
 (******************************************************************************)
 [External]Procedure Read_Monsters (Var Monster: List_of_Monsters);External;
 [External]Procedure Save_Monsters (Monster: List_of_Monsters);External;
-[External]Function Yes_or_No (Time_Out: Integer:=-1;
-    Time_Out_Char: Char:=' '): [Volatile]Char;External;
+[External]Function Yes_or_No (Time_Out: Integer:=-1; Time_Out_Char: Char:=' '): [Volatile]Char;External;
 [External]Procedure Cursor;External;
 [External]Procedure No_Cursor;External;
 [External]Function String(Num: Integer; Len: Integer:=0):Line;external;
 [External]Function Get_Num (Display: Unsigned): Integer;External;
-[External]Function Make_Choice (Choices: Char_Set;  Time_Out:  Integer:=-1;
-    Time_Out_Char: Char:=' '): Char;External;
+[External]Function Make_Choice (Choices: Char_Set;  Time_Out:  Integer:=-1; Time_Out_Char: Char:=' '): Char;External;
 (******************************************************************************)
 
 Procedure Display_Image (Image: Image_Type);
@@ -106,27 +109,107 @@ Procedure Display_Image (Image: Image_Type);
 { This procedure will display the image at 57, 3 }
 
 Var
-  X,Y: Integer;
+  X,Y, Row: Integer;
 
 Begin { Display Image }
    SMG$Begin_Display_Update (ScreenDisplay);
-   SMG$Put_Chars (ScreenDisplay,
-       '+-----------------------+',3,57);
+   SMG$Put_Chars (ScreenDisplay, '+-----------------------+', 3, 57);
    For Y:=1 to 9 do
       Begin
-         SMG$Put_Chars (ScreenDisplay,
-             '|',3+Y,57);
+         Row := 3 + Y;
+
+         SMG$Put_Chars (ScreenDisplay, '|', Row, 57);
+
          For X:=1 to 23 do
-             SMG$Put_Chars (ScreenDisplay,
-                 Image[X,Y]
-                 +'',Y+3,X+56,0);
-         SMG$Put_Chars (ScreenDisplay,
-             '|',13,57);
+             SMG$Put_Chars (ScreenDisplay, Image[X, Y] + '', Row, X + 56, 0);
+
+         SMG$Put_Chars (ScreenDisplay,  '|', Row, 56 + 23 + 1);
       End;
-   SMG$Put_Chars (ScreenDisplay,
-       '+-----------------------+',13,57);
+   SMG$Put_Chars (ScreenDisplay, '+-----------------------+', 13, 57);
    SMG$End_Display_Update (ScreenDisplay);
 End;  { Display Image }
+
+(******************************************************************************)
+
+Procedure Print_Current_ClassSet(classSet: Class_Set);
+
+Var
+   Pos: Integer;
+   Loop: Class_Type;
+   T, Name: Line;
+   ClassName: [External]Array [Class_Type] of Varying [13] of char;
+
+Begin
+     Pos:=1;
+     T:='';
+     For Loop:=MIN_CLASS_TYPE to MAX_CLASS_TYPE do
+         If Loop in ClassSet then
+                 Begin
+                    If Loop <> NoClass then
+                        Name:=ClassName[Loop]
+                    Else
+                       Name:='No-class';
+
+                    T:=T + Pad(Name,' ',20);
+                    If Odd(Pos) then
+                       T:=T + '    '
+                    Else
+                       Begin
+                          SMG$Put_Line (ScreenDisplay,T);
+                          T:='';
+                       End;
+                    Pos:=Pos + 1;
+                 End;
+     SMG$Put_Line (ScreenDisplay,T);
+End;
+
+(******************************************************************************)
+
+Procedure Print_Available_Classes;
+
+Var
+   Pos: Integer;
+   Loop: Class_Type;
+   T: Line;
+   Name: Line;
+   ClassName: [External]Array [Class_Type] of Varying [13] of char;
+
+Begin
+     Pos:=1;
+     T:='';
+     For Loop:=MIN_CLASS_TYPE to MAX_CLASS_TYPE do
+         Begin
+            If Loop <> NoClass then
+               Name:=ClassName[Loop]
+            Else
+               Name:='No-class';
+            T:=T + CHR(Ord(Loop) + 65) + '  ' + Pad(Name,' ',20);
+            If Odd(Pos) then
+               T:=T+'    '
+            Else
+               Begin
+                  SMG$Put_Line (ScreenDisplay,T);
+                  T:='';
+               End;
+            Pos:=Pos+1;
+         End;
+     SMG$Put_Line (ScreenDisplay,T,0);
+End;
+
+(******************************************************************************)
+
+Function Get_Class_From_Number (attackNumber: Integer): Class_Type;
+
+Var
+    Temp: Class_Type;
+
+Begin
+    Temp:=MIN_CLASS_TYPE;
+    While Ord(Temp)<>attackNumber do
+       Temp:=Succ(Temp);
+
+    Get_Class_From_Number := Temp;
+End;
 
 (******************************************************************************)
 
@@ -138,7 +221,6 @@ Var
    Temp,Loop: Class_Type;
    Answer: Char;
    T: Line;
-   ClassName: [External]Array [Class_Type] of Varying [13] of char;
 
 Begin
    Repeat
@@ -146,62 +228,94 @@ Begin
          SMG$Begin_Display_Update (ScreenDisplay);
          SMG$Erase_Display (ScreenDisplay);
          SMG$Put_Line (ScreenDisplay,T1,1,0);
-         Pos:=1;
-         T:='';
-         For Loop:=NoClass to Barbarian do
-                 If Loop in ClassSet then
-                         Begin
-                            If Loop<>NoClass then Name:=ClassName[Loop]
-                            Else Name:='No-class';
-                            T:=T+Pad(Name,' ',20);
-                            If Odd(Pos) then
-                               T:=T+'    '
-                            Else
-                               Begin
-                                  SMG$Put_Line (ScreenDisplay,T);
-                                  T:='';
-                               End;
-                            Pos:=Pos+1;
-                         End;
-         SMG$Put_Line (ScreenDisplay,T);
+
+         Print_Current_ClassSet(ClassSet);
+
          SMG$Set_Cursor_ABS (ScreenDisplay,15,1);
-         SMG$Put_Line (ScreenDisplay,
-             'Change which Class?');
-         Pos:=1;
-         T:='';
-         For Loop:=NoClass to Barbarian do
-                 If Loop in ClassSet then
-                         Begin
-                            If Loop<>NoClass then Name:=ClassName[Loop]
-                            Else Name:='No-class';
-                            T:=T
-                                +CHR(Ord(Loop)+65)
-                                +'  '
-                                +Pad(Name,' ',20);
-                            If Odd(Pos) then
-                               T:=T+'    '
-                            Else
-                               Begin
-                                  SMG$Put_Line (ScreenDisplay,T);
-                                  T:='';
-                               End;
-                            Pos:=Pos+1;
-                         End;
-         SMG$Put_Line (ScreenDisplay,T,0);
+         SMG$Put_Line (ScreenDisplay, 'Change which Class?');
+
+         Print_Available_Classes;
+
          SMG$End_Display_Update (ScreenDisplay);
-         Answer:=Make_Choice (['A'..CHR(Ord(Barbarian)+65),' ']);
-         If Answer<>' ' then
-                 Begin
-                    ClassNum:=Ord(Answer)-65;
-                    Temp:=NoClass;
-                    While Ord(Temp)<>ClassNum do Temp:=Succ(Temp);
-                    If Temp in ClassSet then
-                       ClassSet:=ClassSet-[Temp]
-                    Else
-                       ClassSet:=ClassSet+[Temp];
-                 End;
+
+         Answer:=Make_Choice (['A' .. CHR(Ord(Barbarian) + 65), ' ']);
+
+         If Answer <> ' ' then
+             Begin
+                ClassNum:=Ord(Answer) - 65;
+
+                Temp := Get_Class_From_Number(ClassNum);
+
+                If Temp in ClassSet then
+                   ClassSet:=ClassSet - [ Temp ]
+                Else
+                   ClassSet:=ClassSet + [ Temp ];
+             End;
       End;
    Until (* f *) Answer=' ';
+End;
+
+(******************************************************************************)
+
+Procedure Print_Current_Attack_Set (AttackSet: Attack_Set);
+
+Var
+   Pos: Integer;
+   Loop: Attack_Type;
+
+Begin
+     Pos:=1;
+     For Loop:=MIN_ATTACK_TYPE to MAX_ATTACK_TYPE do
+         If Loop in AttackSet then
+             Begin
+                SMG$Put_Chars (ScreenDisplay,Pad(Attack_Name[Loop],' ',20));
+
+                If Odd(Pos) then
+                   SMG$Put_Chars (ScreenDisplay,'    ')
+                Else
+                   Begin
+                      SMG$Put_Line (ScreenDisplay,'');
+                   End;
+                Pos:=Pos+1;
+             End;
+   SMG$Put_Line (ScreenDisplay,'',0);
+End;
+
+(******************************************************************************)
+
+Procedure Print_Available_Attacks;
+
+Var
+  Pos: Integer;
+  Loop: Attack_Type;
+
+Begin
+     Pos:=1;
+     For Loop:=MIN_ATTACK_TYPE to MAX_ATTACK_TYPE do
+         Begin
+            SMG$Put_Chars (ScreenDisplay,CHR(Ord(Loop) + 65) + '  ' + Pad(Attack_Name[Loop],' ',20));
+
+            If Odd(Pos) then
+               SMG$Put_Chars (ScreenDisplay,'    ')
+            Else
+               SMG$Put_Line (ScreenDisplay,'');
+            Pos:=Pos + 1;
+         End;
+End;
+
+(******************************************************************************)
+
+Function Get_Attack_From_Number (attackNumber: Integer): Attack_Type;
+
+Var
+    Temp: Attack_Type;
+
+Begin
+    Temp:=MIN_ATTACK_TYPE;
+    While Ord(Temp)<>attackNumber do
+       Temp:=Succ(Temp);
+
+    Get_Attack_From_Number := Temp;
 End;
 
 (******************************************************************************)
@@ -209,9 +323,8 @@ End;
 [Global]Procedure Change_Attack_Set (Var AttackSet: Attack_Set; T1: Line);
 
 Var
-   Name: Line;
-   Pos,AttackNum: Integer;
-   Temp,Loop: Attack_Type;
+   AttackNum: Integer;
+   Temp: Attack_Type;
    Answer: Char;
 
 Begin (* Change_Attack_Set *)
@@ -220,65 +333,77 @@ Begin (* Change_Attack_Set *)
          SMG$Begin_Display_Update (ScreenDisplay);
          SMG$Erase_Display (ScreenDisplay);
          SMG$Put_Line (ScreenDisplay,T1);
-         Pos:=1;
-         For Loop:=NoAttack to Sleep do
-                 If Loop in AttackSet then
-                         Begin
-                            SMG$Put_Chars (ScreenDisplay,Pad(Attack_Name[Loop],' ',20));
-                            If Odd(Pos) then
-                               SMG$Put_Chars (ScreenDisplay,'    ')
-                            Else
-                               Begin
-                                  SMG$Put_Line (ScreenDisplay,'');
-                               End;
-                            Pos:=Pos+1;
-                         End;
+
+         Print_Current_Attack_Set(AttackSet);
+
          SMG$Set_Cursor_ABS (ScreenDisplay,15,1);
-         SMG$Put_Line (ScreenDisplay,
-             'Change which attack?');
-         Pos:=1;
-         For Loop:=NoAttack to Sleep do
-                 If Loop in AttackSet then
-                         Begin
-                            SMG$Put_Chars (ScreenDisplay,CHR(Ord(Loop)+65)
-                                 +'  '
-                                 +Pad(Attack_Name[Loop],' ',20));
-                            If Odd(Pos) then
-                               SMG$Put_Chars (ScreenDisplay,'    ')
-                            Else
-                               SMG$Put_Line (ScreenDisplay,'');
-                            Pos:=Pos+1;
-                         End;
+         SMG$Put_Line (ScreenDisplay, 'Change which attack?');
+
+         Print_Available_Attacks;
+
          SMG$End_Display_Update (ScreenDisplay);
+
          Answer:=Make_Choice (['A'..CHR(Ord(Sleep)+65),' ']);
+
          If Answer<>' ' then
-                 Begin
-                    AttackNum:=Ord(Answer)-65;
-                    Temp:=NoAttack;
-                    While Ord(Temp)<>AttackNum do Temp:=Succ(Temp);
-                    If Temp in AttackSet then
-                       AttackSet:=AttackSet-[Temp]
-                    Else
-                       AttackSet:=AttackSet+[Temp];
-                 End;
+             Begin
+                AttackNum:=Ord(Answer)-65;
+
+                Temp := Get_Attack_From_Number(AttackNum);
+
+                If Temp in AttackSet then
+                   AttackSet:=AttackSet-[Temp]
+                Else
+                   AttackSet:=AttackSet+[Temp];
+             End;
       End;
    Until (* a *) Answer=' ';
 End; (* Change_Attack_Set *)
 
 (******************************************************************************)
 
-Procedure Change_Screen1 (Number: Integer);
-
-Type
-   TreasureSet = Set of T_Type;
+Function Print_Die (die: Die_Type): Line;
 
 Var
-   Keyboard: [External]Unsigned;
-   Options: Char_Set;
-   X1,Y1,Z1,Num,Loop: Integer;
-   Answer: Char;
-   Strng,T: Line;
-   AlignName: [External]Array [Align_Type] of Packed Array [1..7] of Char;
+  T: Line;
+
+Begin
+  T:=String(die.X,0) + 'D' + String(die.Y,0);
+
+  If die.Z>=0 then
+     T:=T+'+'
+  Else
+     T:=T+'-';
+
+  T:=T+String(die.Z,0);
+
+  Print_Die := T;
+End;
+
+(******************************************************************************)
+
+Procedure List_Treasure_Types (Treasure: TreasureSet);
+
+Var
+  Pos, Loop: Integer;
+
+Begin
+    Pos:=1;
+    For Loop:=1 to 150 do
+       If Loop in Treasure then
+          Begin
+             SMG$Put_Char (ScreenDisplay, String (Loop,0), , (Pos mod 4) * 20);
+
+             If (Pos mod 4) = 0 then
+                SMG$Put_Line (ScreenDisplay, '');
+
+             Pos:=Pos+1;
+          End;
+    SMG$Put_Line (ScreenDisplay,'',0);
+End;
+
+
+(******************************************************************************)
 
 Procedure Treasure_Types (Var Treasure: TreasureSet);
 
@@ -291,39 +416,41 @@ Begin
   Repeat
      Begin
         SMG$Begin_Display_Update (ScreenDisplay);
-        SMG$Put_Line (ScreenDisplay,
-            'The monster has these treasure types');
-        Pos:=1;
-        T:='';
-        For Loop:=1 to 150 do
-           If Loop in Treasure then
-              Begin
-                 T:=T+String (Loop,0);
-                 If (Pos/4)<>(Pos div 4) then
-                    T:=T+'     '
-                 Else
-                    Begin
-                       SMG$Put_Line (ScreenDisplay,T);
-                       T:='';
-                    End;
-                 Pos:=Pos+1;
-              End;
-        SMG$Put_Line (ScreenDisplay,T,0);
+        SMG$Put_Line (ScreenDisplay, 'The monster has these treasure types');
+
+        List_Treasure_Types(Treasure);
+
         SMG$End_Display_Update (ScreenDisplay);
-        SMG$Put_Chars (ScreenDisplay,
-            'Change which type? (1-150)',15,1);
+
+        SMG$Put_Chars (ScreenDisplay, 'Change which type? (1-150)',15,1);
         Num:=Get_Num(ScreenDisplay);
-        If Num>150 then
+
+        If Num > 150 then
            Num:=0
         Else
            If Num>0 then
               If Num in Treasure then
-                 Treasure:=Treasure-[Num]
+                 Treasure:=Treasure - [Num]
               Else
-                 Treasure:=Treasure+[Num];
+                 Treasure:=Treasure + [Num];
      End;
   Until Num=0;
 End;
+
+(******************************************************************************)
+
+Procedure Change_Screen1 (Number: Integer);
+
+
+Var
+   Keyboard: [External]Unsigned;
+   Options: Char_Set;
+   X1,Y1,Z1,Num,Loop: Integer;
+   Answer: Char;
+   Strng,T: Line;
+   AlignName: [External]Array [Align_Type] of Packed Array [1..7] of Char;
+
+
 
 Begin
    Loop:=0;
@@ -333,43 +460,20 @@ Begin
          SMG$Begin_Display_Update (ScreenDisplay);
          SMG$Erase_Display (ScreenDisplay);
          SMG$Home_Cursor (ScreenDisplay);
-         SMG$Put_Line (ScreenDisplay,
-             'Monster #'
-             +String(Number,3) );
-         SMG$Put_Line (ScreenDisplay,
-             '------- ----',1,0);
+         SMG$Put_Line (ScreenDisplay, 'Monster #' + String(Number,3) );
+         SMG$Put_Line (ScreenDisplay, '------- ----', 1, 0);
          For Loop:=1 to 12 do
             Begin (* Do Loop *)
-                T:=CHR(Loop+64)
-                    +'  '
-                    +Cat[Loop]+': ';
+                T:=CHR(Loop+64) + '  ' + Cat[Loop] + ': ';
                 Case Loop of
-                    1: T:=T+String(Monsters[Number].Monster_Number,0);
-                    2: T:=T+Monsters[Number].Name;
-                    3: T:=T+Monsters[Number].Plural;
-                    4: T:=T+Monsters[Number].Real_Name;
-                    5: T:=T+Monsters[Number].Real_Plural;
-                    6: T:=T+AlignName[Monsters[Number].Alignment];
-                    7: Begin
-                          T:=T+String(Monsters[Number].Number_Appearing.X,0)
-                             +'D'
-                             +String(Monsters[Number].Number_Appearing.Y,0);
-                          If Monsters[Number].Number_Appearing.Z>=0 then
-                             T:=T+'+'
-                          Else
-                             T:=T+'-';
-                          T:=T+String(Monsters[Number].Number_Appearing.Z,0);
-                       End;
-                    8: Begin
-                          T:=T+String(Monsters[Number].Hit_Points.X,0)
-                             +'D'
-                             +String(Monsters[Number].Hit_Points.Y,0);
-                          If Monsters[Number].Hit_Points.Z>=0 then
-                             T:=T+'+'
-                          Else
-                             T:=T+'-';
-                          T:=T+String(Monsters[Number].Hit_Points.Z,0);
-                       End;
+                    1: T:=T + String(Monsters[Number].Monster_Number,0);
+                    2: T:=T + Monsters[Number].Name;
+                    3: T:=T + Monsters[Number].Plural;
+                    4: T:=T + Monsters[Number].Real_Name;
+                    5: T:=T + Monsters[Number].Real_Plural;
+                    6: T:=T + AlignName[Monsters[Number].Alignment];
+                    7: T:=T + Print_Die(Monsters[Number].Number_Appearing);
+                    8: T:=T + Print_Die(Monsters[Number].Hit_Points);
                     9: T:=T+MonsterType[Monsters[Number].Kind];
                     10: T:=T+String(Monsters[Number].Armor_Class,0);
                     11: If Monsters[Number].Treasure.In_Lair=[] then
@@ -383,10 +487,13 @@ Begin
                 End;  (* Case *)
             SMG$Put_Line (ScreenDisplay,T);
          End;  (* Do Loop *)
-         Options:=['A'..'N',' '];
+
          SMG$Put_Line (ScreenDisplay, '');
          SMG$End_Display_Update (ScreenDisplay);
+
+         Options:=['A'..'N',' '];
          Answer:=Make_Choice (Options);
+
          Case ORD(Answer)-64 of
              2,3,4,5:  Begin
                          SMG$Set_Cursor_ABS (ScreenDisplay,15,1);
@@ -534,11 +641,60 @@ Begin (* PropertiesP *)
 End; (* PropertiesP *)
 
 
+
+Procedure List_Current_Attacks (Attack: DamageTypes);
+
+Var
+  Loop: Integer;
+  T: Line;
+
+Begin
+     For Loop:=1 to 20 do
+        Begin (* For *)
+           T:=String(Loop,1) + ') ';
+           T:=T + String(Attack[Loop].X, 0) + 'D';
+           T:=T + String(Attack[Loop].Y, 0) + '+';
+           T:=T + String(Attack[Loop].Z, 0);
+
+           If Odd (Loop) then
+              SMG$Put_Chars (ScreenDisplay,T, ,1)
+           Else
+              Begin
+                 SMG$Put_Chars (ScreenDisplay,T, , 40);
+                 SMG$Put_Line (ScreenDisplay,'');
+              End;
+        End; (* For *)
+     SMG$Put_Line (ScreenDisplay, '');
+End;
+
+(******************************************************************************)
+
+Procedure Edit_Attack (Var attack: Die_Type);
+
+Var
+  X1,Y1,Z1: Integer;
+
+Begin
+   SMG$Put_Chars (ScreenDisplay, 'Enter X: ', 16, 1);
+   X1:=Get_Num(ScreenDisplay);
+
+   SMG$Put_Chars (ScreenDisplay, 'Enter Y: ', 17, 1);
+   Y1:=Get_Num(ScreenDisplay);
+
+   SMG$Put_Chars (ScreenDisplay, 'Enter Z: ', 18, 1);
+   Z1:=Get_Num(ScreenDisplay);
+
+   Attack.X:=X1;
+   Attack.Y:=Y1;
+   Attack.Z:=Z1;
+End;
+
+(******************************************************************************)
+
 Procedure Edit_Attacks (Var Attack: DamageTypes);
 
 Var
-  X1,Y1,Z1,Number,Loop: Integer;
-  T: Line;
+  Number: Integer;
 
 Begin (* Edit_Attacks *)
    Repeat
@@ -547,45 +703,23 @@ Begin (* Edit_Attacks *)
          SMG$Erase_Display (ScreenDisplay);
          SMG$Put_Line (ScreenDisplay,'Edit Attacks',,1);
          SMG$Put_Line (ScreenDisplay,'---- -------',,1);
-         For Loop:=1 to 20 do
-            Begin (* For *)
-               T:=String(Loop,1)
-                   +') ';
-               T:=T+String(Attack[Loop].X,0)
-                   +'D';
-               T:=T+String(Attack[Loop].Y,0)
-                   +'+';
-               T:=T+String(Attack[Loop].Z,0);
-               If Odd (Loop) then
-                  SMG$Put_Chars (ScreenDisplay,T)
-               Else
-                  SMG$Put_Line (ScreenDisplay,T);
-               SMG$Put_Line (ScreenDisplay, '');
-            End; (* For *)
+
+         List_Current_Attacks (Attack);
+
          SMG$End_Display_Update (ScreenDisplay);
-         SMG$Put_Chars (ScreenDisplay,
-             'Change which attack? >',,1,1);
+
+         SMG$Put_Chars (ScreenDisplay, 'Change which attack? >', , 1, 1);
+
          Number:=Get_Num(ScreenDisplay);
+
          SMG$Put_Line (ScreenDisplay, '');
          If (Number<=20) and (Number>=1) then
-            Begin (* If in range *)
-               SMG$Put_Chars (ScreenDisplay,
-                   'Enter X: ',16,1);
-               X1:=Get_Num(ScreenDisplay);
-               SMG$Put_Chars (ScreenDisplay,
-                   'Enter Y: ',17,1);
-               Y1:=Get_Num(ScreenDisplay);
-               SMG$Put_Chars (ScreenDisplay,
-                   'Enter Z: ',18,1);
-               Z1:=Get_Num(ScreenDisplay);
-               Attack[Number].X:=X1;
-               Attack[Number].Y:=Y1;
-               Attack[Number].Z:=Z1;
-            End;  (* If in range *)
+            Edit_Attack (Attack[Number]);
       End;  (* Repeat *)
    Until Number=0;
 End;  (* Edit_Attacks *)
 
+(******************************************************************************)
 
 Procedure List_Screen2_Properties(Number: Integer);
 
@@ -598,22 +732,16 @@ Begin (* List_Screen2_Properties *)
         Case Loop of
             13: T:=T+String(Monsters[Number].Levels_Drained);
             14: T:=T+String(Monsters[Number].Years_ages);
-            15: T:=T+String(Monsters[Number].Regenerates)
-                +' HP/Round';
+            15: T:=T+String(Monsters[Number].Regenerates) + ' HP/Round';
             16: T:=T+String(Monsters[Number].Highest.Cleric_Spell);
             17: T:=T+String(Monsters[Number].Highest.Wizard_Spell);
-            18: T:=T+String(Monsters[Number].Magic_Resistance)
-                + '%';
-            19: T:=T+String(Monsters[Number].gate_Success_percentage,0)
-                + '%';
+            18: T:=T+String(Monsters[Number].Magic_Resistance) + '%';
+            19: T:=T+String(Monsters[Number].gate_Success_percentage,0) + '%';
             20: If Monsters[Number].Monster_Called=0 then
                     T:=T+'None'
                 Else
-                    T:=T
-                        +'('
-                        +String(Monsters[Number].Monster_Called)
-                        +')'
-                        +Monsters[Monsters[Number].Monster_Called].Real_Name;
+                    T:=T + '(' + String(Monsters[Number].Monster_Called) + ')'
+                        + Monsters[Monsters[Number].Monster_Called].Real_Name;
             21: If Monsters[Number].Breath_Weapon=NoAttack then
                     T:=T+'None'
                 Else
@@ -654,13 +782,13 @@ End; (* List_Screen2_Properties *)
 Procedure Edit_Screen2_Properties(Number: Integer);
 
 Begin (* Edit_Screen2_Properties *)
- Options:=['A'..'Q',' '];
- Answer:=Make_Choice (Options);
+   Options:=['A'..'Q',' '];
+   Answer:=Make_Choice (Options);
+
    Case ORD(Answer)-52 of
         13,14,15,16,17,18,19,20,22,26,29: Begin
              SMG$Set_Cursor_ABS (ScreenDisplay,22,1);
-             SMG$Put_Line (ScreenDisplay,
-                 'Enter an Integer.');
+             SMG$Put_Line (ScreenDisplay, 'Enter an Integer.');
              Num:=Get_Num(ScreenDisplay);
              Case ORD(Answer)-52 of
                     13: If ABS(Num)<32768 then
@@ -710,14 +838,8 @@ Begin
          SMG$Begin_Display_Update (ScreenDisplay);
          SMG$Erase_Display (ScreenDisplay);
          SMG$Home_Cursor (ScreenDisplay);
-         SMG$Put_Line (ScreenDisplay,
-             'Monster #'
-             +String(Number,3)
-             +' ('
-             +Monsters[Number].Real_Name
-             +')');
-         SMG$Put_Line (ScreenDisplay,
-             '------- ----');
+         SMG$Put_Line (ScreenDisplay, 'Monster #' + String(Number,3) +' (' + Monsters[Number].Real_Name +')');
+         SMG$Put_Line (ScreenDisplay, '------- ----');
          List_Screen2_Properties(Number);
          Display_Image (Pics[Monsters[Number].Picture_Number].Image);
          SMG$End_Display_Update (ScreenDisplay);
@@ -740,23 +862,21 @@ Begin
       Begin
          SMG$Begin_Display_Update (ScreenDisplay);
          SMG$Erase_Display (ScreenDisplay);
-         If Monsters[Number].Monster_number<>Number then
+
+         If Monsters[Number].Monster_number <> Number then
             Monsters[Number].Breath_Weapon:=NoAttack;
-         SMG$Put_Line(ScreenDisplay,
-             'Monster #'
-             +String(Number,0)
-             +'  '
-             +Monsters[Number].Real_Name,1,0);
-         SMG$Put_Line (ScreenDisplay,
-            'Which screen? (1 or 2, <SPACE> exits)',0,0);
+
+         SMG$Put_Line(ScreenDisplay, 'Monster #' + String(Number,0) + '  ' + Monsters[Number].Real_Name, 1, 0);
+         SMG$Put_Line(ScreenDisplay, 'Which screen? (1 or 2, <SPACE> exits)', 0, 0);
          SMG$End_Display_Update (ScreenDisplay);
+
          Options:=['1','2',' '];
          Answer:=Make_Choice (Options);
+
          If Answer='1' then
             Change_Screen1 (Number)
-        Else
-            If Answer='2' then
-                Change_Screen2 (Number);
+         Else If Answer='2' then
+            Change_Screen2 (Number);
       End;
    Until (* e *) Answer=' ';
 End;
@@ -778,56 +898,47 @@ Begin
       Begin
          SMG$Begin_Display_Update (ScreenDisplay);
          SMG$Erase_Display (ScreenDisplay);
+
          For Loop:=First to Last do
             Begin
-               SMG$Put_Chars (ScreenDisplay,
-                  String(Loop,3)
-                  +' '
-                  +Pad(Monsters[Loop].Real_Name,' ',62));
-               SMG$Put_Chars (ScreenDisplay,
-                  String(Monsters[Loop].Hit_Points.X,3)
-                  +' HD');
-               SMG$Put_Line (ScreenDisplay,
-                  ' '
-                  +MonsterType[Monsters[Loop].Kind]);
+               SMG$Put_Chars (ScreenDisplay, String(Loop,3) + ' ' + Pad(Monsters[Loop].Real_Name,' ',62));
+               SMG$Put_Chars (ScreenDisplay, String(Monsters[Loop].Hit_Points.X,3) +' HD');
+               SMG$Put_Line (ScreenDisplay, ' ' + MonsterType[Monsters[Loop].Kind]);
             End;
+
          SMG$Put_Line (ScreenDisplay,'F)orward, B)ack, E)xit, C)hange',0);
          SMG$End_Display_Update (ScreenDisplay);
+
          Options:=['F','B','E','C'];
          Answer:=Make_Choice (options);
+
          If (Answer='F') and (Last<450) then
             Begin
                First:=Last;
-               Last:=First+18;
-               If Last>450 then Last:=450;
+               Last:=Min(First+18, 450);
             End
-         Else
-           If (Answer='F') then
-              Begin
-                 First:=1;  Last:=First+18;
-              End
-           Else
-              If (Answer='B') and (First>=18) then
-                 Begin
-                    Last:=First;
-                    First:=First-18;
-                    If First<1 then First:=1;
-                 End
-              Else
-                 If (Answer='B') then
-                    Begin
-                       Last:=450;
-                       First:=Last-18;
-                    End
-                 Else
-                    If (Answer='C') then
-                       Begin
-                          SMG$Put_Chars (ScreenDisplay,
-                              'Change which monster? --->',24,1,1);
-                          Number:=Get_Num(ScreenDisplay);
-                          If (Number>0) and (Number<451) then
-                             Change_Monster (Number);
-                       End;
+         Else If (Answer='F') then
+            Begin
+               First:=1;
+               Last:=First + 18;
+            End
+         Else If (Answer='B') and (First>=18) then
+            Begin
+               Last:=First;
+               First:=Max(First - 18, 1);
+            End
+         Else If (Answer='B') then
+            Begin
+               Last:=450;
+               First:=Last-18;
+            End
+         Else If (Answer='C') then
+           Begin
+              SMG$Put_Chars (ScreenDisplay, 'Change which monster? --->',24,1,1);
+              Number:=Get_Num(ScreenDisplay);
+              If (Number > 0) and (Number < 451) then
+                 Change_Monster (Number);
+           End;
       End;
    Until Answer='E';
 End;
@@ -841,23 +952,17 @@ Var
   Temp_Record: Monster_Record;
 
 Begin
-   SMG$Put_Chars (ScreenDisplay,
-       'Swap record A ->');
+   SMG$Put_Chars (ScreenDisplay, 'Swap record A ->');
    Repeat
       Old_Slot:=Get_Num(ScreenDisplay)
-   Until (Old_Slot>-1) and (Old_Slot<451);
+   Until (Old_Slot > -1) and (Old_Slot < 451);
 
-   SMG$Put_Chars (ScreenDisplay,
-      'Swap record B ->');
+   SMG$Put_Chars (ScreenDisplay, 'Swap record B ->');
    Repeat
       New_Slot:=Get_Num(ScreenDisplay)
-   Until (New_Slot>-1) and (New_Slot<451);
+   Until (New_Slot > -1) and (New_Slot < 451);
 
-   SMG$Put_Line (ScreenDisplay,
-      'Swap: '
-      +Monsters[New_Slot].Real_Name
-      +' with '
-      +Monsters[Old_Slot].Real_Name);
+   SMG$Put_Line (ScreenDisplay, 'Swap: ' + Monsters[New_Slot].Real_Name + ' with ' + Monsters[Old_Slot].Real_Name);
    SMG$Put_Line (ScreenDisplay, 'Confirm? (Y/N)');
 
    If Yes_or_No='Y' then
@@ -894,13 +999,8 @@ Begin
       End;
    Until (New_Slot>-1) and (New_Slot<451);
 
-   SMG$Put_Line (ScreenDisplay,
-       'Copy:  '
-       +Monsters[New_Slot].Real_Name
-       +' over '
-       +Monsters[Old_Slot].Real_Name);
-   SMG$Put_Line (ScreenDisplay,
-       'Confirm? (Y/N)');
+   SMG$Put_Line (ScreenDisplay, 'Copy:  ' + Monsters[New_Slot].Real_Name + ' over ' + Monsters[Old_Slot].Real_Name);
+   SMG$Put_Line (ScreenDisplay, 'Confirm? (Y/N)');
 
    If Yes_or_No='Y' then
       Begin
@@ -918,20 +1018,14 @@ Var
    New,X: Integer;
 
 Begin
+  SMG$Put_Chars (ScreenDisplay, 'Slot to insert monster ->');
    Repeat
-      Begin
-         SMG$Put_Chars (ScreenDisplay,
-            'Slot to insert monster ->');
-            New:=Get_Num(ScreenDisplay);
-      End;
+      New:=Get_Num(ScreenDisplay);
    Until (New>-1) and (New<451);
 
-   SMG$Put_Line (ScreenDisplay,
-       'Kill: '
-       +Monsters[450].Real_Name
-       +'?');
-   SMG$Put_Line (ScreenDisplay,
-       'Confirm? (Y/N)');
+   SMG$Put_Line (ScreenDisplay, 'Kill: ' + Monsters[450].Real_Name + '?');
+   SMG$Put_Line (ScreenDisplay, 'Confirm? (Y/N)');
+
    Answer:=Yes_or_No;
 
    If Answer='Y' then
@@ -952,18 +1046,14 @@ Var
    Old,X: Integer;
 
 Begin
-   SMG$Put_Chars (ScreenDisplay,
-       'Slot to delete monster ->');
+   SMG$Put_Chars (ScreenDisplay, 'Slot to delete monster ->');
    Repeat
       Old:=Get_Num(ScreenDisplay);
    Until (Old>-1) and (Old<451);
 
-   SMG$Put_Line (ScreenDisplay,
-       'Kill: '
-       +Monsters[Old].Real_Name
-       +'?');
-   SMG$Put_Line (ScreenDisplay,
-      'Confirm? (Y/N)');
+   SMG$Put_Line (ScreenDisplay, 'Kill: ' + Monsters[Old].Real_Name + '?');
+   SMG$Put_Line (ScreenDisplay, 'Confirm? (Y/N)');
+
    Answer:=Yes_or_No;
 
    If Answer='Y' then
@@ -985,19 +1075,14 @@ Begin
       Begin
          SMG$Begin_Display_Update (ScreenDisplay);
          SMG$Erase_Display (ScreenDisplay);
-         SMG$Put_Line (ScreenDisplay,
-             'Edit Monster',,1);
-         SMG$Put_Line (ScreenDisplay,
-             'Edit which monster?');
+         SMG$Put_Line (ScreenDisplay, 'Edit Monster',,1);
+         SMG$Put_Line (ScreenDisplay, 'Edit which monster?');
          SMG$End_Display_Update (ScreenDisplay);
-         SMG$Put_Chars (ScreenDisplay,
-             '(1-450, -6 copies, '
-             +'-5 swaps, -4 inser'
-             +'ts, -3 deletes, -2'
-             +' lists, -1 exits)',3,1);
-         SMG$Put_Chars (ScreenDisplay,
-             '--->',4,1);
+         SMG$Put_Chars (ScreenDisplay, '(1-450, -6 copies, -5 swaps, -4 inserts, -3 deletes, -2 lists, -1 exits)', 3, 1);
+         SMG$Put_Chars (ScreenDisplay, '--->', 4, 1);
+
          Number:=Get_Num(ScreenDisplay);
+
          SMG$Set_Cursor_ABS (ScreenDisplay,4,1);
          If (Number > 0) and (Number < 451) then Change_Monster (Number);
          If Number=-2 then Print_Table;

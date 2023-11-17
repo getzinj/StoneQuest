@@ -35,7 +35,10 @@ Value
    AttackName [Statue,1]:='smashes';           AttackName[Statue,2]:='swings';
    AttackName [Reptile,1]:='lashes out';       AttackName[Reptile,2]:='strikes';
    AttackName [Enchanted,1]:='swings';         AttackName[Enchanted,2]:='thrusts';
-
+   AttackName [ELEMENTAL,1]:='swings';         AttackName[ELEMENTAL,2]:='smashes';
+   AttackName [FEY,1]:='thrusts';              AttackName[FEY,2]:='slashes';
+   AttackName [HUMANOID,1]:='slashes';         AttackName[HUMANOID,2]:='thrusts';
+   AttackName [MONSTROSITIES,1]:='swings';     AttackName[MONSTROSITIES,2]:='swats';
 
 [External]Function  Alive (Character: Character_Type): Boolean;External;
 [External]Function  Compute_Hit_Die (Character: Character_Type): Integer;external;
@@ -599,7 +602,7 @@ Begin
                   T:=T + 'once'
                Else
                   T:=T + String(hits) + ' times';
-               T:=T + 'for ' + String(Damage) + ' damage!';
+               T:=T + ' for ' + String(Damage) + ' damage!';
 
                SMG$Put_Line (MessageDisplay, T, Wrap_Flag:=SMG$M_WRAP_WORD);
 

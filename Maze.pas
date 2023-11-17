@@ -604,8 +604,11 @@ Var
 Begin { Initialize }
    Leave_Maze:=False;        Direction:=North;
    Time_Delay:=300;
-   Maze:=Zero; PosX:=1;     PosY:=20;    PosZ:=1;
 
+   Maze:=Zero;
+   PosX:=1;
+   PosY:=1;
+   PosZ:=1;
 
    Previous_Spot:=Corridor;
    Round_Counter:=1;         Minute_Counter:=1;
@@ -613,12 +616,13 @@ Begin { Initialize }
    Messages:=Read_Messages;
    Init_Stack (Places);
    Rounds_Left:=Zero;
-   Initialize_Party (Member,Current_Party_Size,Party_Size);
+   Initialize_Party (Member, Current_Party_Size, Party_Size);
 
-   Maze:=Get_Level (1,Maze);
+   Maze:=Get_Level (1, Maze);
 
    Show_Place:=Auto_Load;
    Dont_Draw:=Not Show_Place;
+
    If Auto_Load then
       Begin
          Saved_Game_Record:=Load_Saved_Game;
@@ -647,10 +651,16 @@ Begin { Initialize }
       End;
 
    Insert_Place (PosX,PosY,PosZ,Places);
+
    Draw_Screen (TRUE,Member,Current_Party_Size,Party_Size);
-   If Not Show_Place then Show_Image (37,ViewDisplay);
+
+   If Not Show_Place then
+       Show_Image (37,ViewDisplay);
+
    Party_Box (Member,Current_Party_Size,Party_Size,Leave_Maze);
-   If Rounds_Left[Comp]>0 then SMG$Label_Border (ViewDisplay,DirectionName[Direction],SMG$K_TOP);
+
+   If Rounds_Left[Comp]>0 then
+      SMG$Label_Border (ViewDisplay,DirectionName[Direction],SMG$K_TOP);
 
  { SMG$END_PASTEBOARD_UPDATE in CAMP module }
 
@@ -674,12 +684,12 @@ Begin
   End;
 
   Base:=Correct.Base_Monster_Number;
-  Base:=Min(Base+Random_Number (Correct.Addition), 450);
+  Base:=Min(Base + Random_Number (Correct.Addition), 450);
 
   Choose_Monster:=Base;
 
   If Has_Light then
-    Correct.Probability:=Correct.Probability + 1;   { Light draws attention - TODO: Maybe it should be a bigger addition? }
+    Correct.Probability:=Correct.Probability + 15;   { Light draws attention }
 
   Encountered:=Made_Roll (Correct.Probability);
 End;
@@ -715,9 +725,9 @@ Begin
    For Loop:=1 to Party_Size do
       Begin
         Case Member[Loop].Alignment of
-           Evil: Temp:=-1;
+           Evil:    Temp:=-1;
            Neutral: Temp:=Temp+1;
-           Good: Temp:=Temp+2;
+           Good:    Temp:=Temp+2;
         End;
       End;
    Evil_Party:=(Temp < 0);
@@ -824,8 +834,8 @@ Begin
 
          { Show the angel and make 'em sweat for 2 seconds }
 
-         SMG$Paste_Virtual_Display (AngelDisplay,Pasteboard,2,2);
-         SMG$Erase_Display (GraveDisplay,21,1);
+         SMG$Paste_Virtual_Display (AngelDisplay, Pasteboard, 2, 2);
+         SMG$Erase_Display (GraveDisplay, 21, 1);
 
          Delay(2);
 
@@ -833,13 +843,13 @@ Begin
 
          If Evil_Party (Member,Party_Size) then T:='We are not through with thee yet'
          Else                                   T:='Thine efforts have not gone unnoticed';
-         SMG$Put_Chars (AngelDisplay,T,22,39-(T.length div 2),1);
+         SMG$Put_Chars (AngelDisplay, T, 22, 39 - (T.length div 2), 1);
 
          Delay (2);
 
          If Evil_Party (Member,Party_Size) then T:='Go back and wreak further havoc!'
          Else                                   T:='Thou shalt live again!';
-         SMG$Put_Chars (AngelDisplay,T,22,39-(T.length div 2),1);
+         SMG$Put_Chars (AngelDisplay, T, 22, 39 - (T.length div 2), 1);
 
          Delay (4);
 
@@ -859,12 +869,12 @@ Var
 
 Begin
    Name:=Member[Character].Name;
-   If Name.Length>12 then
+   If Name.Length > 12 then
       Name:=SUBSTR(Name,1,12);
 
-   SMG$Draw_Rectangle (GraveDisplay,Y,X,Y+9,X+12);
-   SMG$Put_Chars(GraveDisplay,'R.I.P.',Y+1,X+3);
-   SMG$Put_Chars (GraveDisplay,Name+'',Y+3,X+6-(Name.Length div 2));
+   SMG$Draw_Rectangle (GraveDisplay, Y, X, Y + 9, X + 12);
+   SMG$Put_Chars(GraveDisplay,'R.I.P.', Y + 1, X + 3);
+   SMG$Put_Chars (GraveDisplay,Name+'', Y + 3, X + 6 - (Name.Length div 2));
 End;
 
 (******************************************************************************)
@@ -876,9 +886,9 @@ Var
    CorX,CorY: Coordinate_Matrix;
 
 Begin
-  CorX[1]:=10;     CorY[1]:=1;
-  CorX[2]:=32;     CorY[2]:=1;
-  CorX[3]:=54;     CorY[3]:=1;
+  CorX[1]:=10;     CorY[1]:= 1;
+  CorX[2]:=32;     CorY[2]:= 1;
+  CorX[3]:=54;     CorY[3]:= 1;
   CorX[4]:=10;     CorY[4]:=11;
   CorX[5]:=32;     CorY[5]:=11;
   CorX[6]:=54;     CorY[6]:=11;
@@ -945,11 +955,13 @@ Var
    Encountered,No_Magic,Alarm_Off,Dummy: Boolean;
 
 Begin
-   No_Magic:=(Maze.Special_Table[Maze.Room[PosX,PosY].Contents].Special=AntiMagic);
+   No_Magic:=(Maze.Special_Table[Maze.Room[PosX,PosY].Contents].Special = AntiMagic);
 
-   Alarm_Off:=False;  Encountered:=False;   Dummy:=False;
+   Alarm_Off:=False;
+   Encountered:=False;
+   Dummy:=False;
 
-   If Just_Kicked and (Maze.Room[PosX,PosY].Kind=Room) then Area:=Room { If we JUST walked into the room, it's a lair encounter }
+   If Just_Kicked and (Maze.Room[PosX,PosY].Kind=Room) then Area:=Room       { If we JUST walked into the room, it's a lair encounter }
    Else                                                     Area:=Corridor;  { Otherwise, it's wandering }
 
    Monster_Encountered:=Choose_Monster (Maze.Monsters,Area,Encountered);
@@ -963,7 +975,7 @@ Begin
          While Alarm_Off do
             Begin
                Monster_Encountered:=Choose_Monster (Maze.Monsters,Area,Dummy);
-              Run_Encounter_Aux (Monster_Encountered,Member,Current_Party_Size,Party_Size,Alarm_Off,Area,No_Magic,Time_Delay);
+               Run_Encounter_Aux (Monster_Encountered,Member,Current_Party_Size,Party_Size,Alarm_Off,Area,No_Magic,Time_Delay);
             End;
       End;
 
@@ -977,7 +989,7 @@ End;
 
 (******************************************************************************)
 
-Procedure New_Round (Var Round_Counter: Integer; Var Member: Party_Type; Current_Party_Size,Party_Size: Integer);
+Procedure New_Round (Var Round_Counter: Integer; Var Member: Party_Type; Current_Party_Size, Party_Size: Integer);
 
 Var
    Character: Integer;
@@ -1008,16 +1020,22 @@ Begin
    OldZ:=PosZ;
 
    SMG$Begin_Pasteboard_Update (Pasteboard);
+
    Camp (Member,Current_Party_Size,Party_Size,Leave_Maze,Auto_Save,Time_Delay);
+
    If Not Auto_Save then
       Begin
          New_Spot:=True;
+
          Maze:=Get_Level (PosZ,Maze,OldZ);
+
          SMG$Begin_Pasteboard_Update (Pasteboard);
          SMG$Set_Cursor_Mode (Pasteboard,1);
+
          Spells_Box (Rounds_Left);
          Party_Box (Member, Current_Party_Size,Party_Size,Leave_Maze);
          Draw_View (Direction,New_Spot,Member,Current_Party_Size);
+
          SMG$End_Pasteboard_Update (Pasteboard);
       End;
 End;
@@ -1051,9 +1069,12 @@ Begin
    SMG$Erase_Display (MessageDisplay);
    SMG$Put_Line (MessageDisplay,'Current time delay: '+String(Time_Delay));
    SMG$Put_Chars (MessageDisplay,'New Delay (0-999, -1 exits) :');
+
    Change:=Get_Num(MessageDisplay);
+
    If (Change>-1) and (change<1000) then
       Time_Delay:=Change;
+
    SMG$Erase_Display (MessageDisplay);
 End;
 
@@ -1063,13 +1084,14 @@ Function Print_Exit (exit: Exit_Type): Line;
 
 Begin
   case exit of
-    Passage: return 'Passage';
-    Wall: return 'Wall';
-    Door: return 'Door';
-    Secret: return 'Secret';
-    Transparent: return 'Transparent';
-    Walk_Through: return 'Walk_Through';
-    otherwise return 'Unknown';
+     Passage:      return 'Passage';
+     Wall:         return 'Wall';
+     Door:         return 'Door';
+     Secret:       return 'Secret';
+     Transparent:  return 'Transparent';
+     Walk_Through: return 'Walk_Through';
+
+     otherwise     return 'Unknown';
   end;
 End;
 
@@ -1082,15 +1104,9 @@ Var
 
 Begin
    Spot:=Maze.Room[PosX,PosY];
-   SMG$Put_Line (MessageDisplay,
-      'North: '
-      +Print_Exit(Spot.North)
-      +', South: '
-      +Print_Exit(Spot.South)
-      +', East: '
-      +Print_Exit(Spot.East)
-      +', West: '
-      +Print_Exit(Spot.West));
+   SMG$Put_Line (MessageDisplay, 'North: ' + Print_Exit(Spot.North) + ', South: '
+      + Print_Exit(Spot.South) +', East: ' + Print_Exit(Spot.East)  + ', West: '
+      + Print_Exit(Spot.West));
 End;
 
 (******************************************************************************)
@@ -1112,14 +1128,8 @@ End;
 Procedure Display_Location_Info (Direction: Direction_Type);
 
 Begin
-  SMG$Put_Line (MessageDisplay,
-      'Location is X:'
-      +String(PosX)
-      +', Y: '
-      +String(PosY)
-      +', Z: '
-      +String(PosZ));
-   SMG$Put_line(MessageDisplay,'Facing: ' + print_direction(direction));
+  SMG$Put_Line (MessageDisplay, 'Location is X: ' + String(PosX) +', Y: ' + String(PosY) + ', Z: ' + String(PosZ));
+  SMG$Put_line(MessageDisplay, 'Facing: ' + print_direction(direction));
 
   Print_Debug_Room_Info(PosX,PosY);
 End;
@@ -1137,12 +1147,17 @@ Var
 
 Begin
    Options:=['T','K','F',Up_Arrow,'L','R','C','S',Left_Arrow,Right_Arrow,'E'];
-   If Not Party_Movable (Member,Current_Party_Size) then Options:=['S','T'];
+   If Not Party_Movable (Member,Current_Party_Size) then
+       Options:=['S','T'];
+
    Answer:=Make_Choice (Options,Time_Out:=5,Time_Out_Char:='S');
+
    Just_Kicked:=False;
    Round_Counter:=Round_Counter+1;
-   If Round_Counter=5 then New_Round (Round_Counter,Member,Current_Party_Size,Party_Size);
+   If Round_Counter=5 then
+       New_Round (Round_Counter,Member,Current_Party_Size,Party_Size);
    Minute_Counter:=Minute_Counter+1;
+
    Case Answer of
                     'S': Update_Status (Member,Current_Party_Size,Party_Size,Leave_Maze,Rounds_Left);
                     'C': Set_Up_Camp   (Member,Current_Party_Size,Party_Size,Leave_Maze,Auto_Save,New_Spot,Time_Delay);
@@ -1152,11 +1167,12 @@ Begin
        Right_Arrow, 'R': Turn_Right    (Direction);
                     'T': Change_Time   (Time_Delay);
    End;
-   If Not Auto_Save then Fix_Compass (Direction,Rounds_Left);
+
+   If Not Auto_Save then
+       Fix_Compass (Direction,Rounds_Left);
+
    If debug then
-      Begin
-         Display_Location_Info (Direction);
-      End;
+      Display_Location_Info (Direction);
 End;
 
 (******************************************************************************)
