@@ -232,9 +232,9 @@ Var
 
 Begin
    T:='';
-   That_Level := Character.Level - Drained;  { TODO: Handle PREVIOUS LEVEL, TOO! }
+   That_Level := (Character.Level + Character.Previous_Lvl) - Drained;
 
-   If That_Level<1 then
+   If That_Level < 1 then
       Begin
          T:=Character.Name + ' is destroyed!';
          Character.Status:=Deleted;
@@ -247,7 +247,7 @@ Begin
         Drain_Levels_From_Character (Character,Drained);
       End;
 
-   SMG$Put_Line (MessageDisplay,T,0,1);
+   SMG$Put_Line (MessageDisplay, T, 0, 1);
    Delay (3 * Delay_Constant);
 End;
 
@@ -258,9 +258,9 @@ Procedure Age_Character (Var Character: Character_Type;  Years: Integer:=1);
 Begin
    If Alive (Character) then
       Begin
-         Character.Age:=Character.Age+(365 * Years);
+         Character.Age:=Character.Age + (365 * Years);
 
-         SMG$Put_Line (MessageDisplay,Character.Name + ' is aged ' + String(years) + 'years!',0,1);
+         SMG$Put_Line (MessageDisplay, Character.Name + ' is aged ' + String(years) + 'years!', 0, 1);
          Delay (2 * Delay_Constant);
       End;
 End;
@@ -271,7 +271,7 @@ Procedure Check_Critical_Hit (Monster: Monster_Record; Props: Property_Set; Var 
 
 Begin
    If (Autokills in Props) and Alive (Character) then
-      If Critical_Hit (Monster.Hit_Points.X,Max(Character.Level,Character.Previous_Lvl)) then { TODO: Should these be combined? I think so. }
+      If Critical_Hit (Monster.Hit_Points.X, Character.Level + Character.Previous_Lvl) then
          Begin
             Character.Curr_HP := 0;
 
@@ -290,7 +290,7 @@ Var
   Changed: boolean;
 
 Begin
-   If (Levels_Drained<>0) and Alive(Character) then
+   If (Levels_Drained <> 0) and Alive(Character) then
       Begin
          If LvlDrain in resists then
             Changed:=Made_Roll(25)

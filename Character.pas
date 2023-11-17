@@ -356,7 +356,7 @@ Begin
    SMG$Erase_Display (ScreenDisplay);
 
    X:=1;  Y:=1;
-   For Column:=CrLt to Heal do
+   For Column:=MIN_SPELL_NAME to Heal do
       Begin
          Print_Spell (Book,Column,Cursor,X,Y);
          Y:=Y+1;
@@ -370,7 +370,7 @@ Begin
       End;
 
    X:=40;  Y:=1;
-   For Column:=Succ(DuBl) to DetS do
+   For Column:=Succ(DuBl) to MAX_SPELL_NAME do
       Begin
          Print_Spell (Book,Column,Cursor,X,Y);
          Y:=Y+1;
@@ -396,12 +396,12 @@ Begin
          Key:=Make_Choice ([Up_arrow,Down_Arrow,' ',CHR(13)]);
 
          Case Key of
-            Up_Arrow:  If Cursor=CrLt then
-                          Cursor:=DetS
+            Up_Arrow:  If Cursor=MIN_SPELL_NAME then
+                          Cursor:=MAX_SPELL_NAME
                        Else
                           Cursor:=Pred(Cursor);
-            Down_Arrow: If Cursor=DetS then
-                           Cursor:=CrLt
+            Down_Arrow: If Cursor=MAX_SPELL_NAME then
+                           Cursor:=MIN_SPELL_NAME
                         Else
                            Cursor:=Succ(Cursor);
             ' ': If Cursor in Book then

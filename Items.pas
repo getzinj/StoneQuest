@@ -90,7 +90,7 @@ Begin
    Cursor;
    SMG$Read_String (Keyboard,Spellname,Display_ID:=ScreenDisplay);
    No_Cursor;
-   For Loop:=Crlt to DetS do
+   For Loop:=MIN_SPELL_NAME to MAX_SPELL_NAME do
       If (STR$Case_Blind_Compare(Spell[Loop]+'',SpellName)=0) then
          Location:=Loop;
    SpellChosen:=Location;

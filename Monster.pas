@@ -392,7 +392,7 @@ Begin
     For Loop:=1 to 150 do
        If Loop in Treasure then
           Begin
-             SMG$Put_Char (ScreenDisplay, String (Loop,0), , (Pos mod 4) * 20);
+             SMG$Put_Chars (ScreenDisplay, String (Loop,0), , (Pos mod 4) * 20);
 
              If (Pos mod 4) = 0 then
                 SMG$Put_Line (ScreenDisplay, '');
@@ -408,7 +408,7 @@ End;
 Procedure Treasure_Types (Var Treasure: TreasureSet);
 
 Var
-  Pos: Integer;
+  Pos, Num: Integer;
   Loop: T_Type;
   T: Line;
 
@@ -427,12 +427,11 @@ Begin
 
         If Num > 150 then
            Num:=0
-        Else
-           If Num>0 then
-              If Num in Treasure then
-                 Treasure:=Treasure - [Num]
-              Else
-                 Treasure:=Treasure + [Num];
+        Else If Num>0 then
+           If Num in Treasure then
+              Treasure:=Treasure - [ Num ]
+           Else
+              Treasure:=Treasure + [ Num ];
      End;
   Until Num=0;
 End;

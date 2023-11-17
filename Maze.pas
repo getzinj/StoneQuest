@@ -997,7 +997,7 @@ Var
 
 Begin
   Round_Counter:=1;
-  For Spell:=Crlt to DetS do
+  For Spell:=MIN_SPELL_NAME to MAX_SPELL_NAME do
      If Rounds_Left[Spell]>0 then
         Rounds_Left[Spell]:=Rounds_Left[Spell]-1;
 

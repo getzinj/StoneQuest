@@ -61,7 +61,7 @@ Begin { Select Camp Spell }
        prompt_string:='--->');
    No_Cursor;
    If SpellName.Length<4 then SpellName:=Pad(SpellName,' ',4);
-   For Loop:=CrLt to DetS do
+   For Loop:=MIN_SPELL_NAME to MAX_SPELL_NAME do
        If (STR$Case_Blind_Compare(Spell[Loop]+'',SpellName)=0) or
           (STR$Case_Blind_Compare(Long_Spell[Loop]+'',SpellName)=0) then
           Location:=Loop;

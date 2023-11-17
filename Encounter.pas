@@ -1557,7 +1557,7 @@ Begin
    Else
       Begin
          X:=1;  Y:=1;
-         For Loop:=CrLt to DetS do
+         For Loop:=MIN_SPELL_NAME to MAX_SPELL_NAME do
             If Loop in SpellList then
                Begin
                   SMG$Put_Chars (SpellListDisplay,Long_Spell[Loop],y,x);
@@ -1623,7 +1623,7 @@ Begin
 
         If SpellName <> '?' then
            Begin
-              For Loop:=CrLt to DetS do
+              For Loop:=MIN_SPELL_NAME to MAX_SPELL_NAME do
                  If (STR$Case_Blind_Compare(Spell[Loop]+'',SpellName) = 0) or
                     (STR$Case_Blind_Compare(Long_Spell[Loop]+'',SpellName) = 0) then
                        Location:=Loop;

@@ -188,11 +188,9 @@ Var
 Begin { Print Equipment }
   SMG$Begin_Display_Update (ScreenDisplay);
   SMG$Set_Cursor_ABS (ScreenDisplay,14,5);
-  SMG$Put_Line (ScreenDisplay,
-      '* = Equipped,  - = Cu'
-      +'rsed,  ? = Unknown, '
-      +' # = Unusable');
-  For Eq:=1 to 8 do Print_Item (Character,Eq);
+  SMG$Put_Line (ScreenDisplay, '* = Equipped,  - = Cursed,  ? = Unknown,  # = Unusable');
+  For Eq:=1 to 8 do
+      Print_Item (Character,Eq);
   SMG$End_Display_Update (ScreenDisplay);
 End;  { Print Equipment }
 
@@ -210,14 +208,15 @@ Begin { Choose Item }
         SMG$Begin_Display_Update (ScreenDisplay);
         SMG$Erase_Display (ScreenDisplay,19,1);
         Print_Equipment (Character);
-        SMG$Put_Line (ScreenDisplay,
-            Action
-            +' which item? (1-'
-            +String(Character.No_of_items,1)
-            +', [RETURN] exits)', 0);
+        SMG$Put_Line (ScreenDisplay, Action + ' which item? (1-' + String(Character.No_of_items,1) + ', [RETURN] exits)', 0);
+        SMG$End_Display_Update (ScreenDisplay);
+
         Choices:=['1'..CHR(Character.No_of_Items+ZeroOrd),CHR(13)];
         Answer:=Make_Choice(Choices);
-        If Answer=CHR(13) then Answer:='0';
+
+        If Answer=CHR(13)
+            then Answer:='0';
+
         Choose_Item:=Ord(Answer)-ZeroOrd;
      End
    Else
@@ -309,7 +308,7 @@ Var
 
 Begin
    Num:=Choose_Item (Character, 'Drop');
-   If Num<>0 then
+   If Num <> 0 then
      If Character.Item[Num].Cursed then
         Begin
            SMG$Put_Line (ScreenDisplay,'That item is cursed.',0);
@@ -720,7 +719,7 @@ Begin
    X:=1;  Y:=2;
 
    For Level:=1 to 9 do
-      For Loop:=CrLt to DetS do
+      For Loop:=MIN_SPELL_NAME to MAX_SPELL_NAME do
          If (Loop in (SpellList * List[Level])) and Not (Loop in Printed) then
             Begin
                Printed:=Printed+[Loop];
@@ -1104,8 +1103,7 @@ Begin { Trade Equipment }
    Item_Number:=0;
    Repeat
       Begin
-         Item_Number:=Choose_Item (Character,
-            'Trade');
+         Item_Number:=Choose_Item (Character, 'Trade');
          If Item_Number>0 then
             If Character.Item[Item_Number].Cursed then
                Begin
@@ -1136,20 +1134,19 @@ Var
    Number: Integer;
 
 Begin { Trade Stuff }
-   Number:=Choose_Character(
-      'Trade with whom?',
-      Party,
-      Party_Size,
-      False,
-      True);
+   Number:=Choose_Character('Trade with whom?', Party, Party_Size, False, True);
+
    SMG$Begin_Display_Update (ScreenDisplay);
    SMG$Erase_Display (ScreenDisplay,19,1);
    Print_Equipment (Character);
    SMG$End_Display_Update (ScreenDisplay);
-   If Number<>0 then
+
+   If Number <> 0 then
       Begin
-         If Character.Gold>0 then Trade_Gold (Character,Number,Party,Party_Size);
-         If (Character.No_of_items>0) and (Party[Number].No_of_Items<8) then Trade_Equipment (Character,Number,Party);
+         If Character.Gold > 0 then
+            Trade_Gold (Character,Number,Party,Party_Size);
+         If (Character.No_of_items > 0) and (Party[Number].No_of_Items < 8) then
+            Trade_Equipment (Character,Number,Party);
       End;
 End;  { Trade Stuff }
 
@@ -1263,7 +1260,7 @@ Begin { Show Options }
            Choices:=Choices+['R'];
      End;
   T:=T+'L)eave';
-  SMG$Put_Line (ScreenDisplay,T,0,Wrap_Flag:=SMG$M_WRAP_WORD);
+  SMG$Put_Line (ScreenDisplay,T,Wrap_Flag:=SMG$M_WRAP_WORD);
   Choices:=Choices+['L'];
 End;  { Show Options }
 
@@ -1314,7 +1311,8 @@ Begin { Character fully made }
 
        { Then begin updating for the next pass }
 
-   If Not((Answer='L') or Automatic or Leave_Maze) then SMG$Begin_Display_Update (ScreenDisplay);
+   If Not((Answer='L') or Automatic or Leave_Maze) then
+      SMG$Begin_Display_Update (ScreenDisplay);
 End;  { Character fully made }
 
 (******************************************************************************)

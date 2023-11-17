@@ -498,6 +498,10 @@ Var
    MIN_ATTACK_TYPE: Attack_Type;
    MAX_ATTACK_TYPE: Attack_Type;
 
+   MIN_SPELL_NAME: Spell_Name;
+   MAX_SPELL_NAME: Spell_Name;
+
+
 Value
      MIN_MONSTER_TYPE := Warrior;
      MAX_MONSTER_TYPE := Enchanted;
@@ -507,6 +511,9 @@ Value
 
      MIN_ATTACK_TYPE := NoAttack;
      MAX_ATTACK_TYPE := Sleep;
+
+     MIN_SPELL_NAME := CrLt;
+     MAX_SPELL_NAME := DetS;
 
 {
 Value
