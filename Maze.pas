@@ -345,13 +345,15 @@ End;
 (******************************************************************************)
 
 [Global]Function Detected_Secret_Door (Member: Party_Type; Current_Party_Size: Party_Size_Type;
-                                       Rounds_Left: Spell_Duration_List): [Volatile]Boolean;
+                                       Rounds_Left: Spell_Duration_List;
+                                       distance: Integer:=0): [Volatile]Boolean;
 
 Var
    Character: Integer;
    Chance: Integer;
 
 Begin
+   { TODO: Make distance a factor }
    Chance:=5;
    For Character:=1 to Current_Party_Size do
       Begin
@@ -370,13 +372,13 @@ End;
 [Global]Procedure Draw_View (Direction: Direction_Type;  New_Spot: Boolean; Member: Party_Type; Current_Party_Size: Party_Size_Type);
 
 [External]Procedure Print_View (Direction: Direction_Type; Member: Party_Type;  Current_Party_Size: Party_Size_Type);External;
-[External]Procedure printView3D (Direction: Direction_Type; Member: Party_Type;  Current_Party_Size: Party_Size_Type);External;
+[External]Procedure printView3D (Direction: Direction_Type; Member: Party_Type;  Current_Party_Size: Party_Size_Type; Rounds_Left: Spell_Duration_List);External;
 
 Begin
    SMG$Begin_Display_Update (ViewDisplay);
    SMG$Erase_Display (ViewDisplay);
 {   Print_View (Direction,Member,Current_Party_Size); }
-   printView3D (Direction,Member,Current_Party_Size);
+   printView3D (Direction,Member,Current_Party_Size, Rounds_Left);
    If Not Has_Light and (Minute_Counter<46) and (Minute_Counter>9) then
       SMG$PUT_CHARS (ViewDisplay, ' A torch would be nice ',1,1);
    SMG$End_Display_Update(ViewDisplay);

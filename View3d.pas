@@ -2,9 +2,6 @@
 
 Const
   Diamond_Join = 0;
-  Clear_Char_Near = ' ';
-  Clear_Char_Middle = ' ';
-  Clear_Char_Far = ' ';
 
 Type
    Vertex = Packed Array [1..4] of Integer;
@@ -18,14 +15,6 @@ Type
 
 Var
   ViewDisplay: [External]Unsigned;
-  renderNear: Unsigned;
-  renderMiddle: Unsigned;
-  renderFar: Unsigned;
-
-Value
-  renderNear := SMG$M_NORMAL;
-  renderMiddle := SMG$M_NORMAL;
-  renderFar := SMG$M_NORMAL;
 
 {********************************************************************************************************************}
 [External]Function getNearCenter(Direction: Direction_Type): NewISpot;External;
@@ -41,23 +30,43 @@ Value
 [External]Function getCenterNear(Direction: Direction_Type): NewISpot;External;
 [External]Function getLeftNear(Direction: Direction_Type): NewISpot;External;
 [External]Function getRightNear(Direction: Direction_Type): NewISpot;External;
+[External]Function Detected_Secret_Door (Member: Party_Type;  Current_Party_Size: Party_Size_Type; Rounds_Left: Spell_Duration_List;
+ distance: Integer:=0):[Volatile]Boolean;External;
 {********************************************************************************************************************}
 {**************************************************** NEAR ROW ******************************************************}
 {********************************************************************************************************************}
 
-Procedure wallNearFrontCenter;
+Function get_rendition_set(isDoor: Boolean): unsigned;
+
+Begin
+   If isDoor then
+      get_rendition_set := SMG$M_REVERSE
+   Else
+      get_rendition_set := SMG$M_NORMAL;
+End;
+
+{********************************************************************************************************************}
+
+Procedure wallNearFrontCenter(isDoor: Boolean);
 
 var
   col, row: integer;
+  renditionSet: Unsigned;
 
 Begin
+    renditionSet := get_rendition_set(isDoor);
+
     For col := 4 to 20 do
       For row := 1 to 6 do
-         SMG$Put_Chars (ViewDisplay, Clear_Char_Near, row, col);
+         if (col = 4) or (col = 20) or (row = 6) then
+           SMG$Put_Chars (ViewDisplay, ' ', row, col, , renditionSet)
+         else
+           SMG$Put_Chars (ViewDisplay, ' ', row, col);
+
 
     { Vertical line }
-    SMG$Draw_Line(ViewDisplay, 1, 3, 7, 3, renderNear);
-    SMG$Draw_Line(ViewDisplay, 1, 21, 7, 21, renderNear);
+    SMG$Draw_Line(ViewDisplay, 1, 3, 7, 3);
+    SMG$Draw_Line(ViewDisplay, 1, 21, 7, 21);
 
     { Horizontal Line }
     SMG$Draw_Line(ViewDisplay, 7, 3, 7, 21);
@@ -65,299 +74,359 @@ End;
 
 {********************************************************************************************************************}
 
-Procedure wallNearFrontLeft;
+Procedure wallNearFrontLeft(isDoor: Boolean);
 
 Var
    row, col: Integer;
+   renditionSet: Unsigned;
 
 Begin
+    renditionSet := get_rendition_set(isDoor);
+
     For col := 1 to 2 do
       For row := 1 to 16 do
-        SMG$Put_Chars(ViewDisplay,Clear_Char_Near,row,col);
+        if (col = 2) or (row = 16) then
+          SMG$Put_Chars(ViewDisplay, ' ', row, col, , renditionSet)
+        else
+          SMG$Put_Chars(ViewDisplay, ' ', row, col);
 
-    SMG$Draw_Line(ViewDisplay, 1, 3, 7, 3, renderNear);
-    SMG$Draw_Line(ViewDisplay, 7, 1, 7, 3, renderNear);
-    SMG$Draw_Char(ViewDisplay, Diamond_Join, 7, 3, renderNear);
+    SMG$Draw_Line(ViewDisplay, 1, 3, 7, 3);
+    SMG$Draw_Line(ViewDisplay, 7, 1, 7, 3);
+    SMG$Draw_Char(ViewDisplay, Diamond_Join, 7, 3);
 End;
 
 {********************************************************************************************************************}
 
-Procedure wallNearFrontRight;
+Procedure wallNearFrontRight(isDoor: Boolean);
 
 Var
    row, col: Integer;
+   renditionSet: Unsigned;
 
 Begin
+    renditionSet := get_rendition_set(isDoor);
+
     For col := 22 to 23 do
       For row := 1 to 16 do
-        SMG$Put_Chars(ViewDisplay,Clear_Char_Near,row,col);
+        if (col = 22) or (row = 16) then
+          SMG$Put_Chars(ViewDisplay, ' ', row, col, , renditionSet)
+        else
+          SMG$Put_Chars(ViewDisplay, ' ', row, col);
 
-    SMG$Draw_Line(ViewDisplay, 1, 21, 7, 21, renderNear);
-    SMG$Draw_Line(ViewDisplay, 7, 21, 7, 23, renderNear);
-    SMG$Draw_Char(ViewDisplay, Diamond_Join, 7, 21, renderNear);
+    SMG$Draw_Line(ViewDisplay, 1, 21, 7, 21);
+    SMG$Draw_Line(ViewDisplay, 7, 21, 7, 23);
+    SMG$Draw_Char(ViewDisplay, Diamond_Join, 7, 21);
 End;
 
 {********************************************************************************************************************}
 
-Procedure wallNearLeftSide;
+Procedure wallNearLeftSide(isDoor: Boolean);
+
+Var
+  renditionSet: Unsigned;
 
 Begin
-    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 1, 1);
-    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 2, 1);
-    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 3, 1);
-    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 4, 1);
-    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 5, 1);
-    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 6, 1);
-    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 7, 1);
-    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 8, 1);
+    renditionSet := get_rendition_set(isDoor);
 
-    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 1, 2);
-    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 2, 2);
-    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 3, 2);
-    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 4, 2);
-    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 5, 2);
-    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 6, 2);
-    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 7, 2);
+    SMG$Put_Chars (ViewDisplay, ' ', 1, 1, , renditionSet);
+    SMG$Put_Chars (ViewDisplay, ' ', 2, 1, , renditionSet);
+    SMG$Put_Chars (ViewDisplay, ' ', 3, 1, , renditionSet);
+    SMG$Put_Chars (ViewDisplay, ' ', 4, 1, , renditionSet);
+    SMG$Put_Chars (ViewDisplay, ' ', 5, 1, , renditionSet);
+    SMG$Put_Chars (ViewDisplay, ' ', 6, 1, , renditionSet);
+    SMG$Put_Chars (ViewDisplay, ' ', 7, 1, , renditionSet);
+    SMG$Put_Chars (ViewDisplay, ' ', 8, 1, , renditionSet);
 
-    SMG$Put_Chars(ViewDisplay, '/', 8, 2, renderNear);
-    SMG$Put_Chars(ViewDisplay, '/', 9, 1, renderNear);
+    SMG$Put_Chars (ViewDisplay, ' ', 1, 2, , renditionSet);
+    SMG$Put_Chars (ViewDisplay, ' ', 2, 2, , renditionSet);
+    SMG$Put_Chars (ViewDisplay, ' ', 3, 2, , renditionSet);
+    SMG$Put_Chars (ViewDisplay, ' ', 4, 2, , renditionSet);
+    SMG$Put_Chars (ViewDisplay, ' ', 5, 2, , renditionSet);
+    SMG$Put_Chars (ViewDisplay, ' ', 6, 2, , renditionSet);
+    SMG$Put_Chars (ViewDisplay, ' ', 7, 2, , renditionSet);
+
+    SMG$Put_Chars(ViewDisplay, '/', 8, 2);
+    SMG$Put_Chars(ViewDisplay, '/', 9, 1);
 
     SMG$Draw_Line (ViewDisplay, 1, 3, 6, 3);
-    SMG$Draw_Char(ViewDisplay, Diamond_Join, 7, 3, renderNear);
+    SMG$Draw_Char(ViewDisplay, Diamond_Join, 7, 3);
 End;
 
 {********************************************************************************************************************}
 
-Procedure wallNearRightSide;
+Procedure wallNearRightSide(isDoor: Boolean);
+
+Var
+  renditionSet: Unsigned;
 
 Begin
-    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 1, 22);
-    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 2, 22);
-    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 3, 22);
-    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 4, 22);
-    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 5, 22);
-    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 6, 22);
-    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 7, 22);
+    renditionSet := get_rendition_set(isDoor);
 
-    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 1, 23);
-    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 2, 23);
-    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 3, 23);
-    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 4, 23);
-    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 5, 23);
-    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 6, 23);
-    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 7, 23);
-    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 8, 23);
+    SMG$Put_Chars (ViewDisplay, ' ', 1, 22, , renditionSet);
+    SMG$Put_Chars (ViewDisplay, ' ', 2, 22, , renditionSet);
+    SMG$Put_Chars (ViewDisplay, ' ', 3, 22, , renditionSet);
+    SMG$Put_Chars (ViewDisplay, ' ', 4, 22, , renditionSet);
+    SMG$Put_Chars (ViewDisplay, ' ', 5, 22, , renditionSet);
+    SMG$Put_Chars (ViewDisplay, ' ', 6, 22, , renditionSet);
+    SMG$Put_Chars (ViewDisplay, ' ', 7, 22, , renditionSet);
 
-    SMG$Put_Chars(ViewDisplay, '\', 8, 22, renderNear);
-    SMG$Put_Chars(ViewDisplay, '\', 9, 23, renderNear);
+    SMG$Put_Chars (ViewDisplay, ' ', 1, 23, , renditionSet);
+    SMG$Put_Chars (ViewDisplay, ' ', 2, 23, , renditionSet);
+    SMG$Put_Chars (ViewDisplay, ' ', 3, 23, , renditionSet);
+    SMG$Put_Chars (ViewDisplay, ' ', 4, 23, , renditionSet);
+    SMG$Put_Chars (ViewDisplay, ' ', 5, 23, , renditionSet);
+    SMG$Put_Chars (ViewDisplay, ' ', 6, 23, , renditionSet);
+    SMG$Put_Chars (ViewDisplay, ' ', 7, 23, , renditionSet);
+    SMG$Put_Chars (ViewDisplay, ' ', 8, 23, , renditionSet);
+
+    SMG$Put_Chars(ViewDisplay, '\', 8, 22);
+    SMG$Put_Chars(ViewDisplay, '\', 9, 23);
 
     SMG$Draw_Line (ViewDisplay, 1, 21, 6, 21);
-    SMG$Draw_Char(ViewDisplay, Diamond_Join, 7, 21, renderNear);
+    SMG$Draw_Char(ViewDisplay, Diamond_Join, 7, 21);
 End;
 
 {********************************************************************************************************************}
 {**************************************************** MIDDLE ROW ****************************************************}
 {********************************************************************************************************************}
 
-Procedure wallMiddleFrontCenter;
+Procedure wallMiddleFrontCenter(isDoor: Boolean);
 
 Var
    row, col: Integer;
+   renditionSet: Unsigned;
 
 Begin
-    For col := 6 to 17 do
+    renditionSet := get_rendition_set(isDoor);
+
+    For col := 7 to 17 do
       For row := 1 to 3 do
-        SMG$Put_Chars(ViewDisplay,Clear_Char_Middle,row,col);
+        if (col = 7) or (col = 17) or (row = 3) then
+           SMG$Put_Chars(ViewDisplay, ' ', row,col, , renditionSet)
+        else
+           SMG$Put_Chars(ViewDisplay, ' ', row,col);
 
-    SMG$Draw_Line(ViewDisplay, 1,  6, 4,  6, renderMiddle);
-    SMG$Draw_Line(ViewDisplay, 4,  6, 4, 18, renderMiddle);
-    SMG$Draw_Line(ViewDisplay, 1, 18, 4, 18, renderMiddle);
+    SMG$Draw_Line(ViewDisplay, 1,  6, 4,  6);
+    SMG$Draw_Line(ViewDisplay, 4,  6, 4, 18);
+    SMG$Draw_Line(ViewDisplay, 1, 18, 4, 18);
 
-    SMG$Draw_Char(ViewDisplay, Diamond_Join, 4, 6, renderMiddle);
-    SMG$Draw_Char(ViewDisplay, Diamond_Join, 4, 18, renderMiddle);
+    SMG$Draw_Char(ViewDisplay, Diamond_Join, 4, 6);
+    SMG$Draw_Char(ViewDisplay, Diamond_Join, 4, 18);
 End;
 
 {********************************************************************************************************************}
 
-Procedure wallMiddleFrontLeft;
+Procedure wallMiddleFrontLeft(isDoor: Boolean);
 
 Var
    row, col: Integer;
+   renditionSet: Unsigned;
 
 Begin
+    renditionSet := get_rendition_set(isDoor);
+
     For col := 1 to 5 do
       For row := 1 to 3 do
-        SMG$Put_Chars(ViewDisplay,Clear_Char_Middle,row,col);
+        if (col = 1) or (col = 5) or (row = 3) then
+          SMG$Put_Chars(ViewDisplay,' ', row, col, , renditionSet)
+        else
+          SMG$Put_Chars(ViewDisplay,' ', row, col);
 
-    SMG$Draw_Line(ViewDisplay, 4, 1, 4, 6, renderMiddle);
-    SMG$Draw_Line(ViewDisplay, 1, 6, 4, 6, renderMiddle);
-    SMG$Draw_Char(ViewDisplay, Diamond_Join, 4, 6, renderMiddle);
+    SMG$Draw_Line(ViewDisplay, 4, 1, 4, 6);
+    SMG$Draw_Line(ViewDisplay, 1, 6, 4, 6);
+    SMG$Draw_Char(ViewDisplay, Diamond_Join, 4, 6);
 End;
 
 {********************************************************************************************************************}
 
-Procedure wallMiddleFrontRight;
+Procedure wallMiddleFrontRight(isDoor: Boolean);
 
 Var
    row, col: Integer;
+   renditionSet: Unsigned;
 
 Begin
+    renditionSet := get_rendition_set(isDoor);
+
     For col := 19 to 23 do
       For row := 1 to 3 do
-        SMG$Put_Chars(ViewDisplay,Clear_Char_Middle,row,col);
+        if (col = 19) or (col = 23) or (row = 3) then
+           SMG$Put_Chars(ViewDisplay,' ', row, col, , renditionSet)
+        Else
+           SMG$Put_Chars(ViewDisplay,' ', row, col);
 
-    SMG$Draw_Line(ViewDisplay, 1, 18, 4, 18, renderMiddle);
-    SMG$Draw_Line(ViewDisplay, 4, 18, 4, 23, renderMiddle);
-    SMG$Draw_Char(ViewDisplay, Diamond_Join, 4, 18, renderMiddle);
+    SMG$Draw_Line(ViewDisplay, 1, 18, 4, 18);
+    SMG$Draw_Line(ViewDisplay, 4, 18, 4, 23);
+    SMG$Draw_Char(ViewDisplay, Diamond_Join, 4, 18);
 End;
 
 {********************************************************************************************************************}
 
-Procedure wallMiddleLeftSide;
+Procedure wallMiddleLeftSide(isDoor: Boolean);
+
+Var
+  renditionSet: Unsigned;
 
 Begin
-    SMG$Put_Chars(ViewDisplay, Clear_Char_Middle, 1, 4, renderMiddle);
-    SMG$Put_Chars(ViewDisplay, Clear_Char_Middle, 2, 4, renderMiddle);
-    SMG$Put_Chars(ViewDisplay, Clear_Char_Middle, 3, 4, renderMiddle);
-    SMG$Put_Chars(ViewDisplay, Clear_Char_Middle, 4, 4, renderMiddle);
-    SMG$Put_Chars(ViewDisplay, Clear_Char_Middle, 5, 4, renderMiddle);
+    renditionSet := get_rendition_set(isDoor);
 
-    SMG$Put_Chars(ViewDisplay, Clear_Char_Middle, 1, 5, renderMiddle);
-    SMG$Put_Chars(ViewDisplay, Clear_Char_Middle, 2, 5, renderMiddle);
-    SMG$Put_Chars(ViewDisplay, Clear_Char_Middle, 3, 5, renderMiddle);
-    SMG$Put_Chars(ViewDisplay, Clear_Char_Middle, 4, 5, renderMiddle);
+    SMG$Put_Chars(ViewDisplay, ' ', 1, 4, , renditionSet);
+    SMG$Put_Chars(ViewDisplay, ' ', 2, 4, , renditionSet);
+    SMG$Put_Chars(ViewDisplay, ' ', 3, 4, , renditionSet);
+    SMG$Put_Chars(ViewDisplay, ' ', 4, 4, , renditionSet);
+    SMG$Put_Chars(ViewDisplay, ' ', 5, 4, , renditionSet);
 
-    SMG$Draw_Line(ViewDisplay, 1, 3, 6, 3, renderMiddle);
-    SMG$Draw_Char(ViewDisplay, Diamond_Join, 7, 3, renderMiddle);
+    SMG$Put_Chars(ViewDisplay, ' ', 1, 5, , renditionSet);
+    SMG$Put_Chars(ViewDisplay, ' ', 2, 5, , renditionSet);
+    SMG$Put_Chars(ViewDisplay, ' ', 3, 5, , renditionSet);
+    SMG$Put_Chars(ViewDisplay, ' ', 4, 5, , renditionSet);
 
-    SMG$Put_Chars(ViewDisplay, '/', 6, 4, renderMiddle); { Wall bottom }
-    SMG$Put_Chars(ViewDisplay, '/', 5, 5, renderMiddle); { Wall bottom }
+    SMG$Draw_Line(ViewDisplay, 1, 3, 6, 3);
+    SMG$Draw_Char(ViewDisplay, Diamond_Join, 7, 3);
 
-    SMG$Draw_Line(ViewDisplay, 1, 6, 3, 6, renderMiddle);
-    SMG$Draw_Char(ViewDisplay, Diamond_Join, 4, 6, renderMiddle);
+    SMG$Put_Chars(ViewDisplay, '/', 6, 4);
+    SMG$Put_Chars(ViewDisplay, '/', 5, 5);
+
+    SMG$Draw_Line(ViewDisplay, 1, 6, 3, 6);
+    SMG$Draw_Char(ViewDisplay, Diamond_Join, 4, 6);
 End;
 
 {********************************************************************************************************************}
 
-Procedure wallMiddleRightSide;
+Procedure wallMiddleRightSide(isDoor: Boolean);
+
+Var
+  renditionSet: Unsigned;
 
 Begin
-    SMG$Put_Chars(ViewDisplay, Clear_Char_Middle, 1, 19, renderMiddle);
-    SMG$Put_Chars(ViewDisplay, Clear_Char_Middle, 2, 19, renderMiddle);
-    SMG$Put_Chars(ViewDisplay, Clear_Char_Middle, 3, 19, renderMiddle);
-    SMG$Put_Chars(ViewDisplay, Clear_Char_Middle, 4, 19, renderMiddle);
+    renditionSet := get_rendition_set(isDoor);
 
-    SMG$Put_Chars(ViewDisplay, Clear_Char_Middle, 1, 20, renderMiddle);
-    SMG$Put_Chars(ViewDisplay, Clear_Char_Middle, 2, 20, renderMiddle);
-    SMG$Put_Chars(ViewDisplay, Clear_Char_Middle, 3, 20, renderMiddle);
-    SMG$Put_Chars(ViewDisplay, Clear_Char_Middle, 4, 20, renderMiddle);
-    SMG$Put_Chars(ViewDisplay, Clear_Char_Middle, 5, 20, renderMiddle);
+    SMG$Put_Chars(ViewDisplay, ' ', 1, 19, , renditionSet);
+    SMG$Put_Chars(ViewDisplay, ' ', 2, 19, , renditionSet);
+    SMG$Put_Chars(ViewDisplay, ' ', 3, 19, , renditionSet);
+    SMG$Put_Chars(ViewDisplay, ' ', 4, 19, , renditionSet);
 
-    SMG$Draw_Line(ViewDisplay, 1, 18, 3, 18, renderMiddle);
-    SMG$Draw_Char(ViewDisplay, Diamond_Join, 4, 18, renderMiddle);
+    SMG$Put_Chars(ViewDisplay, ' ', 1, 20, , renditionSet);
+    SMG$Put_Chars(ViewDisplay, ' ', 2, 20, , renditionSet);
+    SMG$Put_Chars(ViewDisplay, ' ', 3, 20, , renditionSet);
+    SMG$Put_Chars(ViewDisplay, ' ', 4, 20, , renditionSet);
+    SMG$Put_Chars(ViewDisplay, ' ', 5, 20, , renditionSet);
 
-    SMG$Put_Chars(ViewDisplay, '\', 5, 19, renderMiddle);
-    SMG$Put_Chars(ViewDisplay, '\', 6, 20, renderMiddle);
+    SMG$Draw_Line(ViewDisplay, 1, 18, 3, 18);
+    SMG$Draw_Char(ViewDisplay, Diamond_Join, 4, 18);
 
-    SMG$Draw_Line(ViewDisplay, 1, 21, 6, 21, renderMiddle);
-    SMG$Draw_Char(ViewDisplay, Diamond_Join, 7, 21, renderMiddle);
+    SMG$Put_Chars(ViewDisplay, '\', 5, 19);
+    SMG$Put_Chars(ViewDisplay, '\', 6, 20);
+
+    SMG$Draw_Line(ViewDisplay, 1, 21, 6, 21);
+    SMG$Draw_Char(ViewDisplay, Diamond_Join, 7, 21);
 End;
 
 {********************************************************************************************************************}
 {****************************************************** FAR ROW *****************************************************}
 {********************************************************************************************************************}
 
-Procedure wallFarFrontLeftLeft;
+Procedure wallFarFrontLeftLeft(isDoor: Boolean);
 
 Begin
-    SMG$Draw_Line(ViewDisplay, 1, 1, 1, 2, renderFar);
+    SMG$Draw_Line(ViewDisplay, 1, 1, 1, 2);
 End;
 
 {********************************************************************************************************************}
 
-Procedure wallFarFrontLeft;
+Procedure wallFarFrontLeft(isDoor: Boolean);
 
 Begin
-  SMG$Draw_Line(ViewDisplay, 1, 2, 1, 9, renderFar);
+  SMG$Draw_Line(ViewDisplay, 1, 2, 1, 9);
 End;
 
 {********************************************************************************************************************}
 
-Procedure wallFarFrontCenter;
+Procedure wallFarFrontCenter(isDoor: Boolean);
 
 Begin
-    SMG$Draw_Line(ViewDisplay, 1, 9, 1, 15, renderFar);
+    SMG$Draw_Line(ViewDisplay, 1, 9, 1, 15);
 End;
 
 {********************************************************************************************************************}
 
-Procedure wallFarFrontRight;
+Procedure wallFarFrontRight(isDoor: Boolean);
 
 Begin
-    SMG$Draw_Line(ViewDisplay, 1, 15, 1, 22, renderFar);
+    SMG$Draw_Line(ViewDisplay, 1, 15, 1, 22);
 End;
 
 {********************************************************************************************************************}
 
-Procedure wallFarFrontRightRight;
+Procedure wallFarFrontRightRight(isDoor: Boolean);
 
 Begin
-    SMG$Draw_Line(ViewDisplay, 1, 22, 1, 23, renderFar);
+    SMG$Draw_Line(ViewDisplay, 1, 22, 1, 23);
 End;
 
 {********************************************************************************************************************}
 
-Procedure wallFarLeftLeftSide;
+Procedure wallFarLeftLeftSide(isDoor: Boolean);
 
 Begin
-    SMG$Draw_Char(ViewDisplay, Diamond_Join, 1, 2, renderFar);
-    SMG$Put_Chars(ViewDisplay, '/', 2, 1, renderFar);
+    SMG$Draw_Char(ViewDisplay, Diamond_Join, 1, 2);
+    SMG$Put_Chars(ViewDisplay, '/', 2, 1);
 End;
 
 {********************************************************************************************************************}
 
-Procedure wallFarLeftSide;
+Procedure wallFarLeftSide(isDoor: Boolean);
+
+Var
+  renditionSet: Unsigned;
 
 Begin
-    SMG$Put_Chars(ViewDisplay, Clear_Char_Far, 1, 7, renderFar);
-    SMG$Put_Chars(ViewDisplay, Clear_Char_Far, 2, 7, renderFar);
+    renditionSet := get_rendition_set(isDoor);
 
-    SMG$Put_Chars(ViewDisplay, Clear_Char_Far, 1, 8, renderFar);
+    SMG$Put_Chars(ViewDisplay, ' ', 1, 7, , renditionSet);
+    SMG$Put_Chars(ViewDisplay, ' ', 2, 7, , renditionSet);
 
-    SMG$Put_Chars(ViewDisplay, '/', 2, 8, renderFar);
-    SMG$Put_Chars(ViewDisplay, '/', 3, 7, renderFar);
+    SMG$Put_Chars(ViewDisplay, ' ', 1, 8, , renditionSet);
 
-    SMG$Draw_Line(ViewDisplay, 1, 6, 3, 6, renderFar);
+    SMG$Put_Chars(ViewDisplay, '/', 2, 8);
+    SMG$Put_Chars(ViewDisplay, '/', 3, 7);
 
-    SMG$Draw_Char(ViewDisplay, Diamond_Join, 1, 9, renderFar);
-    SMG$Draw_Char(ViewDisplay, Diamond_Join, 4, 6, renderFar);
+    SMG$Draw_Line(ViewDisplay, 1, 6, 3, 6);
+
+    SMG$Draw_Char(ViewDisplay, Diamond_Join, 1, 9);
+    SMG$Draw_Char(ViewDisplay, Diamond_Join, 4, 6);
 End;
 
 {********************************************************************************************************************}
 
-Procedure wallFarRightSide;
+Procedure wallFarRightSide(isDoor: Boolean);
+
+Var
+  renditionSet: Unsigned;
 
 Begin
-    SMG$Put_Chars(ViewDisplay, Clear_Char_Far, 1, 16, renderFar);
+    renditionSet := get_rendition_set(isDoor);
 
-    SMG$Put_Chars(ViewDisplay, Clear_Char_Far, 1, 17, renderFar);
-    SMG$Put_Chars(ViewDisplay, Clear_Char_Far, 2, 17, renderFar);
+    SMG$Put_Chars(ViewDisplay, ' ', 1, 16, , renditionSet);
 
-    SMG$Put_Chars(ViewDisplay, '\', 2, 16, renderFar);
-    SMG$Put_Chars(ViewDisplay, '\', 3, 17, renderFar);
-    SMG$Draw_Line(ViewDisplay, 1, 18, 3, 18, renderFar);
+    SMG$Put_Chars(ViewDisplay, ' ', 1, 17, , renditionSet);
+    SMG$Put_Chars(ViewDisplay, ' ', 2, 17, , renditionSet);
 
-    SMG$Draw_Char(ViewDisplay, Diamond_Join, 1, 15, renderFar);
-    SMG$Draw_Char(ViewDisplay, Diamond_Join, 4, 18, renderFar);
+    SMG$Put_Chars(ViewDisplay, '\', 2, 16);
+    SMG$Put_Chars(ViewDisplay, '\', 3, 17);
+    SMG$Draw_Line(ViewDisplay, 1, 18, 3, 18);
+
+    SMG$Draw_Char(ViewDisplay, Diamond_Join, 1, 15);
+    SMG$Draw_Char(ViewDisplay, Diamond_Join, 4, 18);
 End;
 
 {********************************************************************************************************************}
 
-Procedure wallFarRightRightSide;
+Procedure wallFarRightRightSide(isDoor: Boolean);
 
 Begin
-    SMG$Put_Chars(ViewDisplay, '\', 2, 23, renderFar);
-    SMG$Draw_Char(ViewDisplay, Diamond_Join, 1, 22, renderFar);
+    SMG$Put_Chars(ViewDisplay, '\', 2, 23);
+    SMG$Draw_Char(ViewDisplay, Diamond_Join, 1, 22);
 End;
 
 {********************************************************************************************************************}
@@ -370,96 +439,109 @@ End;
 
 {********************************************************************************************************************}
 
-[Global]Procedure far(leftLeftRoom: NewISpot; leftRoom: NewISpot; centerRoom: NewISpot; rightRoom: NewISpot; rightRightRoom: NewISpot);
+Function looksLikeDoor(distance: Integer; exit: Exit_Type; Member: Party_Type; Current_Party_Size: Party_Size_Type;
+                       Rounds_Left: Spell_Duration_List): [Volatile]Boolean;
+
+Begin
+  return (exit = Door) or ((exit = Secret) and (Detected_Secret_Door(Member, Current_Party_Size, Rounds_Left, distance)));
+End;
+
+{********************************************************************************************************************}
+
+[Global]Procedure far(leftLeftRoom: NewISpot; leftRoom: NewISpot; centerRoom: NewISpot; rightRoom: NewISpot; rightRightRoom: NewISpot;
+                      Member: Party_Type; Current_Party_Size: Party_Size_Type; Rounds_Left: Spell_Duration_List);
 
 Begin
    if (looksLikeWall(leftLeftRoom.front)) then
-      wallFarFrontLeftLeft;
+      wallFarFrontLeftLeft(looksLikeDoor(2, leftLeftRoom.front, Member, current_Party_size, Rounds_Left));
 
     if (looksLikeWall(leftRoom.front)) then
-      wallFarFrontLeft;
+      wallFarFrontLeft(looksLikeDoor(2, leftRoom.front, Member, current_Party_size, Rounds_Left));
 
     if (looksLikeWall(centerRoom.front)) then
-      wallFarFrontCenter;
+      wallFarFrontCenter(looksLikeDoor(2, centerRoom.front, Member, current_Party_size, Rounds_Left));
 
     if (looksLikeWall(rightRoom.front)) then
-      wallFarFrontRight;
+      wallFarFrontRight(looksLikeDoor(2, rightRoom.front, Member, current_Party_size, Rounds_Left));
 
     if (looksLikeWall(rightRightRoom.front)) then
-      wallFarFrontRightRight;
+      wallFarFrontRightRight(looksLikeDoor(2, rightRightRoom.front, Member, current_Party_size, Rounds_Left));
 
     if (looksLikeWall(leftRoom.left)) then
-      wallFarLeftLeftSide;
+      wallFarLeftLeftSide(looksLikeDoor(2, leftRoom.left, Member, current_Party_size, Rounds_Left));
 
     if (looksLikeWall(centerRoom.left)) then
-      wallFarLeftSide;
+      wallFarLeftSide(looksLikeDoor(2, centerRoom.left, Member, current_Party_size, Rounds_Left));
 
     if (looksLikeWall(centerRoom.right)) then
-      wallFarRightSide;
+      wallFarRightSide(looksLikeDoor(2, centerRoom.right, Member, current_Party_size, Rounds_Left));
 
     if (looksLikeWall(rightRoom.right)) then
-      wallFarRightRightSide;
+      wallFarRightRightSide(looksLikeDoor(2, rightRoom.right, Member, current_Party_size, Rounds_Left));
 End;
 
 {********************************************************************************************************************}
 
-Procedure middle(leftRoom: NewISpot; centerRoom: NewISpot; rightRoom: NewISpot);
+Procedure middle(leftRoom: NewISpot; centerRoom: NewISpot; rightRoom: NewISpot; Member: Party_Type; Current_Party_Size: Party_Size_Type;
+                 Rounds_Left: Spell_Duration_List);
 
 Begin
   if (looksLikeWall(leftRoom.front)) then
     Begin
-      wallMiddleFrontLeft;
+      wallMiddleFrontLeft(looksLikeDoor(1, leftRoom.front, Member, current_Party_size, Rounds_Left));
     End;
   if (looksLikeWall(rightRoom.front)) then
     Begin
-      wallMiddleFrontRight;
+      wallMiddleFrontRight(looksLikeDoor(1, rightRoom.front, Member, current_Party_size, Rounds_Left));
     End;
   if (looksLikeWall(centerRoom.front)) then
     Begin
-      wallMiddleFrontCenter;
+      wallMiddleFrontCenter(looksLikeDoor(1, centerRoom.front, Member, current_Party_size, Rounds_Left));
     End;
 
   if (looksLikeWall(centerRoom.left)) then
     Begin
-      wallMiddleLeftSide;
+      wallMiddleLeftSide(looksLikeDoor(1, centerRoom.left, Member, current_Party_size, Rounds_Left));
     End;
 
   if (looksLikeWall(centerRoom.right)) then
     Begin
-      wallMiddleRightSide;
+      wallMiddleRightSide(looksLikeDoor(1, centerRoom.right, Member, current_Party_size, Rounds_Left));
     End;
 End;
 
 {********************************************************************************************************************}
 
-Procedure near(leftRoom: NewISpot; centerRoom: NewISpot; rightRoom: NewISpot);
+Procedure near(leftRoom: NewISpot; centerRoom: NewISpot; rightRoom: NewISpot; Member: Party_Type;
+               Current_Party_Size: Party_Size_Type; Rounds_Left: Spell_Duration_List);
 
 Begin
   if (looksLikeWall(leftRoom.front)) then
     Begin
-      wallNearFrontLeft;
+      wallNearFrontLeft(looksLikeDoor(0, leftRoom.front, Member, current_Party_size, Rounds_Left));
     End;
   if (looksLikeWall(rightRoom.front)) then
     Begin
-      wallNearFrontRight;
+      wallNearFrontRight(looksLikeDoor(0, rightRoom.front, Member, current_Party_size, Rounds_Left));
     End;
   if (looksLikeWall(centerRoom.front)) then
     Begin
-      wallNearFrontCenter;
+      wallNearFrontCenter(looksLikeDoor(0, centerRoom.front, Member, current_Party_size, Rounds_Left));
     End;
   if (looksLikeWall(centerRoom.left)) then
     Begin
-      wallNearLeftSide;
+      wallNearLeftSide(looksLikeDoor(0, centerRoom.left, Member, current_Party_size, Rounds_Left));
     End;
   if (looksLikeWall(centerRoom.right)) then
     Begin
-      wallNearRightSide;
+      wallNearRightSide(looksLikeDoor(0, centerRoom.right, Member, current_Party_size, Rounds_Left));
     End;
 End;
 
 {********************************************************************************************************************}
 
-[Global]Procedure printView3D (Direction: Direction_Type; Member: Party_Type; Current_Party_Size: Party_Size_Type);
+[Global]Procedure printView3D (Direction: Direction_Type; Member: Party_Type; Current_Party_Size: Party_Size_Type;
+                               Rounds_Left: Spell_Duration_List);
 
 var
   leftNear,centerNear,rightNear: NewISpot;
@@ -472,12 +554,18 @@ Begin
       getLeftFar(Direction),
       getCenterFar(Direction),
       getRightFar(Direction),
-      getRightRightFar(Direction)
+      getRightRightFar(Direction),
+      member,
+      current_Party_Size,
+      Rounds_Left
   );
   middle(
     getLeftMiddle(Direction),
     getCenterMiddle(Direction),
-    getRightMiddle(Direction)
+    getRightMiddle(Direction),
+    member,
+    current_Party_Size,
+    Rounds_Left
   );
 
   leftNear:=getLeftNear(Direction);
@@ -487,7 +575,10 @@ Begin
   near(
     leftNear,
     centerNear,
-    rightNear
+    rightNear,
+    member,
+    current_Party_Size,
+    Rounds_Left
   );
 
   SMG$End_Display_Update(ViewDisplay);
