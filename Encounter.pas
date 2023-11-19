@@ -2671,15 +2671,15 @@ Var
 
 Begin
    Temp:=0;
-   If Group.Orig_Group_Size>0 then
-      For Loop:=1 to Group.Orig_Group_Size do
-         Temp:=Temp+Experience(Loop,Group);
 
-   If Group.Orig_Group_Size>(4 * Party_size) then
-      Temp:=Temp+ Round(Temp*(1/5))
-   Else
-      If Group.Orig_Group_Size>(2 * Party_Size) then
-         Temp:=Temp+ Round(Temp*(3/20));
+   If Group.Orig_Group_Size > 0 then
+      For Loop:=1 to Group.Orig_Group_Size do
+         Temp:=Temp + Experience(Loop, Group);
+
+   If Group.Orig_Group_Size > (4 * Party_size) then
+      Temp:=Temp + Round(Temp * (1 / 5))
+   Else If Group.Orig_Group_Size > (2 * Party_Size) then
+      Temp:=Temp + Round(Temp * (3 / 20));
 
    Group_Experience:=Temp;
 End;
@@ -2695,7 +2695,8 @@ Var
 Begin
    Temp:=0;
    For Loop:=1 to 4 do
-      Temp:=Temp+Group_Experience(Encounter[Loop],Party_Size);
+      Temp:=Temp + Group_Experience(Encounter[Loop], Party_Size);
+
    Encounter_Experience:=Temp;
 End;
 

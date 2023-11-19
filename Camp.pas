@@ -172,22 +172,22 @@ Procedure Delete (Node: ItemSet; Var List: ItemSet);
 { This procedure recursively deletes the node pointed to by NODE from the list, LIST }
 
 Var
-   Temp: ItemSet;
+   remainder: ItemSet;
 
 Begin { Delete }
-   If List<> Nil then
-      Begin { Not Nil }
-         If List=Node then
-            Begin
-               List:=List^.Next_Item;
-            End
+   If List <> Nil then
+      Begin
+         If List = Node then
+            List:=List^.Next_Item
          Else
             Begin
-               Temp:=List^.Next_Item;
-               Delete (Node, Temp);
-               List^.Next_Item:=Temp;
+               remainder:=List^.Next_Item;
+
+               Delete (Node, remainder);
+
+               List^.Next_Item:=remainder;
             End;
-      End;  { Not Nil }
+      End;
 End;  { Delete }
 
 (******************************************************************************)
@@ -202,81 +202,121 @@ Var
 
 Begin { Print Item Node }
    Item:=Item_List[Node^.Item_Num];
-   SMG$Put_Chars (CampDisplay,
-       '['+CHR(Choice_Num+64)+']   ');
+   SMG$Put_Chars (CampDisplay, '[' +CHR(Choice_Num + 64) + ']   ');
+
    If (Node^.Identified) then
       Begin
-         SMG$Put_Line (CampDisplay,
-             Item.True_Name);
+         SMG$Put_Line (CampDisplay, Item.True_Name);
       End
    Else
       Begin
-         SMG$Put_Line (CampDisplay,
-            '?'+Item.Name);
+         SMG$Put_Line (CampDisplay, '?' + Item.Name);
       End;
 End;  { Print Item Node }
 
 (******************************************************************************)
+[External]Function Usable_Item (Character: Character_Type; Item: Item_Record): Boolean;External;
+(******************************************************************************)
 
-Function Choose_From_List (Class,Class1: Class_Type; Align: Align_Type; Var Choice_List: ItemSet): ItemSet;
+Function Print_Usable_And_Return_Choices (Character: Character_Type; Choice_List: ItemSet): Char_Set;
+
+Var
+   Options: Set of char;
+   TempPtr: ItemSet;
+   Position: Integer;
+   Item: Item_Record;
+
+Begin
+   Position:=0;
+   TempPtr:=Choice_list;  { The temporary pointer points to beginning of list }
+
+   While (TempPtr <> Nil) do  { While there are items on list }
+      Begin
+         Item:=Item_List[TempPtr^.Item_Num];
+
+         If Usable_Item(Character, Item) then
+            Begin
+               Position:=Position + 1;                  { Increment the line counter }
+               Options:=Options + [CHR(Position + 64)]; { Add it to the set of choices }
+
+               Print_Item_Node (TempPtr, Position);     { Print the choice }
+            End;
+
+         TempPtr:=TempPtr^.Next_Item;           { Go to next item }
+      End;
+
+   Print_Usable_And_Return_Choices := Options;
+End;
+
+(******************************************************************************)
+
+Function Character_Equips_Item (character: Character_Type; itemNumber: Integer; Var Choice_List: ItemSet): ItemSet;
+
+Var
+   Item: Item_Record;
+   Temp: ItemSet;
+   Position: Integer;
+   TempPtr: ItemSet;
+
+Begin
+     Position:=0;
+     TempPtr:=Choice_List;
+     Temp:=Nil;
+
+     While (TempPtr <> Nil) and (Position < itemNumber) do  { Until found }
+        Begin { For each item }
+           Item:=Item_List[TempPtr^.Item_Num];  { Get the item }
+
+           If Usable_Item(Character, Item) then
+                 Begin
+                    Position:=Position + 1;  { Advance the counter }
+                    Temp:=TempPtr;           { Get the current ptr. }
+                 End;
+           TempPtr:=TempPtr^.Next_Item;      { Go to next item }
+        End;  { For each item }
+
+     If (Temp <> Nil) then
+        Begin
+           Delete (Temp, Choice_List);  { delete the node from the list }
+        End;
+
+     Character_Equips_Item := Temp;
+End;
+
+(******************************************************************************)
+
+Function Choose_From_List (Character: Character_Type; Var Choice_List: ItemSet): ItemSet;
 
 { This function will display a list of viable choices for a character, and return the one (if any) he selects.  If nothing is
   chosen, the value NUL is returned, otherwise the pointer to the selected item_node is returned. }
 
 Var
-   Position,Chosen: Integer;
-   TempPtr,Temp: ItemSet;
+   Chosen: Integer;
    Options: Set of char;
    Answer: Char;
-   Item: Item_Record;
+
+[External]Procedure Cursor;External;
+[External]Procedure No_Cursor;External;
 
 Begin { Choose from List }
-   Options:=[CHR(113)];  { So far, no options }
-   Position:=0;
-   TempPtr:=Choice_list;  { The temporary pointer points to beginning of list }
-   While (TempPtr<>Nil) do  { While there are items on list }
-      Begin { For each item }
-         Item:=Item_List[TempPtr^.Item_Num];
-         If (((Class in Item.Usable_By) or (Class1 in Item.Usable_By)) and  { if the item is usable }
-            (((Align=Item.Alignment) or (Item.Alignment=NoAlign)))) then
-            Begin { Usable item }
-               Position:=Position+1;                 { Increment the line counter }
-               Print_Item_Node (TempPtr,Position);  { Print the choice }
-               Options:=Options+[CHR(Position+64)]; { Add it to the set of choices }
-            End;  { Usable item }
-         TempPtr:=TempPtr^.Next_Item;           { Go to next item }
-      End;  { For each item }
-   SMG$Put_Line (CampDisplay,
-       'Which?',0);
-   SMG$End_Display_Update (CampDisplay);
-   Answer:=Make_Choice (Options);               { Get the choice }
-   If (Answer<>CHR (13)) then   { If the player chose an item... }
-      Begin { Item chosen }
-         Chosen:=Ord(Answer)-64;  { Find the number desired }
+   Options:= Print_Usable_And_Return_Choices(Character, Choice_List);
 
-         Position:=0;
-         TempPtr:=Choice_List;  Temp:=Nil;
-         While (TempPtr<>Nil) and (Position>Chosen) do  { Until found }
-            Begin { For each item }
-               Item:=Item_List[TempPtr^.Item_Num];  { Get the item }
-               If (((Class in Item.Usable_By) or (Class1 in Item.Usable_By)) and  { If the item is usable }
-                  (((Align=Item.Alignment) or (Item.Alignment=NoAlign)))) then
-                     Begin
-                        Position:=Position+1;  { Advance the counter }
-                        Temp:=TempPtr;         { Get the current ptr. }
-                     End;
-               TempPtr:=TempPtr^.Next_Item;          { Go to next item }
-            End;  { For each item }
-         If (Temp<>Nil) then
-            Begin
-               Delete (Temp,Choice_List);  { delete the node from the list }
-            End;
-      End { Item chosen }
-   Else
+   SMG$Put_Line (CampDisplay, 'Which?', 0);
+
+   Options := Options + [ CHR(13) ];
+
+   Cursor;
+   Answer:=Make_Choice (Options);               { Get the choice }
+   No_Cursor;
+
+   If (Answer <> CHR (13)) then   { If the player chose an item... }
       Begin
-         Temp:=Nil;  { Otherwise, return Nil }
-      End;
-   Choose_From_List:=Temp;
+         Chosen:=Ord(Answer) - 64;  { Find the number desired }
+
+         Choose_From_List := Character_Equips_Item(Character, Chosen, Choice_List);
+      End
+   Else
+      Choose_From_List:=Nil;  { Otherwise, return Nil }
 End;  { Choose from List }
 
 (******************************************************************************)
@@ -322,21 +362,20 @@ Var
 Begin { Select Item }
    If (One_Usable (Choices,Character)) then  { If there is a usable item in list }
       Begin { at least one usable }
-         SMG$Begin_Display_Update (CampDisplay);
          SMG$Erase_Display (CampDisplay);
+
          T:='[RETURN] for none';
          SMG$Put_Chars (CampDisplay,T,23,39-(t.length div 2));
-         T:='Please select a '
-             +Item_Name[Kind]
-             +' for '
-             +Character.Name;
+
+         T:='Please select a ' + Item_Name[Kind] + ' for ' + Character.Name;
          SMG$Set_Cursor_ABS (CampDisplay,1,39-(t.length div 2));
          SMG$Put_Line (CampDisplay,T,1);
          { SMG$END_DISPLAY_UPDATE (CAMPDISPLAY) in Choose_from_list }
 
          { Get the item chosen }
 
-         ItemPtr:=Choose_From_List(Character.Class,Character.PreviousClass,Character.Alignment,Choices);
+         ItemPtr:=Choose_From_List(Character, Choices);
+
          If (ItemPtr<>Nil) then  { If there WAS an item chosen }
             Begin { Item selected }
 
@@ -350,12 +389,9 @@ Begin { Select Item }
                Character.Item[Num].Cursed:=Item.cursed;
                Character.Item[Num].isEquipped:=True;
 
-                  { Check to see if it's cursed }
-
                If (Character.Item[Num].Cursed) then
                   Begin { Cursed }
-                     SMG$Put_Line (CampDisplay,
-                         'Cursed!!!!');
+                     SMG$Put_Line (CampDisplay, 'Cursed!!!!');
                      Ring_Bell (CampDisplay,3);
                      Delay (2);
                   End;  { Cursed }

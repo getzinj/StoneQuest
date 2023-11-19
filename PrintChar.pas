@@ -330,7 +330,7 @@ End;
 
 (******************************************************************************)
 
-Function Usable_Item (Character: Character_Type; Item: Item_Record): Boolean;
+[Global]Function Usable_Item (Character: Character_Type; Item: Item_Record): Boolean;
 
 Var
    Temp: Boolean;
