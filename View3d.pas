@@ -1,5 +1,11 @@
 [Inherit ('SYS$LIBRARY:STARLET','Types','SMGRTL')]Module View3d;
 
+Const
+  Diamond_Join = 0;
+  Clear_Char_Near = ' ';
+  Clear_Char_Middle = ' ';
+  Clear_Char_Far = ' ';
+
 Type
    Vertex = Packed Array [1..4] of Integer;
   NewISpot = Record
@@ -12,7 +18,14 @@ Type
 
 Var
   ViewDisplay: [External]Unsigned;
+  renderNear: Unsigned;
+  renderMiddle: Unsigned;
+  renderFar: Unsigned;
 
+Value
+  renderNear := SMG$M_NORMAL;
+  renderMiddle := SMG$M_NORMAL;
+  renderFar := SMG$M_NORMAL;
 
 {********************************************************************************************************************}
 [External]Function getNearCenter(Direction: Direction_Type): NewISpot;External;
@@ -29,91 +42,22 @@ Var
 [External]Function getLeftNear(Direction: Direction_Type): NewISpot;External;
 [External]Function getRightNear(Direction: Direction_Type): NewISpot;External;
 {********************************************************************************************************************}
-
-
-Function isPointInsideQuadrilateral(vertx: Vertex; verty: Vertex; testx: Integer; testy: Integer): boolean;
-
-Var
-   Result: Boolean;
-   i,j: Integer;
-
-Begin
-    result:=false;
-
-    i:=1;
-    j:=4;
-    Repeat
-       Begin
-          If ((verty[j] - verty[i]) <> 0) then
-             Begin
-              If (
-                ((verty[i] > testy) <> (verty[j] > testy)) and
-                (testx < (vertx[j] - vertx[i]) * (testy - verty[i]) / (verty[j] - verty[i]) + vertx[i])
-              ) then
-                result:=not result;
-             End
-          Else if (testy = verty[i]) then
-             Begin
-                result:=true;
-             End
-          Else
-             Begin
-               result:=false;
-             End;
-
-          j:=i;
-          i:=i + 1;
-       End
-    Until (i > 4);
-
-    return result;
-End;
-
-
-Procedure clearQuadrilateral(
-  upperLeftY: Integer; upperLeftX: Integer;
-  upperRightY: Integer; upperRightX: Integer;
-  lowerRightY: Integer; lowerRightX: Integer;
-  lowerLeftY: Integer; lowerLeftX: Integer);
-
-  Var
-    Row,Col: Integer;
-    isInsideQuadrilateral: Boolean;
-    vertx: Vertex;
-    verty: Vertex;
-
-  Begin
-    for row:=min(upperLeftY,upperRightY,lowerLeftY,lowerRightY) to max(upperLeftY,upperRightY,lowerLeftY,lowerRightY) do
-      for col:=min(upperLeftX,upperRightX,lowerLeftX,lowerRightX) to max(upperLeftX,upperRightX,lowerLeftX,lowerRightX) do
-        begin
-            vertx[1]:=upperLeftX;  vertx[2]:=upperRightX; vertx[3]:=lowerRightX;  vertx[4]:=lowerLeftX;
-            verty[1]:=upperLeftY;  verty[2]:=upperRightY; verty[3]:=lowerRightY;  verty[4]:=lowerLeftY;
-
-            isInsideQuadrilateral:=isPointInsideQuadrilateral(
-              vertx,
-              verty,
-              col, row
-            );
-
-            if (isInsideQuadrilateral) then
-              Begin
-                 SMG$Erase_Chars(ViewDisplay, 1, row, col);
-              End;
-        End;
- End;
-
-{********************************************************************************************************************}
 {**************************************************** NEAR ROW ******************************************************}
 {********************************************************************************************************************}
 
 Procedure wallNearFrontCenter;
 
+var
+  col, row: integer;
+
 Begin
-    clearQuadrilateral(1, 3, 1, 21, 7, 21, 7, 7);
+    For col := 4 to 20 do
+      For row := 1 to 6 do
+         SMG$Put_Chars (ViewDisplay, Clear_Char_Near, row, col);
 
     { Vertical line }
-    SMG$Draw_Line(ViewDisplay, 1, 3, 7, 3);
-    SMG$Draw_Line(ViewDisplay, 1, 21, 7, 21);
+    SMG$Draw_Line(ViewDisplay, 1, 3, 7, 3, renderNear);
+    SMG$Draw_Line(ViewDisplay, 1, 21, 7, 21, renderNear);
 
     { Horizontal Line }
     SMG$Draw_Line(ViewDisplay, 7, 3, 7, 21);
@@ -123,22 +67,34 @@ End;
 
 Procedure wallNearFrontLeft;
 
-Begin
-    clearQuadrilateral(1, 1, 1, 3, 7, 3, 7, 1);
+Var
+   row, col: Integer;
 
-    SMG$Draw_Line(ViewDisplay, 1, 3, 7, 3);
-    SMG$Draw_Line(ViewDisplay, 7, 1, 7, 3);
+Begin
+    For col := 1 to 2 do
+      For row := 1 to 16 do
+        SMG$Put_Chars(ViewDisplay,Clear_Char_Near,row,col);
+
+    SMG$Draw_Line(ViewDisplay, 1, 3, 7, 3, renderNear);
+    SMG$Draw_Line(ViewDisplay, 7, 1, 7, 3, renderNear);
+    SMG$Draw_Char(ViewDisplay, Diamond_Join, 7, 3, renderNear);
 End;
 
 {********************************************************************************************************************}
 
 Procedure wallNearFrontRight;
 
-Begin
-    clearQuadrilateral(1, 21, 1, 23, 7, 23, 7, 21);
+Var
+   row, col: Integer;
 
-    SMG$Draw_Line(ViewDisplay, 1, 21, 7, 21);
-    SMG$Draw_Line(ViewDisplay, 7, 21, 7, 23)
+Begin
+    For col := 22 to 23 do
+      For row := 1 to 16 do
+        SMG$Put_Chars(ViewDisplay,Clear_Char_Near,row,col);
+
+    SMG$Draw_Line(ViewDisplay, 1, 21, 7, 21, renderNear);
+    SMG$Draw_Line(ViewDisplay, 7, 21, 7, 23, renderNear);
+    SMG$Draw_Char(ViewDisplay, Diamond_Join, 7, 21, renderNear);
 End;
 
 {********************************************************************************************************************}
@@ -146,11 +102,28 @@ End;
 Procedure wallNearLeftSide;
 
 Begin
-    clearQuadrilateral(1, 1, 1, 3, 7, 3, 9, 1);
+    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 1, 1);
+    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 2, 1);
+    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 3, 1);
+    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 4, 1);
+    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 5, 1);
+    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 6, 1);
+    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 7, 1);
+    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 8, 1);
 
-    SMG$Draw_Char(ViewDisplay, 0, 7, 3);
-    SMG$Put_Chars(ViewDisplay, '/', 8, 2);
-    SMG$Put_Chars(ViewDisplay, '/', 9, 1);
+    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 1, 2);
+    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 2, 2);
+    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 3, 2);
+    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 4, 2);
+    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 5, 2);
+    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 6, 2);
+    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 7, 2);
+
+    SMG$Put_Chars(ViewDisplay, '/', 8, 2, renderNear);
+    SMG$Put_Chars(ViewDisplay, '/', 9, 1, renderNear);
+
+    SMG$Draw_Line (ViewDisplay, 1, 3, 6, 3);
+    SMG$Draw_Char(ViewDisplay, Diamond_Join, 7, 3, renderNear);
 End;
 
 {********************************************************************************************************************}
@@ -158,11 +131,28 @@ End;
 Procedure wallNearRightSide;
 
 Begin
-    clearQuadrilateral(1, 21, 1, 23, 9, 23, 7, 21);
+    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 1, 22);
+    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 2, 22);
+    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 3, 22);
+    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 4, 22);
+    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 5, 22);
+    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 6, 22);
+    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 7, 22);
 
-    SMG$Draw_Char(ViewDisplay, 0, 7, 21);
-    SMG$Put_Chars(ViewDisplay, '\\', 8, 22);
-    SMG$Put_Chars(ViewDisplay, '\\', 9, 23);
+    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 1, 23);
+    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 2, 23);
+    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 3, 23);
+    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 4, 23);
+    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 5, 23);
+    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 6, 23);
+    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 7, 23);
+    SMG$Put_Chars (ViewDisplay, Clear_Char_Near, 8, 23);
+
+    SMG$Put_Chars(ViewDisplay, '\', 8, 22, renderNear);
+    SMG$Put_Chars(ViewDisplay, '\', 9, 23, renderNear);
+
+    SMG$Draw_Line (ViewDisplay, 1, 21, 6, 21);
+    SMG$Draw_Char(ViewDisplay, Diamond_Join, 7, 21, renderNear);
 End;
 
 {********************************************************************************************************************}
@@ -171,43 +161,54 @@ End;
 
 Procedure wallMiddleFrontCenter;
 
+Var
+   row, col: Integer;
+
 Begin
-    clearQuadrilateral(1, 6, 1, 18, 4, 18, 4, 6);
-    SMG$Put_Chars(ViewDisplay, '', 1, 9);
-    SMG$Put_Chars(ViewDisplay, ' ', 2, 8);
-    SMG$Put_Chars(ViewDisplay, ' ', 3, 7);
+    For col := 6 to 17 do
+      For row := 1 to 3 do
+        SMG$Put_Chars(ViewDisplay,Clear_Char_Middle,row,col);
 
-    SMG$Put_Chars(ViewDisplay, ' ', 1, 6);
-    SMG$Put_Chars(ViewDisplay, ' ', 2, 6);
-    SMG$Put_Chars(ViewDisplay, ' ', 3, 6);
-    SMG$Put_Chars(ViewDisplay, ' ', 4, 6);
+    SMG$Draw_Line(ViewDisplay, 1,  6, 4,  6, renderMiddle);
+    SMG$Draw_Line(ViewDisplay, 4,  6, 4, 18, renderMiddle);
+    SMG$Draw_Line(ViewDisplay, 1, 18, 4, 18, renderMiddle);
 
-    SMG$Draw_Line(ViewDisplay, 1,  6, 4,  6);
-    SMG$Draw_Line(ViewDisplay, 1, 18, 4, 18);
-    SMG$Draw_Line(ViewDisplay, 4,  6, 4, 18);
+    SMG$Draw_Char(ViewDisplay, Diamond_Join, 4, 6, renderMiddle);
+    SMG$Draw_Char(ViewDisplay, Diamond_Join, 4, 18, renderMiddle);
 End;
 
 {********************************************************************************************************************}
 
 Procedure wallMiddleFrontLeft;
 
+Var
+   row, col: Integer;
+
 Begin
-    clearQuadrilateral(1, 1, 1, 6, 4, 6, 4, 1);
+    For col := 1 to 5 do
+      For row := 1 to 3 do
+        SMG$Put_Chars(ViewDisplay,Clear_Char_Middle,row,col);
 
-    SMG$Draw_Line(ViewDisplay, 4, 0, 4, 6);
-
-    SMG$Draw_Line(ViewDisplay, 1, 6, 4, 6);
+    SMG$Draw_Line(ViewDisplay, 4, 1, 4, 6, renderMiddle);
+    SMG$Draw_Line(ViewDisplay, 1, 6, 4, 6, renderMiddle);
+    SMG$Draw_Char(ViewDisplay, Diamond_Join, 4, 6, renderMiddle);
 End;
 
 {********************************************************************************************************************}
 
 Procedure wallMiddleFrontRight;
 
-Begin
-    clearQuadrilateral(1, 18, 1, 23, 4, 23, 4, 18);
+Var
+   row, col: Integer;
 
-    SMG$Draw_Line(ViewDisplay, 1, 18, 4, 18);
-    SMG$Draw_Line(ViewDisplay, 4, 18, 4, 23);
+Begin
+    For col := 19 to 23 do
+      For row := 1 to 3 do
+        SMG$Put_Chars(ViewDisplay,Clear_Char_Middle,row,col);
+
+    SMG$Draw_Line(ViewDisplay, 1, 18, 4, 18, renderMiddle);
+    SMG$Draw_Line(ViewDisplay, 4, 18, 4, 23, renderMiddle);
+    SMG$Draw_Char(ViewDisplay, Diamond_Join, 4, 18, renderMiddle);
 End;
 
 {********************************************************************************************************************}
@@ -215,14 +216,25 @@ End;
 Procedure wallMiddleLeftSide;
 
 Begin
-    clearQuadrilateral(4, 6, 7, 3, 1, 3, 1, 6);
+    SMG$Put_Chars(ViewDisplay, Clear_Char_Middle, 1, 4, renderMiddle);
+    SMG$Put_Chars(ViewDisplay, Clear_Char_Middle, 2, 4, renderMiddle);
+    SMG$Put_Chars(ViewDisplay, Clear_Char_Middle, 3, 4, renderMiddle);
+    SMG$Put_Chars(ViewDisplay, Clear_Char_Middle, 4, 4, renderMiddle);
+    SMG$Put_Chars(ViewDisplay, Clear_Char_Middle, 5, 4, renderMiddle);
 
-    SMG$Draw_Char(ViewDisplay, 0, 4, 6);
-    SMG$Draw_Line(ViewDisplay, 1, 6, 4, 6);
-    SMG$Put_Chars(ViewDisplay, '/', 5, 5);
-    SMG$Put_Chars(ViewDisplay, '/', 6, 4);
-    SMG$Draw_Line(ViewDisplay, 1, 3, 7, 3);
-    SMG$Draw_Char(ViewDisplay, 0, 7, 3);
+    SMG$Put_Chars(ViewDisplay, Clear_Char_Middle, 1, 5, renderMiddle);
+    SMG$Put_Chars(ViewDisplay, Clear_Char_Middle, 2, 5, renderMiddle);
+    SMG$Put_Chars(ViewDisplay, Clear_Char_Middle, 3, 5, renderMiddle);
+    SMG$Put_Chars(ViewDisplay, Clear_Char_Middle, 4, 5, renderMiddle);
+
+    SMG$Draw_Line(ViewDisplay, 1, 3, 6, 3, renderMiddle);
+    SMG$Draw_Char(ViewDisplay, Diamond_Join, 7, 3, renderMiddle);
+
+    SMG$Put_Chars(ViewDisplay, '/', 6, 4, renderMiddle); { Wall bottom }
+    SMG$Put_Chars(ViewDisplay, '/', 5, 5, renderMiddle); { Wall bottom }
+
+    SMG$Draw_Line(ViewDisplay, 1, 6, 3, 6, renderMiddle);
+    SMG$Draw_Char(ViewDisplay, Diamond_Join, 4, 6, renderMiddle);
 End;
 
 {********************************************************************************************************************}
@@ -230,14 +242,25 @@ End;
 Procedure wallMiddleRightSide;
 
 Begin
-    clearQuadrilateral(1, 18, 1, 21, 7, 21, 4, 18);
+    SMG$Put_Chars(ViewDisplay, Clear_Char_Middle, 1, 19, renderMiddle);
+    SMG$Put_Chars(ViewDisplay, Clear_Char_Middle, 2, 19, renderMiddle);
+    SMG$Put_Chars(ViewDisplay, Clear_Char_Middle, 3, 19, renderMiddle);
+    SMG$Put_Chars(ViewDisplay, Clear_Char_Middle, 4, 19, renderMiddle);
 
-    SMG$Draw_Line(ViewDisplay, 1, 18, 4, 18);
-    SMG$Draw_Char(ViewDisplay, 0, 4, 18);
-    SMG$Put_Chars(ViewDisplay, '\\', 5, 19);
-    SMG$Put_Chars(ViewDisplay, '\\', 6, 20);
-    SMG$Draw_Line(ViewDisplay, 1, 21, 7, 21);
-    SMG$Draw_Char(ViewDisplay, 0, 7, 21);
+    SMG$Put_Chars(ViewDisplay, Clear_Char_Middle, 1, 20, renderMiddle);
+    SMG$Put_Chars(ViewDisplay, Clear_Char_Middle, 2, 20, renderMiddle);
+    SMG$Put_Chars(ViewDisplay, Clear_Char_Middle, 3, 20, renderMiddle);
+    SMG$Put_Chars(ViewDisplay, Clear_Char_Middle, 4, 20, renderMiddle);
+    SMG$Put_Chars(ViewDisplay, Clear_Char_Middle, 5, 20, renderMiddle);
+
+    SMG$Draw_Line(ViewDisplay, 1, 18, 3, 18, renderMiddle);
+    SMG$Draw_Char(ViewDisplay, Diamond_Join, 4, 18, renderMiddle);
+
+    SMG$Put_Chars(ViewDisplay, '\', 5, 19, renderMiddle);
+    SMG$Put_Chars(ViewDisplay, '\', 6, 20, renderMiddle);
+
+    SMG$Draw_Line(ViewDisplay, 1, 21, 6, 21, renderMiddle);
+    SMG$Draw_Char(ViewDisplay, Diamond_Join, 7, 21, renderMiddle);
 End;
 
 {********************************************************************************************************************}
@@ -247,16 +270,15 @@ End;
 Procedure wallFarFrontLeftLeft;
 
 Begin
-    SMG$Draw_Line(ViewDisplay, 1, 1, 1, 2);
+    SMG$Draw_Line(ViewDisplay, 1, 1, 1, 2, renderFar);
 End;
 
 {********************************************************************************************************************}
 
-
 Procedure wallFarFrontLeft;
 
 Begin
-  SMG$Draw_Line(ViewDisplay, 1, 2, 1, 9);
+  SMG$Draw_Line(ViewDisplay, 1, 2, 1, 9, renderFar);
 End;
 
 {********************************************************************************************************************}
@@ -264,7 +286,7 @@ End;
 Procedure wallFarFrontCenter;
 
 Begin
-    SMG$Draw_Line(ViewDisplay, 1, 9, 1, 15);
+    SMG$Draw_Line(ViewDisplay, 1, 9, 1, 15, renderFar);
 End;
 
 {********************************************************************************************************************}
@@ -272,7 +294,7 @@ End;
 Procedure wallFarFrontRight;
 
 Begin
-    SMG$Draw_Line(ViewDisplay, 1, 15, 1, 22);
+    SMG$Draw_Line(ViewDisplay, 1, 15, 1, 22, renderFar);
 End;
 
 {********************************************************************************************************************}
@@ -280,7 +302,7 @@ End;
 Procedure wallFarFrontRightRight;
 
 Begin
-    SMG$Draw_Line(ViewDisplay, 1, 22, 1, 23);
+    SMG$Draw_Line(ViewDisplay, 1, 22, 1, 23, renderFar);
 End;
 
 {********************************************************************************************************************}
@@ -288,8 +310,8 @@ End;
 Procedure wallFarLeftLeftSide;
 
 Begin
-    SMG$Draw_Char(ViewDisplay, 0, 1, 2);
-    SMG$Put_Chars(ViewDisplay, '/', 2, 1);
+    SMG$Draw_Char(ViewDisplay, Diamond_Join, 1, 2, renderFar);
+    SMG$Put_Chars(ViewDisplay, '/', 2, 1, renderFar);
 End;
 
 {********************************************************************************************************************}
@@ -297,13 +319,18 @@ End;
 Procedure wallFarLeftSide;
 
 Begin
-    clearQuadrilateral(1, 9, 4, 6, 1, 6, 1, 9);
+    SMG$Put_Chars(ViewDisplay, Clear_Char_Far, 1, 7, renderFar);
+    SMG$Put_Chars(ViewDisplay, Clear_Char_Far, 2, 7, renderFar);
 
-    SMG$Draw_Char(ViewDisplay, 0, 1, 9);
-    SMG$Put_Chars(ViewDisplay, '/', 2, 8);
-    SMG$Put_Chars(ViewDisplay, '/', 3, 7);
-    SMG$Draw_Line(ViewDisplay, 1, 6, 4, 6);
-    SMG$Draw_Char(ViewDisplay, 0, 4, 6);
+    SMG$Put_Chars(ViewDisplay, Clear_Char_Far, 1, 8, renderFar);
+
+    SMG$Put_Chars(ViewDisplay, '/', 2, 8, renderFar);
+    SMG$Put_Chars(ViewDisplay, '/', 3, 7, renderFar);
+
+    SMG$Draw_Line(ViewDisplay, 1, 6, 3, 6, renderFar);
+
+    SMG$Draw_Char(ViewDisplay, Diamond_Join, 1, 9, renderFar);
+    SMG$Draw_Char(ViewDisplay, Diamond_Join, 4, 6, renderFar);
 End;
 
 {********************************************************************************************************************}
@@ -311,13 +338,17 @@ End;
 Procedure wallFarRightSide;
 
 Begin
-    clearQuadrilateral(1, 15, 4, 18, 1, 18, 1, 15);
+    SMG$Put_Chars(ViewDisplay, Clear_Char_Far, 1, 16, renderFar);
 
-    SMG$Draw_Char(ViewDisplay, 0, 1, 15);
-    SMG$Put_Chars(ViewDisplay, '\\', 2, 16);
-    SMG$Put_Chars(ViewDisplay, '\\', 3, 17);
-    SMG$Draw_Line(ViewDisplay, 1, 22, 4, 18);
-    SMG$Draw_Char(ViewDisplay, 0, 4, 18);
+    SMG$Put_Chars(ViewDisplay, Clear_Char_Far, 1, 17, renderFar);
+    SMG$Put_Chars(ViewDisplay, Clear_Char_Far, 2, 17, renderFar);
+
+    SMG$Put_Chars(ViewDisplay, '\', 2, 16, renderFar);
+    SMG$Put_Chars(ViewDisplay, '\', 3, 17, renderFar);
+    SMG$Draw_Line(ViewDisplay, 1, 18, 3, 18, renderFar);
+
+    SMG$Draw_Char(ViewDisplay, Diamond_Join, 1, 15, renderFar);
+    SMG$Draw_Char(ViewDisplay, Diamond_Join, 4, 18, renderFar);
 End;
 
 {********************************************************************************************************************}
@@ -325,10 +356,9 @@ End;
 Procedure wallFarRightRightSide;
 
 Begin
-    SMG$Draw_Char(ViewDisplay, 0, 1, 22);
-    SMG$Put_Chars(ViewDisplay, '\\', 2, 23);
+    SMG$Put_Chars(ViewDisplay, '\', 2, 23, renderFar);
+    SMG$Draw_Char(ViewDisplay, Diamond_Join, 1, 22, renderFar);
 End;
-
 
 {********************************************************************************************************************}
 
@@ -340,26 +370,33 @@ End;
 
 {********************************************************************************************************************}
 
-Procedure far(leftLeftRoom: NewISpot; leftRoom: NewISpot; centerRoom: NewISpot; rightRoom: NewISpot; rightRightRoom: NewISpot);
+[Global]Procedure far(leftLeftRoom: NewISpot; leftRoom: NewISpot; centerRoom: NewISpot; rightRoom: NewISpot; rightRightRoom: NewISpot);
 
 Begin
-    if (looksLikeWall(leftLeftRoom.front)) then
+   if (looksLikeWall(leftLeftRoom.front)) then
       wallFarFrontLeftLeft;
+
     if (looksLikeWall(leftRoom.front)) then
       wallFarFrontLeft;
+
     if (looksLikeWall(centerRoom.front)) then
       wallFarFrontCenter;
+
     if (looksLikeWall(rightRoom.front)) then
       wallFarFrontRight;
+
     if (looksLikeWall(rightRightRoom.front)) then
       wallFarFrontRightRight;
 
     if (looksLikeWall(leftRoom.left)) then
       wallFarLeftLeftSide;
+
     if (looksLikeWall(centerRoom.left)) then
       wallFarLeftSide;
+
     if (looksLikeWall(centerRoom.right)) then
       wallFarRightSide;
+
     if (looksLikeWall(rightRoom.right)) then
       wallFarRightRightSide;
 End;
