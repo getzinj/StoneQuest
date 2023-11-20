@@ -132,7 +132,7 @@ Begin
          Begin { For loop 1 }
             If Loop in CantStand then
                 Begin
-                    T:=T+Pad(Monster_T[Loop],' ',20);
+                    T:=T + Pad(Monster_T[Loop],' ',20);
                     If Pos/3<>Pos div 3 then
                        T:=T+'    '
                     Else
@@ -140,7 +140,7 @@ Begin
                           SMG$Put_Line (ScreenDisplay,T);
                           T:='';
                        End;
-                    Pos:=Pos+1;
+                    Pos:=Pos + 1;
                 End;
          End; { For loop 1 }
 
@@ -171,7 +171,7 @@ Begin
                 SMG$Put_Line (ScreenDisplay, T);
                 T:='';
              End;  { third entry }
-         Pos:=Pos+1;
+         Pos:=Pos + 1;
      End;  { For Loop 2 }
      SMG$Put_Line(ScreenDisplay,T,0);
      SMG$End_Display_Update (ScreenDisplay);
@@ -329,7 +329,7 @@ Var
    Amount: Integer;
 
 Begin
-   SMG$Put_Chars (ScreenDisplay, CHR(Position+64) + '  ' + Cat[Position] + ': ');
+   SMG$Put_Chars (ScreenDisplay, CHR(Position + 64) + '  ' + Cat[Position] + ': ');
    Case Position of
       1: SMG$Put_Chars (ScreenDisplay,String(Item_List[Number].Item_Number));
       2: SMG$Put_Chars (ScreenDisplay,Item_List[Number].Name);
@@ -360,7 +360,7 @@ Begin
       13: If Item_List[Number].Usable_By = [ ] then
              SMG$Put_Chars (ScreenDisplay, 'No one')
          Else
-             SMG$Put_Chars (ScreenDisplay, 'Press "' + CHR(13+64) + '" to edit list');
+             SMG$Put_Chars (ScreenDisplay, 'Press "' + CHR(13 + 64) + '" to edit list');
       14: SMG$Put_Chars (ScreenDisplay,String(Item_List[Number].Regenerates));
       15: If Item_List[Number].Protects_Against=[] then
              SMG$Put_Chars (ScreenDisplay, 'Nothing')
@@ -552,7 +552,7 @@ Begin
 
          Answer:=Make_Choice (['F','B','E']);
 
-         If (Answer = 'F') and (First+Page_size <= Table_Size) then
+         If (Answer = 'F') and (First + Page_size <= Table_Size) then
             Begin
                First:=First + Page_Size;
                Last:=First + Page_Size;
@@ -626,7 +626,7 @@ Begin
    Done:=(X>=MAX_ITEM_NUMBER);
    While Not Done do
       Begin
-         X:=X+1;
+         X:=X + 1;
          Done:=(Item_List[X]=Null_Item);
          Done:=Done or (X>=MAX_ITEM_NUMBER);
       End;

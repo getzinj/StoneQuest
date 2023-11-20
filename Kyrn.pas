@@ -49,7 +49,7 @@ Begin { Character Record Exists }
    Found_It:=False;  Last_Slot:=False;
    Repeat
       Begin
-         Slot:=Slot+1;
+         Slot:=Slot + 1;
          Last_Slot:=(Slot=20);
          Found_It:=(Roster[Slot].Name=Name);
       End;
@@ -89,7 +89,7 @@ Begin  { Store Character }
             { Search for an available slot and store the character there }
 
             Slot:=0;
-            Repeat  Slot:=Slot+1  Until Roster[Slot].Status=Deleted;
+            Repeat  Slot:=Slot + 1  Until Roster[Slot].Status=Deleted;
             Put_Character_In_Slot (Character,Slot);
 
          End    { If the character doesn't exists}
@@ -118,7 +118,7 @@ Begin  { Store Character without Lock }
             { Search for an available slot and store the character there }
 
             Slot:=0;
-            Repeat  Slot:=Slot+1  Until Roster[Slot].Status=Deleted;
+            Repeat  Slot:=Slot + 1  Until Roster[Slot].Status=Deleted;
             Roster[Slot]:=Character;
 
          End;  { If the character doesn't exists }
@@ -319,7 +319,7 @@ Begin { Update Party }
             Store_Character (Party[Member]);  { remove from the party }
             If Party_Size>1 then
                For Person:=Member to Party_Size-1 do
-                  Party[Person]:=Party[Person+1];
+                  Party[Person]:=Party[Person + 1];
             Party_Size:=Party_Size-1;  { The party is smaller now }
          End;
 

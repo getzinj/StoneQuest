@@ -63,7 +63,7 @@ Begin
    Else
        T:=' ';
 
-   T:=T+Symbol_Type (Up,Member,Current_Party_Size);
+   T:=T + Symbol_Type (Up,Member,Current_Party_Size);
 
    If Sight_Blocked(Up) or Sight_Blocked(Right) then
        T:=T+'#'
@@ -86,7 +86,7 @@ Begin
    Else
        T:=' ';
 
-   T:=T+Symbol_Type (Down,Member,Current_Party_Size);
+   T:=T + Symbol_Type (Down,Member,Current_Party_Size);
 
    If Sight_Blocked(Down) or Sight_Blocked(Right) then
        T:=T+'#'
@@ -121,7 +121,7 @@ Begin
           T:=T+'.';
 
    If Section<>Left_S then
-       T:=T+Symbol_Type (Right,Member,Current_Party_Size)
+       T:=T + Symbol_Type (Right,Member,Current_Party_Size)
    Else
        T:=T+' ';
 
@@ -181,7 +181,7 @@ Function Plus(ordinate: Horizontal_Type): Horizontal_Type;
                  if ordinate>19 then
                     return 0
                  else
-                    return ordinate+1;
+                    return ordinate + 1;
               End;
 
 (******************************************************************************)
@@ -299,7 +299,7 @@ Var
 
 Begin
    Bright:=0;
-   If Has_Light then Bright:=Bright+SMG$M_BOLD;
+   If Has_Light then Bright:=Bright + SMG$M_BOLD;
 
    SMG$Put_Line (ViewDisplay,
        '   '

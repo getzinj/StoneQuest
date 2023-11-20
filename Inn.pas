@@ -108,7 +108,7 @@ Var
 Begin
   Class:=Character.Class;  Level:=Character.Level;  XP:=Character.Experience;
 
-  Next_Level:=Level+1;
+  Next_Level:=Level + 1;
 
   Gains_Level:=(XP>=XP_Needed(Class,Next_Level));
 End;
@@ -171,10 +171,10 @@ Var
 Begin
    Temp:=Spells_Known (Class,Level);
    Case Class of
-     AntiPaladin,Paladin: Character.Cleric_Spells:=Character.Cleric_Spells+Temp;
-     Bard,Ranger: Character.Wizard_Spells:=Character.Wizard_Spells+Temp;
-     Wizard: Character.Wizard_Spells:=Character.Wizard_Spells+Temp;
-     Cleric: Character.Cleric_Spells:=Character.Cleric_Spells+Temp;
+     AntiPaladin,Paladin: Character.Cleric_Spells:=Character.Cleric_Spells + Temp;
+     Bard,Ranger: Character.Wizard_Spells:=Character.Wizard_Spells + Temp;
+     Wizard: Character.Wizard_Spells:=Character.Wizard_Spells + Temp;
+     Cleric: Character.Cleric_Spells:=Character.Cleric_Spells + Temp;
      Otherwise ;
    End;
 End;
@@ -202,11 +202,11 @@ Begin
       Begin
         Improved:=False;
         If Made_Roll (5) then
-           Begin Character.DetectTrap:=Character.DetectTrap+Roll_Die(5); Improved:=True; End;
+           Begin Character.DetectTrap:=Character.DetectTrap + Roll_Die(5); Improved:=True; End;
         If Made_Roll (5) then
-           Begin Character.Regenerates:=Character.Regenerates+1; Improved:=True; End;
+           Begin Character.Regenerates:=Character.Regenerates + 1; Improved:=True; End;
         If Made_Roll (5) then
-           Begin Character.DetectSecret:=Character.DetectSecret+Roll_Die(5); Improved:=True; End;
+           Begin Character.DetectSecret:=Character.DetectSecret + Roll_Die(5); Improved:=True; End;
 
         If Improved then
            SMG$Put_Line (BottomDisplay,Character.Name+' gained in psionic ability!',0,1);
@@ -218,8 +218,8 @@ End;
 Procedure Promote (Var Character: Character_Type);
 
 Begin
-  Character.Level:=Character.Level+1;
-  Character.Max_HP:=Character.Max_HP+Compute_Hit_Die(Character);
+  Character.Level:=Character.Level + 1;
+  Character.Max_HP:=Character.Max_HP + Compute_Hit_Die(Character);
 
   SMG$Erase_Display (BottomDisplay);
   SMG$Put_Line (BottomDisplay,Character.Name+' gained a level!!!!!!',1,1);
@@ -241,7 +241,7 @@ Begin
    Restore_Spells (Character);
 
    If Alive (Character) then
-      Character.Curr_HP:=Min(Character.Curr_HP+Healing[Room_Number]+(Character.Regenerates*7),Character.MAX_HP);
+      Character.Curr_HP:=Min(Character.Curr_HP + Healing[Room_Number]+(Character.Regenerates + 7),Character.MAX_HP);
 
       If (Character.Curr_HP<1) and Alive(Character) then
          Begin
@@ -282,7 +282,7 @@ Begin
       End
    Else
       Begin
-         XP:=Character.Experience;  Lvl:=Character.Level+1;
+         XP:=Character.Experience;  Lvl:=Character.Level + 1;
 
          Class:=Character.Class;
          Next:=XP_Needed (Class,Lvl);
@@ -315,7 +315,7 @@ Begin
 
    For Person:=1 to Party_Size do
       Begin
-         Temp:=Temp+Party[Person].Gold;
+         Temp:=Temp + Party[Person].Gold;
          Party[Person].Gold:=0;
       End;
 
@@ -361,7 +361,7 @@ Begin
          SMG$Set_Cursor_ABS (BottomDisplay,3,1);
 
          For Room_Number:=1 to 6 do
-            SMG$Put_Line(BottomDisplay,'['+CHR(Room_Number+64)+']   '+Room_Name[Room_Number]);
+            SMG$Put_Line(BottomDisplay,'['+CHR(Room_Number + 64)+']   '+Room_Name[Room_Number]);
 
          SMG$Put_Line (BottomDisplay,'Thou have '+String(Party[Person].Gold)+' Gold Pieces.');
          SMG$Put_Line (BottomDisplay,'Which room?  (P)ool, [RET] exits)',0);
@@ -374,7 +374,7 @@ Begin
                Room_Selected:=Ord(Answer)-64;
                Repeat
                   Begin
-                     Party[Person].Age:=Party[Person].Age+7;
+                     Party[Person].Age:=Party[Person].Age + 7;
                      Party[Person].Gold:=Party[Person].Gold-Cost[Room_Selected];
 
                      If Party[Person].Gold>=0 then

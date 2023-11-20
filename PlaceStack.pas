@@ -70,7 +70,7 @@ Begin
 
   Temp^.Next:=Stack.Front;
   Stack.Front:=Temp;
-  Stack.Length:=Stack.Length+1;
+  Stack.Length:=Stack.Length + 1;
 End;
 
 (*******************************************************************************)

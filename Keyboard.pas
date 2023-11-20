@@ -40,7 +40,7 @@ Begin { Get Key }
 
  { Is it time to check for closing? }
 
-  Keypresses:=Keypresses+1;
+  Keypresses:=Keypresses + 1;
   If Keypresses=Maxint then Keypresses:=0;
   If Not Authorized then
      If (Keypresses mod 4)=0 then

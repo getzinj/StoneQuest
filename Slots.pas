@@ -195,7 +195,7 @@ Begin
 
    SMG$BEGIN_PASTEBOARD_UPDATE (Pasteboard);
    Print_Character (Character);
-   Print_Roll (Roll_Die(8),Roll_Die(8+0),Roll_Die(8+0+0));
+   Print_Roll (Roll_Die(8),Roll_Die(8 + 0),Roll_Die(8 + 0+0));
    SMG$PASTE_VIRTUAL_DISPLAY (ScreenDisplay,Pasteboard,2,2);
    SMG$PASTE_VIRTUAL_DISPLAY (CharacterDisplay,Pasteboard,2,2);
    SMG$PASTE_VIRTUAL_DISPLAY (MachineDisplay,Pasteboard,9,25);
@@ -226,7 +226,7 @@ Begin
                If Bests<0 then If Pays(First,Second,Roll)<Pays(First,Second,Best_Roll) then Best_Roll:=Roll;
                If Bests>0 then If Pays(First,Second,Roll)>Pays(First,Second,Best_Roll) then Best_Roll:=Roll;
             End;
-         Loop:=Loop+1;
+         Loop:=Loop + 1;
       End;
    Until (Bests=0) or (Loop>ABS(Bests));
    Get_Third_Roll:=Best_Roll;
@@ -284,7 +284,7 @@ Var
 
 Begin
   Roll_Slots (First,Second,Third,Character);
-  Temp:=Bet*Pays(First,Second,Third);
+  Temp:=Bet + Pays(First,Second,Third);
   Plays_and_Wins:=Temp;
   If Temp>0 then Player_Won;
 End;
@@ -347,8 +347,8 @@ Begin { Play Slots }
                       Begin
                          Character.Gold:=Character.Gold-Bet;
                          Wins:=Plays_And_Wins(Bet,Character)-Bet;
-                         Net_Winnings:=(Net_Winnings+Wins)-Bet;
-                         Character.Gold:=Character.Gold+Bet+Wins;
+                         Net_Winnings:=(Net_Winnings + Wins)-Bet;
+                         Character.Gold:=Character.Gold + Bet + Wins;
                       End;
                    If Bet>Character.Gold then Bet:=0;
                 End;

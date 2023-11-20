@@ -150,7 +150,7 @@ Begin { Compute Party Size }
    Temp:=0;
    For Character:=1 to Party_Size do
       If Alive (Member[Character]) then
-         Temp:=Temp+1;
+         Temp:=Temp + 1;
    Compute_Party_Size:=Temp;
 End;  { Compute Party Size }
 
@@ -177,10 +177,10 @@ Var
 Begin
    Done:=False;
    While (Position<Party_Size) and Not(Done) do
-      If Alive(Member[Position+1]) then
+      If Alive(Member[Position + 1]) then
          Begin
-            Swap_Characters (Member[Position+1],Member[Position]);
-            Position:=Position+1;
+            Swap_Characters (Member[Position + 1],Member[Position]);
+            Position:=Position + 1;
          End
       Else
          Done:=True;
@@ -195,8 +195,8 @@ Var
 
 Begin
   Character:=Member[Position];
-  Character.Age:=Character.Age+1;
-  Character.Curr_HP:=Character.Curr_HP+Character.Regenerates;
+  Character.Age:=Character.Age + 1;
+  Character.Curr_HP:=Character.Curr_HP + Character.Regenerates;
 
   If Character.Attack.Berserk then
      Character.Curr_HP:=Min(Character.Curr_HP,(2 * Character.MAX_HP))
@@ -242,8 +242,8 @@ Begin
    TempX:=PosX;  Tempy:=PosY;
    Case direction of
         North:  TempY:=PosY-1;
-        South:  TempY:=PosY+1;
-        East:   TempX:=PosX+1;
+        South:  TempY:=PosY + 1;
+        East:   TempX:=PosX + 1;
         West:  TempX:=PosX-1;
    End;
    If TempX<1 then TempX:=20;
@@ -357,11 +357,11 @@ Begin
    Chance:=5;
    For Character:=1 to Current_Party_Size do
       Begin
-         If Member[Character].Psionics then Chance:=Chance+Member[Character].DetectSecret;
-         If Member[Character].Race in [Drow,Elven] then Chance:=Chance+35
-         Else If Member[Character].Race=HfElf then Chance:=Chance+15;
+         If Member[Character].Psionics then Chance:=Chance + Member[Character].DetectSecret;
+         If Member[Character].Race in [Drow,Elven] then Chance:=Chance + 35
+         Else If Member[Character].Race=HfElf then Chance:=Chance + 15;
       End;
-      If (Rounds_Left[Lght]>0) or (Rounds_Left[CoLi]>0) then Chance:=Chance+50;
+      If (Rounds_Left[Lght]>0) or (Rounds_Left[CoLi]>0) then Chance:=Chance + 50;
 
       If Made_Roll(Chance) then Detected_Secret_Door:=True
       Else                      Detected_Secret_Door:=False;
@@ -489,7 +489,7 @@ Begin { Print a Character Line }
          Case Character.Status of
                 NoStatus,Healthy,Afraid,Asleep,Zombie,Insane: ;
                 Dead,Deleted,Paralyzed,Petrified,Ashes: Rendition:=SMG$M_REVERSE;
-                Poisoned: Rendition:=SMG$M_BLINK+SMG$M_BOLD+SMG$M_REVERSE;
+                Poisoned: Rendition:=SMG$M_BLINK + SMG$M_BOLD + SMG$M_REVERSE;
                 Otherwise Rendition:=SMG$M_REVERSE;
          End;
          SMG$Put_Line (CharacterDisplay,StatusName[Character.Status],0,Rendition);
@@ -501,7 +501,7 @@ End;  { Print a Character Line }
 [Global]Procedure Print_Party_Line (Member: Party_Type;  Party_Size,Position: Integer);
 
 Begin { Print Party Line }
-   SMG$Put_Chars (CharacterDisplay,CHR(Position+ZeroOrd),Position+1,2,1);
+   SMG$Put_Chars (CharacterDisplay,CHR(Position + ZeroOrd),Position + 1,2,1);
    If Position<=Party_Size then
       Print_A_Character_Line (Member[Position],Position);
 End;  { Print Party Line }
@@ -728,8 +728,8 @@ Begin
       Begin
         Case Member[Loop].Alignment of
            Evil:    Temp:=-1;
-           Neutral: Temp:=Temp+1;
-           Good:    Temp:=Temp+2;
+           Neutral: Temp:=Temp + 1;
+           Good:    Temp:=Temp + 2;
         End;
       End;
    Evil_Party:=(Temp < 0);
@@ -754,12 +754,12 @@ Begin
    Adjust:=0;
    For Character:=1 to Party_Size do
       Case Member[Character].Alignment of
-         Good: Adjust:=Adjust+5;
+         Good: Adjust:=Adjust + 5;
          Evil: Adjust:=Adjust-5;
          Neutral,NoAlign: ;
       End;
 
-   Salvation_Chance:=Min(Base+ABS(Adjust),85);
+   Salvation_Chance:=Min(Base + ABS(Adjust),85);
 End;
 
 (******************************************************************************)
@@ -807,7 +807,7 @@ Begin
 
             Member[Character].Armor_Class:=Compute_AC(Member[Character],PosZ);
             Member[Character].Regenerates:=Regenerates(Member[Character],PosZ);
-            Member[Character].Experience:=Member[Character].Experience+100;
+            Member[Character].Experience:=Member[Character].Experience + 100;
          End;
 End;
 
@@ -1155,10 +1155,10 @@ Begin
    Answer:=Make_Choice (Options,Time_Out:=5,Time_Out_Char:='S');
 
    Just_Kicked:=False;
-   Round_Counter:=Round_Counter+1;
+   Round_Counter:=Round_Counter + 1;
    If Round_Counter=5 then
        New_Round (Round_Counter,Member,Current_Party_Size,Party_Size);
-   Minute_Counter:=Minute_Counter+1;
+   Minute_Counter:=Minute_Counter + 1;
 
    Case Answer of
                     'S': Update_Status (Member,Current_Party_Size,Party_Size,Leave_Maze,Rounds_Left);

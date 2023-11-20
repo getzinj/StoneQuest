@@ -27,7 +27,7 @@ end;  { Roll_Die }
 
 [Global]Function Random_Number (Die: Die_Type): [Volatile]Integer;
 
-{ This function will return a random number by rulling xDy+z as determined by DIE }
+{ This function will return a random number by rulling xDy + z as determined by DIE }
 
 Var
    Sum,Loop: Integer;
@@ -36,8 +36,8 @@ Begin { Random Number }
    Sum:=0;
    If (Die.X>0) and (Die.Y>0) then { If there are dice to roll... }
       For Loop:=1 to Die.X do  { Roll each die }
-         Sum:=Sum+Roll_Die (Die.Y);
-   Random_Number:=Sum+Die.Z;  { ... and return the result }
+         Sum:=Sum + Roll_Die (Die.Y);
+   Random_Number:=Sum + Die.Z;  { ... and return the result }
 End;  { Random Number }
 
 {**********************************************************************************************************************************}
@@ -60,7 +60,7 @@ Begin { Get Seed }
    { Get a seed from the time }
 
    Seed:=Ord(Timex[8])-ZeroOrd+(ord(timex[7])-ZeroOrd)*10;
-   Seed:=Seed*Ord(Timex[6]);
+   Seed:=Seed + Ord(Timex[6]);
 
    { Return it }
 

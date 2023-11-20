@@ -92,7 +92,7 @@ Begin { Dead Characters }
    For Character:=1 to Party_Size do
      If (Alive(Member[Character])) then  { For every living member }
         Begin
-           Current_Party_Size:=Current_Party_Size+1;  { Increment survivor count }
+           Current_Party_Size:=Current_Party_Size + 1;  { Increment survivor count }
         End;
 
    { With only six items, we might as well use a Bubblesort as any other sort.  This will put the dead characters at the rear of
@@ -382,7 +382,7 @@ Begin { Select Item }
                   { Add the item to the character's collection }
 
                Item:=Item_List[ItemPtr^.Item_Num];
-               Character.No_of_Items:=Character.No_of_Items+1;
+               Character.No_of_Items:=Character.No_of_Items + 1;
                Num:=Character.No_of_Items;
                Character.Item[Num].Item_Num:=ItemPtr^.Item_Num;
                Character.Item[Num].Ident:=ItemPtr^.Identified;
@@ -454,7 +454,7 @@ Begin { Store Item }
 
                 { Give the item to this person }
 
-            Member[CharNo].No_of_Items:=Member[CharNo].No_of_Items+1;
+            Member[CharNo].No_of_Items:=Member[CharNo].No_of_Items + 1;
             With Member[CharNo].Item[Member[CharNo].No_of_Items] do
                Begin
                   Ident:=Item_Ptr^.Identified;
@@ -466,7 +466,7 @@ Begin { Store Item }
          End  { Has room }
       Else
          Begin { Doesn't have room }
-            CharNo:=CharNo+1;  { Go to next character }
+            CharNo:=CharNo + 1;  { Go to next character }
             If (CharNo>Party_Size) then
                Begin { Loop around to beginning }
                   CharNo:=1;
@@ -520,11 +520,11 @@ Begin { Wants_To_Invoke }
        +'special power of thine ';
    If (Character.Item[Item_No].Ident) then
       Begin
-         T:=T+Item.True_Name;
+         T:=T + Item.True_Name;
       End
    Else
       Begin
-         T:=T+Item.Name;
+         T:=T + Item.Name;
       End;
    T:=T+'?';
 
@@ -723,10 +723,10 @@ End;
 
 Procedure Print_Character_Line (CharNo: Integer; Member: Party_Type;  Party_Size: Integer);
 
-{ This procedure will print the CHARNOth party member's statistics int eh CHARNO+3 row. }
+{ This procedure will print the CHARNOth party member's statistics int eh CHARNO + 3 row. }
 
 Begin { Print Character Line }
-   SMG$SET_CURSOR_ABS (CampDisplay,CharNo+3,2);
+   SMG$SET_CURSOR_ABS (CampDisplay,CharNo + 3,2);
    Print_Character_Line_Aux (CharNo,Member,Party_Size);
 End;  { Print Character Line }
 
@@ -762,7 +762,7 @@ Procedure Print_Lower_Character_Line (CharNo: Integer;  Member: Party_Type;  Par
   the status line of each character in the party. }
 
 Begin { Print_Lower_Character_Line }
-  SMG$SET_CURSOR_ABS (CampDisplay,CharNo+15,2);
+  SMG$SET_CURSOR_ABS (CampDisplay,CharNo + 15,2);
   Print_Character_Line_Aux (CharNo,Member,Party_Size);
 End;  { Print_Lower_Character_Line }
 
@@ -779,7 +779,7 @@ Var
    T: Line;
 
 Begin { Reorder party }
-   Options:=['1'..CHR(Party_Size+ZeroOrd)];  { Characters that can be selected }
+   Options:=['1'..CHR(Party_Size + ZeroOrd)];  { Characters that can be selected }
 
    { This will ask for the position of all but one character.  The position of the last character is not asked because it will simply
      go in the only remaining spot. }
@@ -791,7 +791,7 @@ Begin { Reorder party }
              +String(Position,1);
          SMG$Put_Chars (CampDisplay,T,13,2,1);
          Number:=Ord (Make_Choice(Options))-ZeroOrd;  { get the character number }
-         Options:=Options-[CHR(Number+ZeroOrd)];  { No longer a choice now }
+         Options:=Options-[CHR(Number + ZeroOrd)];  { No longer a choice now }
          Temp_Party[Position]:=Member[Number];
          Print_Lower_Character_Line (Position,Temp_Party,Party_Size);
       End;  { Each position }
@@ -799,7 +799,7 @@ Begin { Reorder party }
    { This following section will place the remaining character last in order }
 
    For Position:=1 to Party_Size do
-      If CHR(Position+ZeroOrd) in Options then { If this is the remaining char. }
+      If CHR(Position + ZeroOrd) in Options then { If this is the remaining char. }
          Temp_Party[Party_Size]:=Member[Position];  { Add him... }
    Print_Lower_Character_Line (Party_Size,Temp_Party,Party_Size);  { ... and print him }
    Delay (1/2);
@@ -880,9 +880,9 @@ Begin
    Days:=Trunc(Minute_Counter/100);
    For Slot:=1 to Current_Party_Size do
       Begin
-         Member[Slot].Curr_HP:=Member[Slot].Curr_HP+Days;
+         Member[Slot].Curr_HP:=Member[Slot].Curr_HP + Days;
          If Member[Slot].Curr_HP>Member[Slot].Max_HP then Member[Slot].Curr_HP:=Member[Slot].Max_HP;
-         If Minute_Counter>(3*100) then Restore_Spells (Member[Slot]);
+         If Minute_Counter>(3 + 100) then Restore_Spells (Member[Slot]);
       End;
    Minute_Counter:=Minute_Counter-(100* (Trunc (Minute_Counter / 100)));
 End;
@@ -990,7 +990,7 @@ Begin { Camp }
             { Otherwise, pasteboard batch }
 
          FirstTime:=False;  {Now we are starting the >= 2nd batch }
-         Choices:=['1'..CHR(Party_Size+ZeroOrd),'R','L'];
+         Choices:=['1'..CHR(Party_Size + ZeroOrd),'R','L'];
          If Not Game_Saved then Choices:=Choices+['S'];
          If Party_Has_Items (Member,Party_Size) then Choices:=Choices+['E'];
          Answer:=Make_Choice (Choices);                                     { Get the player's choice }

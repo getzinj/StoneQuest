@@ -80,8 +80,8 @@ Begin
    For Loop:=1 to 20 do
       Begin
          T:=String(Loop,2)+')  '+Pad(Roster[Loop].Name,' ',20)+' '+AlignName[Roster[Loop].Alignment][1]+'-';
-         T:=T+Pad(ClassName[Roster[Loop].Class],' ',13)+'   '+String(Roster[Loop].Level,3)+'       ';
-         T:=T+StatusName[Roster[Loop].Status];
+         T:=T + Pad(ClassName[Roster[Loop].Class],' ',13)+'   '+String(Roster[Loop].Level,3)+'       ';
+         T:=T + StatusName[Roster[Loop].Status];
          SMG$Put_line (ScreenDisplay,T);
       End;
 End;
@@ -254,24 +254,24 @@ Begin
          SMG$Put_Line (ScreenDisplay,'--------------');
          For Loop:=1 to 15 do
             Begin
-               T:=CHR(Loop+64)+'  '+Cat[Loop]+': ';
+               T:=CHR(Loop + 64)+'  '+Cat[Loop]+': ';
 
                Case Loop of
-                    1:  T:=T+String(Number);
-                    2:  T:=T+Character.Name;
-                    3:  T:=T+SexName[Character.Sex];
-                    4:  T:=T+RaceName[Character.Race];
-                    5:  T:=T+AlignName[Character.Alignment];
-                    6:  T:=T+ClassName[Character.Class];
-                    7:  T:=T+ClassName[Character.PreviousClass];
-                    8:  T:=T+String((Character.Age div 365));
-                    9:  T:=T+String(Character.Abilities[1],2);
-                    10:  T:=T+String(Character.Abilities[2],2);
-                    11:  T:=T+String(Character.Abilities[3],2);
-                    12:  T:=T+String(Character.Abilities[4],2);
-                    13:  T:=T+String(Character.Abilities[5],2);
-                    14:  T:=T+String(Character.Abilities[6],2);
-                    15:  T:=T+String(Character.Abilities[7],2);
+                    1:  T:=T + String(Number);
+                    2:  T:=T + Character.Name;
+                    3:  T:=T + SexName[Character.Sex];
+                    4:  T:=T + RaceName[Character.Race];
+                    5:  T:=T + AlignName[Character.Alignment];
+                    6:  T:=T + ClassName[Character.Class];
+                    7:  T:=T + ClassName[Character.PreviousClass];
+                    8:  T:=T + String((Character.Age div 365));
+                    9:  T:=T + String(Character.Abilities[1],2);
+                    10:  T:=T + String(Character.Abilities[2],2);
+                    11:  T:=T + String(Character.Abilities[3],2);
+                    12:  T:=T + String(Character.Abilities[4],2);
+                    13:  T:=T + String(Character.Abilities[5],2);
+                    14:  T:=T + String(Character.Abilities[6],2);
+                    15:  T:=T + String(Character.Abilities[7],2);
                End;
                SMG$Put_Line (ScreenDisplay, T);
             End;
@@ -319,7 +319,7 @@ Begin
                      Num:=Get_Num(ScreenDisplay);
 
                      Case Ord(Answer)-64 of
-                       8: Character.Age:=Num*365;
+                       8: Character.Age:=Num + 365;
                        9..15: If (Num>2) and (Num<26) then
                           Character.Abilities[Ord(answer)-72]:=Num;
                      End;
@@ -338,8 +338,8 @@ Var
 
 Begin
   R:=0;
-  If Column in Book then R:=R+1;
-  If Column=Cursor then R:=R+2;
+  If Column in Book then R:=R + 1;
+  If Column=Cursor then R:=R + 2;
   SMG$Put_Chars (ScreenDisplay,Spell[Column],Y,X,,R);
 End;
 
@@ -359,21 +359,21 @@ Begin
    For Column:=MIN_SPELL_NAME to Heal do
       Begin
          Print_Spell (Book,Column,Cursor,X,Y);
-         Y:=Y+1;
+         Y:=Y + 1;
       End;
 
    X:=20;  Y:=1;
    For Column:=Harm to Dubl do
       Begin
          Print_Spell (Book,Column,Cursor,X,Y);
-         Y:=Y+1;
+         Y:=Y + 1;
       End;
 
    X:=40;  Y:=1;
    For Column:=Succ(DuBl) to MAX_SPELL_NAME do
       Begin
          Print_Spell (Book,Column,Cursor,X,Y);
-         Y:=Y+1;
+         Y:=Y + 1;
       End;
 
    SMG$End_Display_Update (ScreenDisplay);
@@ -461,7 +461,7 @@ Begin
                   R:=0;
                Y1:=Y;
 
-               SMG$Put_Chars (ScreenDisplay,String(Character.SpellPoints[Y,X]),Y1,7+(X*2),,R);
+               SMG$Put_Chars (ScreenDisplay,String(Character.SpellPoints[Y,X]),Y1,7+(X + 2),,R);
                SMG$Put_Chars (ScreenDisplay,'/');
             End;
          SMG$Put_Line (ScreenDisplay,'');
@@ -494,7 +494,7 @@ Begin
                            If PosX<1 then PosX:=9;
                          End;
              Right_Arrow: Begin
-                           PosX:=PosX+1;
+                           PosX:=PosX + 1;
                            If PosX>9 then PosX:=1;
                          End;
              Up_Arrow,Down_Arrow: If PosY=1 then
@@ -552,28 +552,28 @@ Begin
          SMG$Put_Line (ScreenDisplay,'--------------');
          For Loop:=16 to 29 do
             Begin
-               T:=CHR(Loop+49)+'  '+Cat[Loop]+': ';
+               T:=CHR(Loop + 49)+'  '+Cat[Loop]+': ';
 
                Case Loop of
-                    16:  T:=T+String(Character.Gold);
-                    17:  T:=T+String(Trunc(Character.Experience));
-                    18:  T:=T+String(Character.Level);
-                    19:  T:=T+String(Character.Previous_Lvl);
+                    16:  T:=T + String(Character.Gold);
+                    17:  T:=T + String(Trunc(Character.Experience));
+                    18:  T:=T + String(Character.Level);
+                    19:  T:=T + String(Character.Previous_Lvl);
                     20:  If Character.Lock then
                            T:=T+'Out'
                          Else
                            T:=T+'In';
-                    21:  T:=T+String(Character.Curr_HP);
-                    22:  T:=T+String(Character.Max_HP);
-                    23:  T:=T+String(Character.Armor_Class);
-                    24:  T:=T+StatusName[Character.Status];
-                    25:  T:=T+String(Character.No_of_Items);
+                    21:  T:=T + String(Character.Curr_HP);
+                    22:  T:=T + String(Character.Max_HP);
+                    23:  T:=T + String(Character.Armor_Class);
+                    24:  T:=T + StatusName[Character.Status];
+                    25:  T:=T + String(Character.No_of_Items);
                     26:  If Character.No_of_items=0 then
                             T:=T+'None'
                          Else
                             T:=T+'Type ''K'' to edit list';
                     27:  T:=T+'Type ''L'' to edit list';
-                    28:  T:=T+Age_Class[Character.Age_Status];
+                    28:  T:=T + Age_Class[Character.Age_Status];
                     29:  If Character.Psionics then
                             T:=T+'Type ''N'' to edit'
                          Else

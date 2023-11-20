@@ -211,7 +211,7 @@ Begin { Choose Item }
         SMG$Put_Line (ScreenDisplay, Action + ' which item? (1-' + String(Character.No_of_items,1) + ', [RETURN] exits)', 0);
         SMG$End_Display_Update (ScreenDisplay);
 
-        Choices:=['1'..CHR(Character.No_of_Items+ZeroOrd),CHR(13)];
+        Choices:=['1'..CHR(Character.No_of_Items + ZeroOrd),CHR(13)];
         Answer:=Make_Choice(Choices);
 
         If Answer=CHR(13)
@@ -240,11 +240,11 @@ Begin { Choose Character }
    SMG$Begin_Display_Update (ScreenDisplay);
    SMG$Erase_Display (ScreenDisplay,14,1);
    SMG$Set_Cursor_ABS (ScreenDisplay,15,1);
-   Options:=['1'..CHR(Party_Size+48)]+[CHR(13)];
+   Options:=['1'..CHR(Party_Size + 48)]+[CHR(13)];
    For Character:=1 to Party_size do
      Begin
         SMG$Put_Chars (ScreenDisplay,
-            CHR(Character+48)
+            CHR(Character + 48)
             +') '
             +Pad(Party[Character].Name, ' ',20));
         If HP then
@@ -295,7 +295,7 @@ Var
 Begin
   If Which_Item<>Character.No_of_Items then
      For Loop:=Which_Item to Character.No_of_Items-1 do
-         Character.Item[Loop]:=Character.Item[Loop+1];
+         Character.Item[Loop]:=Character.Item[Loop + 1];
   Character.No_of_Items:=Max(Character.No_of_Items - 1, 0);
 End;
 
@@ -449,17 +449,17 @@ Begin
 
    While tempPtr<>Nil do
       Begin
-         loop:=loop+1;
+         loop:=loop + 1;
          item:=Item_List[TempPtr^.Item_Num];
          If (Class in Item.Usable_By) or (Class1 in Item.Usable_By) then
             Begin
-               SMG$Put_Chars (ScreenDisplay, '['+CHR(Loop+64)+']   ');
+               SMG$Put_Chars (ScreenDisplay, '['+CHR(Loop + 64)+']   ');
                If TempPtr^.Identified then
                   SMG$Put_Line (ScreenDisplay,Item.True_Name)
                Else
                   SMG$Put_Line (ScreenDisplay,Item.Name);
 
-              Options:=Options+[CHR(Loop+64)];
+              Options:=Options+[CHR(Loop + 64)];
             End;
          TempPtr:=TempPtr^.Next_Item;
       End;
@@ -579,9 +579,9 @@ Begin
            Begin
               T:='Dost thou wish to invoke the special power of thine ';
               If Character.Item[Item].Ident then
-                 T:=T+Character_Item.True_Name
+                 T:=T + Character_Item.True_Name
               Else
-                 T:=T+Character_Item.Name;
+                 T:=T + Character_Item.Name;
               T:=T+'?';
 
               SMG$Begin_Display_Update (ScreenDisplay);
@@ -652,7 +652,7 @@ Begin
         Chance:=Chance-Round(Hold_Item.Item_Number * (1/8));
 
         If Character.Items_Seen[Hold_Item.Item_Number] then
-           Chance:=Chance+Trunc(Chance*15/100);
+           Chance:=Chance + Trunc(Chance + 15/100);
 
         If Made_Roll (Chance) then
            Begin
@@ -698,7 +698,7 @@ Begin
       Begin
          T:='     '+Caster_Name[Spell_Type]+'  /';
          For Spell_Level:=1 to 9 do
-            T:=T+String(Character.SpellPoints[Spell_Type,Spell_Level],1)+'/';
+            T:=T + String(Character.SpellPoints[Spell_Type,Spell_Level],1)+'/';
          SMG$Put_Line (ScreenDisplay, T);
       End;
    SMG$End_Display_Update (ScreenDisplay);
@@ -731,7 +731,7 @@ Begin
                      X:=35;
                   End
                Else
-                  Y:=Y+1;
+                  Y:=Y + 1;
             End;
 End;
 
@@ -814,7 +814,7 @@ Var
 Begin { Scenarios Won }
    Temp:=0;
    For Loop:=0 to 999 do
-      If P[Loop] then Temp:=Temp+1;
+      If P[Loop] then Temp:=Temp + 1;
    Scenarios_Won:=Temp;
 End;  { Scenarios Won }
 
@@ -1076,7 +1076,7 @@ Begin { Trade Gold }
    Else
       Begin
          Character.Gold:=Character.Gold-Amount;
-         Party[TradeTo].Gold:=Party[TradeTo].Gold+Amount;
+         Party[TradeTo].Gold:=Party[TradeTo].Gold + Amount;
          Print_Top (Character);
       End;
    SMG$Erase_Line (ScreenDisplay,20);
@@ -1087,7 +1087,7 @@ End;  { Trade Gold }
 Procedure Give_Character_Item (Var Giver,Receiver: Character_Type;  Item_number: Integer);
 
 Begin { Give Character Item }
-   Receiver.No_of_items:=Receiver.No_of_items+1;
+   Receiver.No_of_items:=Receiver.No_of_items + 1;
    Receiver.Item[Receiver.No_of_Items]:=Giver.Item[Item_Number];
    Get_Rid_of_Item (Giver, Item_Number);
 End;  { Give Character Item }
@@ -1196,7 +1196,7 @@ Begin { Use Item }
        +', 0 exits)',0);
    SMG$End_Display_Update (ScreenDisplay);
 
-   Choices:=['0'..CHR(Character.No_of_Items+ZeroOrd)];
+   Choices:=['0'..CHR(Character.No_of_Items + ZeroOrd)];
    Answer:=Make_Choice(Choices);
    Num:=Ord(Answer)-ZeroOrd;
    If Num<>0 then

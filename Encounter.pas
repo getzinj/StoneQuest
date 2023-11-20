@@ -115,7 +115,7 @@ Begin { Party Dead }
 
    Repeat
       Begin
-         Index:=Index+1;
+         Index:=Index + 1;
          Temp:=Temp or Alive (Party[Index]);
       End;
    Until Temp or (Index=6);
@@ -345,7 +345,7 @@ Var
 Begin { Index of Living Aux }
    Index:=1;
    While (Index<=Group.Curr_Group_Size) and (Group.Status[Index]=Dead) do
-      Index:=Index+1;
+      Index:=Index + 1;
    If Index>Group.Curr_Group_Size then
       Index_of_Living_Aux:=0
    Else
@@ -385,7 +385,7 @@ Begin { Number Active }
    Temp:=0;
    For Loop:=1 to Group.Curr_Group_Size do
       If Group.Status[Loop] in [Healthy,Poisoned,Afraid,Zombie] then
-         Temp:=Temp+1;
+         Temp:=Temp + 1;
    Number_Active:=Temp;
 End;  { Number Active }
 
@@ -404,7 +404,7 @@ Begin
       Begin
          Name:=Monster_Name (Group.Monster,Group.Curr_Group_Size,Group.Identified);
          SMG$Put_Chars (MonsterDisplay,
-             CHR(Group_Number+ZeroOrd)
+             CHR(Group_Number + ZeroOrd)
              +'  '
              +String(Group.Curr_Group_Size),Group_Number,1,1);
          SMG$Put_Chars (MonsterDisplay,' '
@@ -485,8 +485,8 @@ Begin
     Group.Curr_Group_Size:=0;  Slot:=1;
     While (Group.Status[Slot]<>Dead) and (Slot<=Group.Orig_Group_Size) do
        Begin
-          Group.Curr_Group_Size:=Group.Curr_Group_Size+1;
-          Slot:=Slot+1;
+          Group.Curr_Group_Size:=Group.Curr_Group_Size + 1;
+          Slot:=Slot + 1;
        End
 End;
 
@@ -527,9 +527,9 @@ Begin
    If Yikes then
       Begin
          If (Pic.Right_Eye.X>0) and (Pic.Right_Eye.Y>0) then
-            SMG$Put_Chars (Display,Pic.Eye_Type+'',Pic.Right_Eye.Y+0,Pic.Right_Eye.X+0);
+            SMG$Put_Chars (Display,Pic.Eye_Type+'',Pic.Right_Eye.Y + 0,Pic.Right_Eye.X + 0);
          If (Pic.Left_Eye.X>0) and (Pic.Left_Eye.Y>0) then
-            SMG$Put_Chars (Display,Pic.Eye_Type+'',Pic.Left_Eye.Y+0,Pic.Left_Eye.X+0);
+            SMG$Put_Chars (Display,Pic.Eye_Type+'',Pic.Left_Eye.Y + 0,Pic.Left_Eye.X + 0);
       End;
    SMG$End_Display_Update (Display);
 End;
@@ -544,7 +544,7 @@ Begin
    SMG$Put_Line (MessageDisplay, 'The ' + Name + ' advance!');
    SMG$End_Display_Update (MessageDisplay);
    Ring_Bell (MessageDisplay, 2);
-   Delay (2*Delay_Constant);
+   Delay (2 + Delay_Constant);
 End;
 
 (******************************************************************************)
@@ -591,7 +591,7 @@ Var
 Begin
    Print_Monsters (Group);
    For i:=1 to 3 do
-      For j:=4 downto i+1 do
+      For j:=4 downto i + 1 do
          If (Group[j-1].Curr_Group_Size<Group[j].Curr_Group_Size) or Want_to_Pass (Group,j-1,j) then
             Begin
                Swap_Groups (Group,j-1,j,Advance,Name);
@@ -716,15 +716,15 @@ Begin
 
    If Attack=Poison then
       If Race in [LizardMan,HfOgre,Dwarven,Hobbit] then
-         Temp:=Temp+Trunc (Constitution / 3.5)
+         Temp:=Temp + Trunc (Constitution / 3.5)
       Else
          If (Constitution>18) then
             Temp:=Temp+(Constitution-18);
 
    If (Race in [Dwarven,Hobbit]) and (Attack in [Magic,Death,CauseFear]) then
-      Temp:=Temp+Trunc (Constitution / 3.5);
+      Temp:=Temp + Trunc (Constitution / 3.5);
 
-   Temp:=Temp+Luck_Adjustment (Luck);
+   Temp:=Temp + Luck_Adjustment (Luck);
 
    Natural_Adjustment:=Temp;
 End;
@@ -744,7 +744,7 @@ Begin
           If Character.Item[Item_No].isEquipped then
              If (Attack in Item_List[Character.Item[Item_No].Item_Num].Resists) or
                 ((Attack in [Stoning,LvlDrain]) and (Magic in Item_List[Character.Item[Item_No].Item_Num].Resists)) then
-                   Temp:=Temp+1;
+                   Temp:=Temp + 1;
    Magical_Adjustment:=Temp;
 End;
 
@@ -887,7 +887,7 @@ Begin
                If Kind in Temp_Item.Versus then
                   Plus:=Plus + (4 * Plus);
                Plane_Difference (Plus,PosZ);
-               Weapon_Plus:=Weapon_Plus+Plus;
+               Weapon_Plus:=Weapon_Plus + Plus;
             End;
    Weapon_Plus_to_Hit:=Weapon_Plus;
 End;
@@ -1221,20 +1221,20 @@ Begin
    Orig:=0; Curr:=0; Chance:=0;
    For GroupNum:=1 to 4 do
       Begin
-         Orig:=Orig+Group[GroupNum].Orig_Group_Size;
-         Curr:=Curr+Group[GroupNum].Curr_Group_Size;
+         Orig:=Orig + Group[GroupNum].Orig_Group_Size;
+         Curr:=Curr + Group[GroupNum].Curr_Group_Size;
       End;
 
-   If (Current_Party_Size=0) or (Curr=0) or (Curr>(Current_Party_Size*2)) then
+   If (Current_Party_Size=0) or (Curr=0) or (Curr>(Current_Party_Size + 2)) then
       Uh_Oh:=False
    Else
       Begin
          If Curr < (Orig * 3 / 4) then
-            Chance:=Chance+25;
+            Chance:=Chance + 25;
          If Curr < (Orig * 1 / 2) then
-            Chance:=Chance+25;
+            Chance:=Chance + 25;
          If Curr < (Orig * 1 / 4) then
-            Chance:=Chance+25;
+            Chance:=Chance + 25;
          Uh_Oh:=Made_Roll(Chance);
       End;
 End;
@@ -1436,7 +1436,7 @@ Begin
          Group1:=5;
          Number:=Caster;
       End
-   Else If Spell in Party_Spell+All_Monsters_Spell+Area_Spell then
+   Else If Spell in Party_Spell + All_Monsters_Spell + Area_Spell then
       Group1:=5
    Else If Spell in Group_Spell then
       Get_Group_Number (Group,Group1,Take_Back)
@@ -1487,8 +1487,8 @@ Begin
       For Item:=1 to Character.No_of_Items do
          If Can_Use (Character,Character.Item[Item]) then
             Begin
-               Options:=Options+[CHR(Item+ZeroOrd)];
-               SMG$Set_Cursor_ABS (OptionsDisplay,((Item+1) div 2),23-(22*(Item Mod 2)));
+               Options:=Options+[CHR(Item + ZeroOrd)];
+               SMG$Set_Cursor_ABS (OptionsDisplay,((Item + 1) div 2),23-(22*(Item Mod 2)));
                SMG$Put_Chars (OptionsDisplay, String(Item,1) + ') ');
                If Character.Item[Item].Ident then
                   SMG$Put_Chars (OptionsDisplay,Item_List[Character.Item[Item].Item_Num].True_Name)
@@ -1535,7 +1535,7 @@ Begin
                  End;
       Otherwise SpellList:=[ ];
    End;
-   SpellList:=SpellList*Encounter_Spells;
+   SpellList:=SpellList + Encounter_Spells;
 
    For Level:=1 to 9 do
       Begin
@@ -1717,7 +1717,7 @@ Begin
    Take_Back:=True;
    SMG$Begin_Display_Update (OptionsDisplay);
    SMG$Erase_Display (OptionsDisplay);
-   SMG$Put_Chars (OptionsDisplay,Message,3,1+27-(Message.Length div 2));
+   SMG$Put_Chars (OptionsDisplay,Message,3,1 + 27-(Message.Length div 2));
    SMG$End_Display_Update (OptionsDisplay);
    Delay (2.5);
 End;
@@ -1759,7 +1759,7 @@ Begin
       Begin
         Find_Spell_Group (Spell_Chosen,Character,Class,Level);
 
-        Take_Back:=Not(Spell_Chosen in Character.Cleric_Spells+Character.Wizard_Spells);
+        Take_Back:=Not(Spell_Chosen in Character.Cleric_Spells + Character.Wizard_Spells);
         Take_Back:=Take_Back or ((Class <> Cler_Spell) and (Class <> Wiz_Spell)) or (Level = 0) or (Level = 10);
 
         If Take_Back then
@@ -1957,14 +1957,14 @@ Begin
                         T:=T+'*) '
                      Else
                         Begin
-                           Options:=Options+[CHR(Item+ZeroOrd)];
-                           T:=T+String (Item,1) + ') ';
+                           Options:=Options+[CHR(Item + ZeroOrd)];
+                           T:=T + String (Item,1) + ') ';
                            One_Usable:=True;
                         End;
                      If Character.Item[Item].Ident then
-                        T:=T+Item_List[Character.Item[Item].Item_Num].True_Name
+                        T:=T + Item_List[Character.Item[Item].Item_Num].True_Name
                      Else
-                        T:=T+Item_List[Character.Item[Item].Item_Num].Name;
+                        T:=T + Item_List[Character.Item[Item].Item_Num].Name;
                   End
                Else
                   T:=T+'                       ';
@@ -2034,7 +2034,7 @@ Var
   Temp: Boolean;
 
 Begin
-   Temp:=(Character.Wizard_Spells+Character.Cleric_Spells)<>[];
+   Temp:=(Character.Wizard_Spells + Character.Cleric_Spells)<>[];
    Temp:=Temp and Has_Spell_Points (Character);
    Has_Spells:=Temp;
 End;
@@ -2045,11 +2045,11 @@ Procedure Print_Fight_Option (Option: Line; Var Y,X: Integer);
 
 Begin
    SMG$Put_Chars (OptionsDisplay,Option,Y,X);
-   X:=X+11;
+   X:=X + 11;
    If X>44 then
       Begin
          X:=1;
-         Y:=Y+1;
+         Y:=Y + 1;
       End;
 End;
 
@@ -2107,7 +2107,7 @@ Begin
 
    SMG$Begin_Display_Update (OptionsDisplay);
    SMG$Erase_Display (OptionsDisplay);
-   SMG$Put_Line (OptionsDisplay,Member[Number].Name+CHR(39)+'s options:',2);
+   SMG$Put_Line (OptionsDisplay,Member[Number].Name + CHR(39)+'s options:',2);
    Options:=[];  X:=1;  Y:=3;
    If (Number<4) and (Character.Status in [Healthy,Poisoned,Zombie]) then
       Begin
@@ -2318,7 +2318,7 @@ Begin
          24,25: Temp:=6;
          Otherwise Temp:=0;
    End;
-   Dex_Adjustment:=Temp*500;
+   Dex_Adjustment:=Temp + 500;
 End;
 
 (******************************************************************************)
@@ -2330,7 +2330,7 @@ Var
 
 Begin
    Level:=Max(Character.Level,Character.Previous_Lvl);
-   Character_Priority:=Roll_Die (6000)-Dex_Adjustment (Character)-(Level*200);
+   Character_Priority:=Roll_Die (6000)-Dex_Adjustment (Character)-(Level + 200);
 End;
 
 (******************************************************************************)
@@ -2391,7 +2391,7 @@ Begin { Successful Flee }
       Else
          Begin
             Temp:=Temp+(20*(Group[Group_Num].Orig_Group_Size-Group[Group_Num].Curr_Group_Size));
-            Temp:=Temp-(5*Group[Group_Num].Curr_Group_Size);
+            Temp:=Temp-(5 + Group[Group_Num].Curr_Group_Size);
          End;
    If Temp<0 then Temp:=0;
    Successful_Flee_Chance:=Temp;
@@ -2416,7 +2416,7 @@ Begin
             For Monster:=1 to Group[Mon_Group].Curr_Group_Size do
                Begin
                   Dex_Adj:=Monster_Rec.No_of_attacks+(-1 * (10-Monster_Rec.Armor_Class)); { TODO: Make a function }
-                  Individual.Priority:=Roll_Die (6000)-(Dex_Adj*400)-(Monster_Rec.Hit_Points.X*200); { TODO: Make a function }
+                  Individual.Priority:=Roll_Die (6000)-(Dex_Adj + 400)-(Monster_Rec.Hit_Points.X + 200); { TODO: Make a function }
 
                   Individual.Caster_Level:=Monster_Rec.Hit_Points.X;
                   Individual.Group:=Mon_Group;
@@ -2459,9 +2459,9 @@ Begin
 
          SMG$Begin_Display_Update (FightDisplay);
          If (Pic.Right_Eye.X>0) and (Pic.Right_Eye.Y>0) then
-            SMG$Put_Chars (FightDisplay,Pic.Eye_Type+'',Pic.Right_Eye.Y+0,Pic.Right_Eye.X+0);
+            SMG$Put_Chars (FightDisplay,Pic.Eye_Type+'',Pic.Right_Eye.Y + 0,Pic.Right_Eye.X + 0);
          If (Pic.Left_Eye.X>0) and (Pic.Left_Eye.Y>0) then
-            SMG$Put_Chars (FightDisplay,Pic.Eye_Type+'',Pic.Left_Eye.Y+0,Pic.Left_Eye.X+0);
+            SMG$Put_Chars (FightDisplay,Pic.Eye_Type+'',Pic.Left_Eye.Y + 0,Pic.Left_Eye.X + 0);
          SMG$End_Display_Update (FightDisplay);
       End;
 End;
@@ -2590,10 +2590,10 @@ Begin
    End;
 
    If Have_Monster_Item (Monster.Real_Name,Member,Party_Size) then
-      Chance:=Chance+50;
+      Chance:=Chance + 50;
 
    If Friends then
-      Chance:=Chance+60;
+      Chance:=Chance + 60;
    If Chance>99 then
       Chance:=99;
 
@@ -2649,7 +2649,7 @@ Begin
             If Made_Roll (Encounter[Group].Monster.Gate_Success_Percentage) then
                Begin
                   Number:=Encounter[Group].Monster.Monster_Called;
-                  Group:=Group+1;
+                  Group:=Group + 1;
                   If Group=5 then
                      Done:=True;
                End
@@ -2725,7 +2725,7 @@ Begin
 
   For Character:=1 to Current_Party_Size do
      If Alive (Member[Character]) and (Member[Character].Status<>Zombie) then
-        Member[Character].Experience:=Member[Character].Experience+XP;
+        Member[Character].Experience:=Member[Character].Experience + XP;
 
   Delay (2);
 
@@ -2895,7 +2895,7 @@ Group_Num: Integer;
 Begin
    MonstersRemaining:=0;
    For Group_Num:=1 to 4 do
-      MonstersRemaining:=MonstersRemaining+Encounter[Group_Num].Curr_Group_Size;
+      MonstersRemaining:=MonstersRemaining + Encounter[Group_Num].Curr_Group_Size;
    Monsters_Left:=MonstersRemaining;
 End;
 
@@ -2932,8 +2932,8 @@ Begin
 
    SMG$Begin_Display_Update (FightDisplay);
    Show_Monster_Image (Image_Num, FightDisplay);
-   If (Pic.Right_Eye.X>0) and (Pic.Right_Eye.Y>0) then SMG$Put_Chars (FightDisplay,'x',Pic.Right_Eye.Y+0,Pic.Right_Eye.X+0);
-   If (Pic.Left_Eye.X>0) and (Pic.Left_Eye.Y>0) then SMG$Put_Chars (FightDisplay,'x',Pic.Left_Eye.Y+0,Pic.Left_Eye.X+0);
+   If (Pic.Right_Eye.X>0) and (Pic.Right_Eye.Y>0) then SMG$Put_Chars (FightDisplay,'x',Pic.Right_Eye.Y + 0,Pic.Right_Eye.X + 0);
+   If (Pic.Left_Eye.X>0) and (Pic.Left_Eye.Y>0) then SMG$Put_Chars (FightDisplay,'x',Pic.Left_Eye.Y + 0,Pic.Left_Eye.X + 0);
    SMG$End_Display_Update (FightDisplay);
 End;
 
@@ -3003,7 +3003,7 @@ Begin
       Begin
          Melee_Round (Encounter,Member,Current_Party_Size,Party_Size,Flee,Time_Delay,Can_Attack);
          MonstersRemaining:=Monsters_Left (Encounter);
-         Round_Count:=Round_Count+1;
+         Round_Count:=Round_Count + 1;
          If Round_Count=3 then
             Begin
                Time_Flies (Encounter,Member,Current_Party_Size,Party_Size,Can_Attack);

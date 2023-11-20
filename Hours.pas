@@ -103,7 +103,7 @@ Begin
    ReadV (SubStr(TimeX,4,2),Minutes);
    SYS$GETTIM (TimeQ);
    LIB$DAY_OF_WEEK (TimeQ,Day1);
-   Day1:=Day1+1;
+   Day1:=Day1 + 1;
    If Day=8 then Day:=1;
 End;
 
@@ -116,7 +116,7 @@ Var
 
 Begin
   Temp:=Days[Day];
-  Valid_Time:=Temp[Hour+5]='x';
+  Valid_Time:=Temp[Hour + 5]='x';
 End;
 
 (******************************************************************************)
@@ -140,11 +140,11 @@ Begin
    If Hour=23 then
       Begin
          If Day=7 then Day:=1
-         Else          Day:=Day+1;
+         Else          Day:=Day + 1;
          Hour:=0;
       End
    Else
-      Hour:=Hour+1;
+      Hour:=Hour + 1;
 End;
 
 (******************************************************************************)

@@ -233,7 +233,7 @@ Begin
 
          { Add the amount healed points and make sure it's not more than the character's maximum }
 
-         Target.Curr_HP:=Min(Target.Curr_HP+Healed,Target.Max_HP);
+         Target.Curr_HP:=Min(Target.Curr_HP + Healed,Target.Max_HP);
 
          { Let the player know how successful the spell was }
 
@@ -384,7 +384,7 @@ Begin
                         End;
 
                      Target.Status:=Healthy;
-                     Target.Experience:=Target.Experience+100;
+                     Target.Experience:=Target.Experience + 100;
 
                      Case Spell of
                         Rein,Ress: Target.Curr_HP:=Target.Max_HP;
@@ -686,13 +686,13 @@ Begin
 
         Case Answer of
                   'U': Delta_Z:=Delta_Z-1;
-                  'D': Delta_Z:=Delta_Z+1;
+                  'D': Delta_Z:=Delta_Z + 1;
 
                   Left_Arrow: Delta_X:=Delta_X-1;
-                  Right_Arrow: Delta_X:=Delta_X+1;
+                  Right_Arrow: Delta_X:=Delta_X + 1;
 
                   Up_Arrow: Delta_Y:=Delta_Y-1;
-                  Down_Arrow: Delta_Y:=Delta_Y+1;
+                  Down_Arrow: Delta_Y:=Delta_Y + 1;
 
                   CHR(32),CHR(13): ;
         End;
@@ -702,7 +702,7 @@ Begin
   SMG$Pop_Virtual_Display (SpellDisplay,Pasteboard);
   If Answer=CHR(13) then
      Begin
-        T:=Teleport_To (PosX+Delta_X,PosY+Delta_Y,PosZ+Delta_Z,Crapped,Leave_Maze);
+        T:=Teleport_To (PosX + Delta_X,PosY + Delta_Y,PosZ + Delta_Z,Crapped,Leave_Maze);
         SMG$Put_Chars (ScreenDisplay,T,21,Center_Text (T,78));
         Delay (1);
      End;

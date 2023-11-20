@@ -156,7 +156,7 @@ Procedure Add_Character (Var Character: Character_Type; Var Party: Party_Type;  
 
 Begin { Add Character }
    Character.Armor_Class:=Compute_AC (Character);
-   Party_Size:=Party_Size+1;                               { Increase the party size }
+   Party_Size:=Party_Size + 1;                               { Increase the party size }
    Party[Party_Size]:=Character;                           { Add the character }
    Character.Lock:=True;                                   { Lock out further copies of this character }
    Print_Character_Line (Party_Size,Party,Party_Size);     { Print the new line }
@@ -340,11 +340,11 @@ Begin { Remove Member }
          Temp:=Party[Number];
          If Number<>Party_Size then
             For Loop:=Number to Party_Size-1 do
-               Party[Loop]:=Party[Loop+1];
+               Party[Loop]:=Party[Loop + 1];
          Party_Size:=Party_Size-1;
          Store_Character(Temp);
         { Backup_Party (Party,Party_Size); }
-         For Loop:=Number to Party_Size+1 do Print_Character_Line(Loop,Party,Party_Size);
+         For Loop:=Number to Party_Size + 1 do Print_Character_Line(Loop,Party,Party_Size);
 
          { Return the character to the roster }
       End;
@@ -386,12 +386,12 @@ Procedure Print_Options (Var T: Line; InText: Line);
   'flushes' the output by printing T, and then set t to be the new input }
 
 Begin { Print Options }
-  If T.Length+inText.Length>80 then
+  If T.Length + inText.Length>80 then
      Begin
         SMG$Put_Line (BottomDisplay, T);
         T:='';
      End;
-  T:=T+InText;
+  T:=T + InText;
 End;  { Print Options }
 
 (******************************************************************************)
@@ -535,7 +535,7 @@ Begin { Print Choices }
          Print_Options (T,
             'S)ave party, ');
          Choices:=Choices+['R','S'];
-         Choices:=Choices+['1'..CHR(Party_Size+ZeroOrd)];
+         Choices:=Choices+['1'..CHR(Party_Size + ZeroOrd)];
       End;
    Print_Options (T,
        'L)eave, or "?" for help');

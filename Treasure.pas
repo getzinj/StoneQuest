@@ -71,7 +71,7 @@ Begin
          For Loop:=PoisonNeedle to Stunner do
                  If Loop in Traps then
                     Begin
-                       T:=T+Pad(TrapName[Loop],' ',20);
+                       T:=T + Pad(TrapName[Loop],' ',20);
                        If Pos/3<>Pos div 3 then
                           T:=T+'   '
                        Else
@@ -79,7 +79,7 @@ Begin
                              SMG$Put_Line (ScreenDisplay, T);
                              T:='';
                           End;
-                       Pos:=Pos+1;
+                       Pos:=Pos + 1;
                    End;
          SMG$Put_Line (ScreenDisplay,T);
 
@@ -89,7 +89,7 @@ Begin
          T:='';
          For Loop:=PoisonNeedle to Stunner do
             Begin
-                T:=T+CHR(Ord(Loop)+64)+'  '+Pad(TrapName[Loop],' ',20);
+                T:=T + CHR(Ord(Loop)+64)+'  '+Pad(TrapName[Loop],' ',20);
                 If Pos/3<>Pos div 3 then
                    T:=T+'   '
                 Else
@@ -97,7 +97,7 @@ Begin
                       SMG$Put_Line (ScreenDisplay, T);
                       T:='';
                    End;
-                Pos:=Pos+1;
+                Pos:=Pos + 1;
             End;
          SMG$Put_Line (ScreenDisplay,T,0,0);
          SMG$End_Display_Update (ScreenDisplay);
@@ -329,9 +329,9 @@ Begin
         SMG$Put_Line (ScreenDisplay,'-------- ----');
         For Loop:=1 to 5 do
            Begin
-              T:=CHR(Loop+64)+'  '+Cat[Loop]+': ';
+              T:=CHR(Loop + 64)+'  '+Cat[Loop]+': ';
               Case Loop of
-                 1: T:=T+String(Number);
+                 1: T:=T + String(Number);
                  2: If Treasure[Number].In_Chest then
                        T:=T+'Yes'
                     Else
@@ -343,7 +343,7 @@ Begin
                  4: If Treasure[Number].Max_No_Of_Treasures=0 then
                        T:=T+'None'
                     Else
-                       T:=T+String(Treasure[Number].Max_No_of_Treasures);
+                       T:=T + String(Treasure[Number].Max_No_of_Treasures);
                  5: If Treasure[Number].Max_No_Of_Treasures=0 then
                        T:=T+'None'
                     Else

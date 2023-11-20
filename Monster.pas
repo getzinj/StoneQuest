@@ -191,7 +191,7 @@ Begin
                   SMG$Put_Line (ScreenDisplay,T);
                   T:='';
                End;
-            Pos:=Pos+1;
+            Pos:=Pos + 1;
          End;
      SMG$Put_Line (ScreenDisplay,T,0);
 End;
@@ -276,7 +276,7 @@ Begin
                    Begin
                       SMG$Put_Line (ScreenDisplay,'');
                    End;
-                Pos:=Pos+1;
+                Pos:=Pos + 1;
              End;
    SMG$Put_Line (ScreenDisplay,'',0);
 End;
@@ -375,7 +375,7 @@ Begin
   Else
      T:=T+'-';
 
-  T:=T+String(die.Z,0);
+  T:=T + String(die.Z,0);
 
   Print_Die := T;
 End;
@@ -397,7 +397,7 @@ Begin
              If (Pos mod 4) = 0 then
                 SMG$Put_Line (ScreenDisplay, '');
 
-             Pos:=Pos+1;
+             Pos:=Pos + 1;
           End;
     SMG$Put_Line (ScreenDisplay,'',0);
 End;
@@ -463,7 +463,7 @@ Begin
          SMG$Put_Line (ScreenDisplay, '------- ----', 1, 0);
          For Loop:=1 to 12 do
             Begin (* Do Loop *)
-                T:=CHR(Loop+64) + '  ' + Cat[Loop] + ': ';
+                T:=CHR(Loop + 64) + '  ' + Cat[Loop] + ': ';
                 Case Loop of
                     1: T:=T + String(Monsters[Number].Monster_Number,0);
                     2: T:=T + Monsters[Number].Name;
@@ -473,8 +473,8 @@ Begin
                     6: T:=T + AlignName[Monsters[Number].Alignment];
                     7: T:=T + Print_Die(Monsters[Number].Number_Appearing);
                     8: T:=T + Print_Die(Monsters[Number].Hit_Points);
-                    9: T:=T+MonsterType[Monsters[Number].Kind];
-                    10: T:=T+String(Monsters[Number].Armor_Class,0);
+                    9: T:=T + MonsterType[Monsters[Number].Kind];
+                    10: T:=T + String(Monsters[Number].Armor_Class,0);
                     11: If Monsters[Number].Treasure.In_Lair=[] then
                          T:=T+'None'
                        Else
@@ -591,7 +591,7 @@ Begin (* PropertiesP *)
         For Loop:=Stones to Cause_Fear do
                 If Loop in props then
                         Begin
-                           T:=T+Pad(Propty[Ord(Loop)]
+                           T:=T + Pad(Propty[Ord(Loop)]
                                ,' ',20);
                            If Odd(Pos) then
                               T:=T+'    '
@@ -600,7 +600,7 @@ Begin (* PropertiesP *)
                                  SMG$Put_Line (ScreenDisplay,T);
                                  T:='';
                               End;
-                           Pos:=Pos+1;
+                           Pos:=Pos + 1;
                         End;
         SMG$Put_Line (ScreenDisplay,T,0);
         SMG$Set_Cursor_ABS (ScreenDisplay,15,1);
@@ -609,7 +609,7 @@ Begin (* PropertiesP *)
         T:='';
         For Loop:=Stones to Cause_Fear do
            Begin
-                T:=T+CHR(Ord(Loop)+65)
+                T:=T + CHR(Ord(Loop)+65)
                    +'  '
                    +Pad(Propty[Ord(Loop)],' ',20);
                 If Odd(Pos) then
@@ -619,7 +619,7 @@ Begin (* PropertiesP *)
                       SMG$Put_Line (ScreenDisplay,T);
                       T:='';
                    End;
-                Pos:=Pos+1;
+                Pos:=Pos + 1;
            End;
         SMG$Put_Line (ScreenDisplay,T,1,0);
         SMG$End_Display_Update (ScreenDisplay);
@@ -725,17 +725,17 @@ Procedure List_Screen2_Properties(Number: Integer);
 Begin (* List_Screen2_Properties *)
  For Loop:=13 to 29 do
     Begin (* Do Loop *)
-        T:=CHR(Loop+52)
+        T:=CHR(Loop + 52)
             +'  '
             +Cat[Loop]+':';
         Case Loop of
-            13: T:=T+String(Monsters[Number].Levels_Drained);
-            14: T:=T+String(Monsters[Number].Years_ages);
-            15: T:=T+String(Monsters[Number].Regenerates) + ' HP/Round';
-            16: T:=T+String(Monsters[Number].Highest.Cleric_Spell);
-            17: T:=T+String(Monsters[Number].Highest.Wizard_Spell);
-            18: T:=T+String(Monsters[Number].Magic_Resistance) + '%';
-            19: T:=T+String(Monsters[Number].gate_Success_percentage,0) + '%';
+            13: T:=T + String(Monsters[Number].Levels_Drained);
+            14: T:=T + String(Monsters[Number].Years_ages);
+            15: T:=T + String(Monsters[Number].Regenerates) + ' HP/Round';
+            16: T:=T + String(Monsters[Number].Highest.Cleric_Spell);
+            17: T:=T + String(Monsters[Number].Highest.Wizard_Spell);
+            18: T:=T + String(Monsters[Number].Magic_Resistance) + '%';
+            19: T:=T + String(Monsters[Number].gate_Success_percentage,0) + '%';
             20: If Monsters[Number].Monster_Called=0 then
                     T:=T+'None'
                 Else
@@ -744,9 +744,9 @@ Begin (* List_Screen2_Properties *)
             21: If Monsters[Number].Breath_Weapon=NoAttack then
                     T:=T+'None'
                 Else
-                    T:=T+Attack_Name[Monsters[Number].Breath_Weapon];
+                    T:=T + Attack_Name[Monsters[Number].Breath_Weapon];
             22: If Monsters[Number].No_of_Attacks>0 then
-                    T:=T+String(Monsters[Number].No_of_Attacks)
+                    T:=T + String(Monsters[Number].No_of_Attacks)
                 Else
                     T:=T+'None';
             23: If Monsters[Number].No_of_Attacks=0 then
@@ -761,7 +761,7 @@ Begin (* List_Screen2_Properties *)
                     T:=T+'Nothing'
                 Else
                     T:=T+'Type ''M'' to edit list';
-            26: T:=T+String(Monsters[Number].Picture_Number);
+            26: T:=T + String(Monsters[Number].Picture_Number);
             27: If Monsters[Number].Extra_Damage=[] then
                     T:=T+'Nobody'
                 Else
@@ -769,8 +769,8 @@ Begin (* List_Screen2_Properties *)
             28: If Monsters[Number].Gaze_Weapon=NoAttack then
                     T:=T+'None'
                 Else
-                    T:=T+Attack_Name[Monsters[Number].Gaze_Weapon];
-            29: T:=T+String(Monsters[Number].Weapon_Plus_Needed);
+                    T:=T + Attack_Name[Monsters[Number].Gaze_Weapon];
+            29: T:=T + String(Monsters[Number].Weapon_Plus_Needed);
         End; (* Case *)
         SMG$Put_Line (ScreenDisplay, T);
     End; (* Do Loop *)
@@ -892,7 +892,7 @@ Var
 Begin
    Answer:=' ';
    First:=1;
-   Last:=First+18;
+   Last:=First + 18;
    Repeat
       Begin
          SMG$Begin_Display_Update (ScreenDisplay);
@@ -914,7 +914,7 @@ Begin
          If (Answer='F') and (Last<450) then
             Begin
                First:=Last;
-               Last:=Min(First+18, 450);
+               Last:=Min(First + 18, 450);
             End
          Else If (Answer='F') then
             Begin
@@ -1030,7 +1030,7 @@ Begin
    If Answer='Y' then
       Begin
          If new<450 then
-            For X:=450 downto New+1 do
+            For X:=450 downto New + 1 do
                Monsters[X]:=Monsters[X-1];
          Monsters[New]:=Zero;
       End;
@@ -1059,7 +1059,7 @@ Begin
       Begin
          If Old<450 then
             For X:=Old to 449 do
-               Monsters[X]:=Monsters[X+1];
+               Monsters[X]:=Monsters[X + 1];
          Monsters[450]:=Zero;
       End;
 End;

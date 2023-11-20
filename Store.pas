@@ -33,7 +33,7 @@ Begin
    Temp:=Temp or (Item.Protects_Against<>[]);
    Temp:=Temp or (Item.Resists<>[]);
    Temp:=Temp or (Item.Versus<>[]);
-   Temp:=Temp or (Item.Damage.X+Item.Damage.Z>0);
+   Temp:=Temp or (Item.Damage.X + Item.Damage.Z>0);
    Temp:=Temp or (Item.Additional_Attacks>0);
    Temp:=Temp or (Item.Plus_to_Hit>0);
    Temp:=Temp or (Item.AC_plus<0);
@@ -59,7 +59,7 @@ End;
 Procedure Attach_Item_to_Character (Item: Item_Record;  Var Character: Character_Type);
 
 Begin
-   Character.No_of_Items:=Character.No_of_Items+1;
+   Character.No_of_Items:=Character.No_of_Items + 1;
    Character.Item[Character.No_of_Items].Item_Num:=Item.Item_Number;
    Character.Item[Character.No_of_Items].Ident:=True;
    Character.Item[Character.No_of_Items].Usable:=(Character.Class in Item.Usable_By) or (Character.PreviousClass in Item.Usable_By);
@@ -173,7 +173,7 @@ Begin
          If First<1 then
             First:=249;
          If Item_Count(First)<>0
-            then Temp:=Temp+1;
+            then Temp:=Temp + 1;
       End;
    Until Temp=Amount;  { TODO: If there aren't ten items in the store, this will loop forever. }
 End;
@@ -218,7 +218,7 @@ Var
 Begin
    For Loop:=1 to 10 do { TODO: Use a constant }
       Begin
-         SMG$Put_Chars (BottomDisplay,'['+CHR(Loop+64)+']    '+Pad(Choices[Loop].True_Name,' ',20)+'  ');
+         SMG$Put_Chars (BottomDisplay,'['+CHR(Loop + 64)+']    '+Pad(Choices[Loop].True_Name,' ',20)+'  ');
          SMG$Put_Chars (BottomDisplay,String(Choices[Loop].Current_Value,12)+' GP');
          If Not ((Buyer.Class in Choices[Loop].Usable_By) or (Buyer.PreviousClass in Choices[Loop].Usable_By)) then
             SMG$Put_Chars (BottomDisplay,' (Unusable)');
@@ -241,11 +241,11 @@ Begin
       Begin
          While (Item_Count(Last)=0) or Not(Item_Has_Value(Item_List[Last])) do
             Begin
-               Last:=Last+1;
+               Last:=Last + 1;
                If Last=450 then Last:=1; { TODO: This may be a bug. I think 450 is a valid index }
             End;
          Choices[Loop]:=Item_List[Last];
-         Last:=Last+1;
+         Last:=Last + 1;
          If Last>249 then  { TODO: These two constants---450 and 249---seem confusing to me. Is 450 the maximum item in the item list and 249 is the maximum number of items *in the store*? }
             Last:=1;
       End;
@@ -303,8 +303,8 @@ Var
 Begin
    For Loop:=1 to NumItems do
       Begin
-         Options:=Options+[CHR(Loop+64)];
-         T:=T+'['+CHR(Loop+64)+']  ';
+         Options:=Options+[CHR(Loop + 64)];
+         T:=T+'['+CHR(Loop + 64)+']  ';
          If Seller.Item[Loop].Cursed then
             T:=T+'-'
          Else if Seller.Item[Loop].isEquipped then
@@ -319,16 +319,16 @@ Begin
 
          If (Seller.Item[Loop].Ident) and not (TempItem1.Cursed) and Item_Has_Value(TempItem1) then
             Begin
-               T:=T+Pad(TempItem1.True_Name,' ',20)+'   '+String (Current_Value div 2,12)+' GP';
+               T:=T + Pad(TempItem1.True_Name,' ',20)+'   '+String (Current_Value div 2,12)+' GP';
                SMG$Put_Line (BottomDisplay, T);
             End
          Else
             Begin
-               Dont_Want:=Dont_Want+[CHR(Loop+64)];
+               Dont_Want:=Dont_Want+[CHR(Loop + 64)];
                If (Not(Seller.Item[Loop].Ident)) then
-                  T:=T+Pad(TempItem1.Name,' ',20)
+                  T:=T + Pad(TempItem1.Name,' ',20)
                Else
-                  T:=T+Pad(TempItem1.True_Name,' ',20);
+                  T:=T + Pad(TempItem1.True_Name,' ',20);
                T:=T+'         '+String(0,7)+' GP';
                SMG$Put_Line (BottomDisplay,T);
             End;
@@ -366,7 +366,7 @@ Begin
          Else
             Begin
                For Loop:=Num to NumItems-1 do
-                  Seller.Item[Loop]:=Seller.Item[Loop+1];
+                  Seller.Item[Loop]:=Seller.Item[Loop + 1];
                NumItems:=NumItems-1;
             End;
 
@@ -426,24 +426,24 @@ Var
 Begin
    For Loop:=1 to NumItems do
       Begin
-         Options:=Options+[CHR(Loop+64)];
-         T:='['+CHR(Loop+64)+']  ';
+         Options:=Options+[CHR(Loop + 64)];
+         T:='['+CHR(Loop + 64)+']  ';
          If Customer.Item[Loop].Cursed then
             T:=T+'-'
          Else
             T:=T+' ';
 
          If (Customer.Item[Loop].Ident) then
-            T:=T+Pad(Item_List[Customer.Item[Loop].Item_Num].True_Name,' ',20)+'   '
+            T:=T + Pad(Item_List[Customer.Item[Loop].Item_Num].True_Name,' ',20)+'   '
          Else
-            T:=T+Pad(Item_List[Customer.Item[Loop].Item_Num].Name,' ',20)+'   ';
+            T:=T + Pad(Item_List[Customer.Item[Loop].Item_Num].Name,' ',20)+'   ';
 
          Current_Value:=Item_List[Customer.Item[Loop].Item_Num].Current_Value;
 
          If Not Customer.Item[Loop].Cursed then
             Current_Value:=0;
 
-         T:=T+String(Current_Value)+' GP';
+         T:=T + String(Current_Value)+' GP';
          SMG$Put_Line (BottomDisplay,T);
       End;
 
@@ -479,7 +479,7 @@ Begin
             Begin
                If Num<>NumItems then
                   For Loop:=Num to NumItems-1 do
-                      Customer.Item[Loop]:=Customer.Item[Loop+1];
+                      Customer.Item[Loop]:=Customer.Item[Loop + 1];
 
                NumItems:=NumItems-1;
 
@@ -535,7 +535,7 @@ Begin
    NumItems:=Customer.No_of_Items;
    For Loop:=1 to NumItems do
       Begin
-         T:='['+CHR(Loop+64)+']  ';
+         T:='['+CHR(Loop + 64)+']  ';
          If Customer.Item[Loop].Cursed then
             T:=T+'-'
          Else if Customer.Item[Loop].Ident then
@@ -544,9 +544,9 @@ Begin
             T:=T+'?';
 
          If (Customer.Item[Loop].Ident) then
-            T:=T+Pad(Item_List[Customer.Item[Loop].Item_Num].True_Name,' ',21)
+            T:=T + Pad(Item_List[Customer.Item[Loop].Item_Num].True_Name,' ',21)
          Else
-            T:=T+Pad(Item_List[Customer.Item[Loop].Item_Num].Name,' ',21);
+            T:=T + Pad(Item_List[Customer.Item[Loop].Item_Num].Name,' ',21);
 
          Current_Value:=Item_List[Customer.Item[Loop].Item_Num].Current_Value;
 
@@ -576,7 +576,7 @@ Begin
 
    Print_ID_Items (Customer);
 
-   Options:=['A'..CHR(NumItems+64),CHR(13),CHR(32)];
+   Options:=['A'..CHR(NumItems + 64),CHR(13),CHR(32)];
    Answer:=Make_Choice (Options);
 
    If Not(Answer in [CHR(13),CHR(32)]) then
@@ -645,7 +645,7 @@ Begin
   Sum:=0;
   For N:=1 to Party_Size do
      Begin
-        Sum:=Sum+Party[N].Gold;
+        Sum:=Sum + Party[N].Gold;
         Party[N].Gold:=0;
      End;
   If Sum<0 then Sum:=MaxInt;  { If overflow }

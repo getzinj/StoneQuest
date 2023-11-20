@@ -160,7 +160,7 @@ Begin
 
    If WizLevel > ClerLevel -2 then ClerChance:=ClerChance-20;
 
-   If ClerLevel>WizLevel+2 then WizChance:=WizChance-10;
+   If ClerLevel>WizLevel + 2 then WizChance:=WizChance-10;
 
    Class:=Roll_Die (WizChance + ClerChance);
 

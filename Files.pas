@@ -86,7 +86,7 @@ Begin { View Log File }
 
          Read (LogFile, L, Error:=Continue);
          SMG$Put_Line (ScenarioDisplay, L);
-         LineCount:=LineCount+1;
+         LineCount:=LineCount + 1;
          If LineCount=Length then
             Begin
                 LineCount:=0;
@@ -493,7 +493,7 @@ End;
 
 Begin
    Repeat
-     Find (AmountFile, N+1, Error:=CONTINUE)
+     Find (AmountFile, N + 1, Error:=CONTINUE)
    Until Status(AmountFile)=PAS$K_SUCCESS;  { TODO: What if the file does not exist or is corrupted? }
 End;
 
@@ -518,7 +518,7 @@ End;
 [Global]Function Get_Store_Quantity(slot: Integer): Integer;
 
 Begin
-   Find(AmountFile, slot+1);
+   Find(AmountFile, slot + 1);
 
    Get_Store_Quantity:=AmountFile^;
 End;
@@ -528,7 +528,7 @@ End;
 [Global]Procedure Write_Store_Quantity_Aux(slot: Integer; amount: Integer);
 
 Begin
-    Find(AmountFile, slot+1);
+    Find(AmountFile, slot + 1);
 
     AmountFile^:=amount;
 
@@ -605,7 +605,7 @@ End;
 [Global]Procedure Decrement_Quantity (slot: Integer);
 
 Begin
-  Find(AmountFile, slot+1);
+  Find(AmountFile, slot + 1);
 
   If AmountFile^>0 then
       AmountFile^:=AmountFile^ - 1;
@@ -690,7 +690,7 @@ Begin { Read Pictures }
          While (Loop<=MAX_PICTURE_NUMBER) and Not EOF(PicFile) do
             Begin
                Read(PicFile, returnValue[Loop]);
-               Loop:=Loop+1;
+               Loop:=Loop + 1;
             End;
          Close (PicFile);
 

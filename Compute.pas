@@ -25,8 +25,8 @@ Var
     functions get VERY SLOW as they reach higher numbers.  One of the problems is that it makes many unnecessary calls. For
     example:
 
-    XP_Needed (Fighter,6) = n*XP_Needed (Fighter,5)-XP_Needed(Fighter,4);
-    XP_Needed (Fighter,5) = n*XP_Needed (Fighter,4)-XP_Needed(Fighter,3);
+    XP_Needed (Fighter,6) = n + XP_Needed (Fighter,5)-XP_Needed(Fighter,4);
+    XP_Needed (Fighter,5) = n + XP_Needed (Fighter,4)-XP_Needed(Fighter,3);
 
     As you notice, XP_N (Fighter,6) and XP_N (Fighter, 5) BOTH make calls to XP_N (Fighter, 4).  This is an example where the same
     value is computed more than once, which makes the function unnecessaril slow.
@@ -85,9 +85,9 @@ Var
 Begin { Get Spell Level }
    Level:=10;
    Repeat
-      Level:=Level-1;
-   Until (Spell in Spells[Level]) or (Level=1);
-   If Not (Spell in Spells[1]) and (Level=1) then Level:=10;
+      Level:=Level - 1;
+   Until (Spell in Spells[Level]) or (Level = 1);
+   If Not (Spell in Spells[1]) and (Level = 1) then Level:=10;
    Get_Spell_Level:=Level;
 End;  { Get Spell Level }
 
@@ -113,17 +113,17 @@ Begin { Find Spell Group }
 
    If (Spell in Character.Cleric_Spells) then Cleric_Level:=Get_Spell_Level (Spell,ClerSpells);
 
-   If Cleric_Level<10 then
-      If (Character.SpellPoints[Cler_Spell,Cleric_Level]<1) and (Wizard_level<10) then
+   If Cleric_Level < 10 then
+      If (Character.SpellPoints[Cler_Spell,Cleric_Level]<1) and (Wizard_level < 10) then
         Cleric_Level:=10;  { No cleric points to cast it }
 
-   If Wizard_Level<10 then
-      If (Character.SpellPoints[Wiz_Spell,Wizard_Level]<1) and (Cleric_level<10) then
+   If Wizard_Level < 10 then
+      If (Character.SpellPoints[Wiz_Spell,Wizard_Level]<1) and (Cleric_level < 10) then
         Wizard_Level:=10;  { No wizard points to cast it }
 
    { Find out which of the possible spell-types to use }
 
-   If Min(Cleric_Level,Wizard_Level)<10 then
+   If Min(Cleric_Level,Wizard_Level) < 10 then
       Begin { If can cast from at least one }
          If Cleric_Level<Wizard_Level then
             Begin { If the cleric spell is lower level than the wizard }
@@ -176,15 +176,15 @@ Begin { Get Class and Level }
                 End;
         Paladin,AntiPaladin: Begin
                    Cls:=Cleric;
-                   Lvl:=Level-7;
+                   Lvl:=Level - 7;
                 End;
         Bard:   Begin
                    Cls:=Wizard;
-                   Lvl:=Level-4;
+                   Lvl:=Level - 4;
                 End;
         Ranger: Begin
                    Cls:=Wizard;
-                   Lvl:=Level-7;
+                   Lvl:=Level - 7;
                 End;
         Wizard: Begin
                    Cls:=Wizard;
@@ -192,7 +192,7 @@ Begin { Get Class and Level }
                 End;
         Otherwise Lvl:=0;
    End;
-   If Lvl<0 then lvl:=0;
+   If Lvl < 0 then lvl:=0;
 End;  { Get Class and Level }
 
 (******************************************************************************)
@@ -240,20 +240,18 @@ Var
 
 Begin { Max Spell Level }
     Case Class of
-       Cleric,Wizard:   Max_Level:=Round (level/2);
+       Cleric,Wizard:   Max_Level:=Round (level / 2);
        Bard: Begin
-                Max_Level:=Round((Level-4)/2);
-                If Max_Level<0 then Max_Level:=0;
+                Max_Level:=Max(Round((Level - 4) / 2), 0);
              End;
        AntiPaladin,Paladin,Ranger:
              Begin
-                Max_Level:=Round((level - 7)/2);
-                If Max_Level<0 then Max_Level:=0;
+                Max_Level:=Max(Round((level - 7)/2), 0);
              End;
        Otherwise Max_Level:=0;
     End;
-    If Max_Level>9 then Max_Level:=9;
-    Max_Spell_Level:=Max_Level;
+
+    Max_Spell_Level:=Min(Max_Level, 9);
 End;  { Max Spell Level }
 
 (******************************************************************************)
@@ -267,7 +265,7 @@ Var
    Max_Lvl,Lvl: Integer;
 
 Begin { Spells Known }
-   SpellSet:=[];       { No spells so far }
+   SpellSet:=[ ];       { No spells so far }
 
    { Find the maximum level spell known }
 
@@ -275,17 +273,18 @@ Begin { Spells Known }
 
    { If the character has ANY spells, add them to the set by level }
 
-   If Max_Lvl>0 then   { If knows at least first level spells... }
+   If Max_Lvl > 0 then   { If knows at least first level spells... }
       For Lvl:=1 to Max_Lvl do    { ... for each level known ... }
           Case Class of  { Add the spells of that level to the set }
-             Cleric,AntiPaladin,Paladin: Spellset:=Spellset+ClerSpells[Lvl];
-             Wizard,Ranger,Bard:         Spellset:=SpellSet+WizSpells[Lvl];
+             Cleric,AntiPaladin,Paladin: Spellset:=Spellset + ClerSpells[Lvl];
+             Wizard,Ranger,Bard:         Spellset:=SpellSet + WizSpells[Lvl];
              Otherwise ;
           End;
 
    { Remember: Antipaladins don't have healing spells, so ... }
 
-   If Class=Antipaladin then SpellSet:=SpellSet-[CrLt,CrPs,CrSe,CrVs,Raze,Ress,PaHe,Heal,CrPa,ReFe];
+   If Class=Antipaladin then
+       SpellSet:=SpellSet-[CrLt,CrPs,CrSe,CrVs,Raze,Ress,PaHe,Heal,CrPa,ReFe];
 
    { Remove the spells not implemented at this time.  (May be added later) }
 
@@ -300,7 +299,7 @@ Var
   C1: Integer;
 
 Begin { Critical Addition }
-   If Crit>12 then
+   If Crit > 12 then
       For C1:=13 to Crit do
          Case Crit of
             13:  If (SpellPoints[SpellType,1] in [1..8]) then SpellPoints[SpellType,1]:=SpellPoints[SpellType,1]+1;
@@ -314,15 +313,15 @@ Begin { Critical Addition }
             21:  If (SpellPoints[SpellType,2] in [1..8]) then SpellPoints[SpellType,2]:=SpellPoints[SpellType,2]+1;
             22:  If (SpellPoints[SpellType,4] in [1..8]) then SpellPoints[SpellType,4]:=SpellPoints[SpellType,4]+1;
             33:  Begin
-                     If (SpellPoints[SpellType,3] in [1..8]) then SpellPoints[SpellType,3]:=SpellPoints[SpellType,4]+1;
-                     If (SpellPoints[SpellType,5] in [1..8]) then SpellPoints[SpellType,5]:=SpellPoints[SpellType,5]+1;
-                     If (SpellPoints[SpellType,4] in [1..8]) then SpellPoints[SpellType,4]:=SpellPoints[SpellType,4]+1;
-                     If (SpellPoints[SpellType,5] in [1..7]) then SpellPoints[SpellType,5]:=SpellPoints[SpellType,5]+2; { TODO: Bug: if points are 7 he should get 1 more point, not zero }
+                     SpellPoints[SpellType, 3] := Min(SpellPoints[SpellType, 3] + 1, 9);
+                     SpellPoints[SpellType, 4] := Min(SpellPoints[SpellType, 4] + 1, 9);
+                     SpellPoints[SpellType, 5] := Min(SpellPoints[SpellType, 5] + 1, 9);
+                     SpellPoints[SpellType, 6] := Min(SpellPoints[SpellType, 6] + 2, 9);
                  End;
-            24: If (SpellPoints[SpellType,6] in [1..7]) then SpellPoints[SpellType,6]:=SpellPoints[SpellType,6]+2;      { TODO: Bug: if points are 7 he should get 1 more point, not zero }
+            24: SpellPoints[SpellType,6] := Min(SpellPoints[SpellType, 6] + 2, 9);
             25: Begin
-                    If (SpellPoints[SpellType,6] in [1..7]) then SpellPoints[SpellType,6]:=SpellPoints[SpellType,6]+2;  { TODO: Bug: if points are 7 he should get 1 more point, not zero }
-                    If (SpellPoints[SpellType,7] in [1..7]) then SpellPoints[SpellType,7]:=SpellPoints[SpellType,7]+2;  { TODO: Bug: if points are 7 he should get 1 more point, not zero }
+                    SpellPoints[SpellType, 6] := Min(SpellPoints[SpellType, 6] + 2, 9);
+                    SpellPoints[SpellType, 7] := Min(SpellPoints[SpellType, 7] + 2, 9);
                 End;
             Otherwise ;
          End;
@@ -331,7 +330,7 @@ End;  { Critical Addition }
 
 (******************************************************************************)
 
-[Global]Procedure Add_Bonus (Var Caster: Character_Type; SpellType,Max: Integer);
+[Global]Procedure Add_Bonus (Var Caster: Character_Type; SpellType,Max_Level: Integer);
 
 { This procedure will add the bonus spell points a character gets when his or her primary ability (determined by the class) is very
   high. }
@@ -343,9 +342,9 @@ Begin { Add Bonus }
    { Determine what the CRITical ability score is for the SPELLTYPE }
 
    Case SpellType of
-        Cler_Spell: Crit:=Caster.Abilities[3]; { For Clerics, it's Wisdom }
-        Wiz_Spell:  Crit:=Caster.Abilities[2]; { For Wizards, it's Intelligence }
-        Otherwise   Crit:=0;
+        Cler_Spell: Crit := Caster.Abilities[3]; { For Clerics, it's Wisdom }
+        Wiz_Spell:  Crit := Caster.Abilities[2]; { For Wizards, it's Intelligence }
+        Otherwise   Crit := 0;
    End;
 
    Caster.SpellPoints:=Critical_Addition (Caster.SpellPoints,SpellType,Crit);
@@ -353,11 +352,12 @@ Begin { Add Bonus }
    { Make sure that there are no points above 9, which is the maximum, and none below 0, which is the minimum }
 
    For Level:=1 to 9 do
-      If Caster.SpellPoints[SpellType,Level]>9 then
-         Caster.SpellPoints[SpellType,Level]:=9
-      Else
-         If Caster.SpellPoints[SpellType,Level]<0 then
-            Caster.SpellPoints[SpellType,Level]:=0;
+      Begin
+         If Level > Max_Level then
+            Caster.SpellPoints[SpellType, Level] := 0
+         Else
+            Caster.SpellPoints[SpellType, Level] := Max ( (Min (Caster.SpellPoints[SpellType, Level], 9)), 0 );
+      End;
 End;  { Add Bonus }
 
 (******************************************************************************)
@@ -375,11 +375,11 @@ Begin { Restore }
 
    { Determine how many spells of the highest level are known }
 
-   Max_Number:=1;                                { Usually, it's 1... }
-   If Max_Level>9 then                           { But if the caster is REALLY powerful... }
+   Max_Number:=1;                                  { Usually, it's 1... }
+   If Max_Level > 9 then                           { But if the caster is REALLY powerful... }
       Begin { More than nine levels }
-         Max_Number:=1+((Max_Level-9) div 2);    { ... he gets more 9th level spells ... }
-         Max_Level:=9;                           { ... but he can still only cast up to 9th level spells }
+         Max_Number:=1 + ((Max_Level - 9) div 2);  { ... he gets more 9th level spells ... }
+         Max_Level:=9;                             { ... but he can still only cast up to 9th level spells }
       End;  { More than nine levels }
 
   { Determine what spell group we're working with... }
@@ -395,9 +395,9 @@ Begin { Restore }
   TempNum:=Max_Number;
   For Level_Loop:=Max_Level downto 1 do
      Begin { For Each Level }
-        TempNum:=Min(TempNum,9);
-        Character.SpellPoints[Spell_Type,Level_Loop]:=Character.SpellPoints[Spell_Type,Level_Loop]+TempNum;
-        TempNum:=TempNum+1;                                       { Each lower level has one more point }
+        TempNum:=Min(TempNum, 9);
+        Character.SpellPoints[Spell_Type,Level_Loop] := Character.SpellPoints[Spell_Type,Level_Loop] + TempNum;
+        TempNum := TempNum + 1;                                       { Each lower level has one more point }
      End;  { For each level }
 
   { Add bonus spell points for high ability scores }
@@ -418,6 +418,7 @@ Begin { Restore_Spells }
 
    If Character.PreviousClass in [Bard,Cleric,Paladin,Ranger,AntiPaladin,Wizard] then
       Restore (Character,Character.PreviousClass,Character.Previous_Lvl);
+
    If Character.Class in [Bard,Cleric,Paladin,Ranger,AntiPaladin,Wizard] then
       Restore (Character,Character.Class,Character.Level);
 End;  { Restore_Spells }
@@ -556,7 +557,7 @@ Begin { Compute AC }
    Else
       AC := 12;
 
-   AC := AC - itemsBonus;
+   AC := AC - itemsBonus;      { Everybody gets protection from armor and magic items }
    AC := AC - Spells_AC_Bonus; { Everybody gets spells bonuses }
 
    Compute_AC := Max(AC, -15);
@@ -564,32 +565,22 @@ End;  { Compute AC }
 
 (******************************************************************************)
 
-Function Con_Adjustment (Class: Class_Type; Constitution: Integer): Integer;
-
-Var
-   Con_Adjustment1: Integer;
+Function Con_Adjustment (Constitution: Integer): Integer;
 
 Begin { Con Adjustment }
    Case Constitution of
-            3: Con_Adjustment1:=-2;
-         4..6: Con_Adjustment1:=-1;
-        7..14: Con_Adjustment1:=0;
-           15: Con_Adjustment1:=1;
-           16: Con_Adjustment1:=2;
-           17: Con_Adjustment1:=3;
-           18: Con_Adjustment1:=4;
-        19,20: Con_Adjustment1:=5;
-     21,22,23: Con_Adjustment1:=6;
-        24,25: Con_Adjustment1:=7;
-        Otherwise Con_Adjustment1:=0;
+            3: Con_Adjustment:=-2;
+         4..6: Con_Adjustment:=-1;
+        7..14: Con_Adjustment:=0;
+           15: Con_Adjustment:=1;
+           16: Con_Adjustment:=2;
+           17: Con_Adjustment:=3;
+           18: Con_Adjustment:=4;
+        19,20: Con_Adjustment:=5;
+     21,22,23: Con_Adjustment:=6;
+        24,25: Con_Adjustment:=7;
+        Otherwise Con_Adjustment:=0;
    End;
-
-   { Only fighters can get more than +2 on their dice for constitution }
-
-   If Not (Class in [Fighter,Paladin,Ranger,AntiPaladin,Samurai,Barbarian,Monk]) then
-      If Con_Adjustment1>2 then Con_Adjustment1:=2;
-
-   Con_Adjustment:=Con_Adjustment1;
 End;  { Con Adjustment }
 
 (******************************************************************************)
@@ -618,7 +609,7 @@ Begin { Compute Hit Die }
 
    { If the class is Ranger, Monk, or Samurai, the character gets another hit die at first level }
 
-   If (Character.Class in [Ranger,Samurai,Monk]) and (Character.Level=1) then Base_Hp:=Base_HP+Roll_Die(Die_Type);
+   If (Character.Class in [Ranger,Samurai,Monk]) and (Character.Level=1) then Base_Hp:=Base_HP + Roll_Die(Die_Type);
 
    { After 15th level, the number of hit points gained or lost is constant the class }
 
@@ -631,16 +622,16 @@ Begin { Compute Hit Die }
 
    { Add the constitution bonus }
 
-   Base_HP:=Base_HP+Con_Adjustment (Character.Class,Character.Abilities[5]);
+   Base_HP:=Base_HP + Con_Adjustment (Character.Abilities[5]);
 
    { Add the second die's worth to the hit points }
 
-   If (Character.Class in [Ranger,Samurai,Monk]) and (Character.Level=1) then
-      Base_HP:=Base_HP+Con_Adjustment(Character.Class,Character.Abilities[5]);
+   If (Character.Class in [Ranger,Samurai,Monk]) and (Character.Level = 1) then
+      Base_HP:=Base_HP + Con_Adjustment(Character.Abilities[5]);
 
    { If, with all these adjustments, the HPs turn out to be less than one, make it equal to one }
 
-   If Base_HP<1 then Base_HP:=1;
+   If Base_HP < 1 then Base_HP:=1;
 
    { Return the result }
 
@@ -651,8 +642,8 @@ End;  { Compute Hit Die }
 
 [Global]Function Alive (Character: Character_Type): Boolean;
 
-{ This function returns TRUE if the character is alive, and false if the character is dead.  If the character is undead, he or she
-  is treated as alive for the sake of this function.  }
+{ This function returns TRUE if the character is alive, and false if the character is dead.  If the character is undead,
+  he or she is treated as alive for the sake of this function.  }
 
 Begin { Alive }
    Alive:=Not (Character.Status in [Ashes,Dead,Deleted])
@@ -677,11 +668,11 @@ Begin { Regenerates }
         25:       Regen:=3;
         Otherwise Regen:=0;
    End;
-   If Character.Psionics then Regen:=Regen+Character.Regenerate;
+   If Character.Psionics then Regen:=Regen + Character.Regenerate;
 
    { A poisoned character LOSES hit points... }
 
-   If Character.Status=Poisoned then Regen:=Regen-1;
+   If Character.Status=Poisoned then Regen:=Regen - 1;
 
    { Magic items can affect regeneration }
 
@@ -691,12 +682,12 @@ Begin { Regenerates }
             Begin
                Temp:=Item_List[Character.Item[Loop].Item_Num].Regenerates;
                Plane_Difference (Temp,PosZ);
-               Regen:=Regen+Temp;
+               Regen:=Regen + Temp;
             End;
 
    { Return function result }
 
-   If Character.Status=Asleep then Regen:=Regen+1;
+   If Character.Status=Asleep then Regen:=Regen + 1;
    If Not Alive(Character) then Regen:=0;
    Regenerates:=Regen;
 End;  { Regenerates }
@@ -709,14 +700,14 @@ Function Base_XP (Class: Class_Type): Real;
 
 Begin { Base XP }
    Case Class of
-      Thief:                           Base_XP:=1051;
-      Cleric,Assassin:                 Base_XP:=1300;
-      Fighter,Bard:                    Base_XP:=1800;
-      Ranger,Monk,Ninja:               Base_XP:=2051;
-      Barbarian:                       Base_XP:=2100;
-      Wizard:                          Base_XP:=2300;
-      Paladin,AntiPaladin,Samurai:     Base_XP:=2551;
-      Otherwise                        Base_XP:=0;
+      Thief:                           Base_XP := 1051;
+      Cleric,Assassin:                 Base_XP := 1300;
+      Fighter,Bard:                    Base_XP := 1800;
+      Ranger,Monk,Ninja:               Base_XP := 2051;
+      Barbarian:                       Base_XP := 2100;
+      Wizard:                          Base_XP := 2300;
+      Paladin,AntiPaladin,Samurai:     Base_XP := 2551;
+      Otherwise                        Base_XP := 0;
    End;
 End;  { Base XP }
 
@@ -736,20 +727,21 @@ Var
   L1,L2: Real;
 
 Begin { XP Needed Auxiliary }
-   If Level<2 then   { This should be called for level=0,1 but if it is... }
-        XP_Needed_Aux:=0
+   If Level < 2 then   { This should be called for level=0,1 but if it is... }
+        XP_Needed_Aux := 0
    Else
       If Level=2 then  { The experience needed for level 2 is a constant }
-         XP_Needed_Aux:=Base_XP (Class)
+         XP_Needed_Aux := Base_XP (Class)
       Else
          If Level>13 then
             Begin { Greater than 13th level }
-               L1:=XP_Needed(Class,Level-1);
-               L2:=XP_Needed(Class,Level-2);
-               XP_Needed_Aux:=L1+(L1-L2);
+               L1 := XP_Needed(Class,Level - 1);
+               L2 := XP_Needed(Class,Level - 2);
+
+               XP_Needed_Aux := L1 + (L1 - L2);
             End   { Greater than 13th level }
          Else
-            XP_Needed_Aux:=Level_Factor*XP_Needed(Class,Level-1);
+            XP_Needed_Aux := Level_Factor + XP_Needed(Class,Level - 1);
 End;  { XP Needed Auxiliary }
 
 
@@ -764,13 +756,13 @@ Var
   XP: Real;
 
 Begin { XP Needed }
-   If (Level<50) and (Level>1) then  { If it COULD be in the table... }
-      If Experience_Needed [Class,Level]>0 then  { ...and it IS there... }
+   If (Level < 50) and (Level>1) then  { If it COULD be in the table... }
+      If Experience_Needed [Class,Level] > 0 then  { ...and it IS there... }
          XP:=Experience_Needed [Class,Level]     { ...return the value }
       Else
          Begin { If it's not in the table }
             XP:=XP_Needed_Aux (Class,Level);      { If not there, compute it }
-            Experience_Needed [Class,Level]:=XP;  { and store it for later use! }
+            Experience_Needed [Class,Level] := XP;  { and store it for later use! }
          End   { If it's not in the table }
    Else
       XP:=XP_Needed_Aux (Class,Level);   { If it can't be there, compute it! }
@@ -781,8 +773,8 @@ End;  { XP Needed }
 
 [Global]Function Character_Exists (CharName: Name_Type; Var Spot: Integer): Boolean;
 
-{ This function does two things.  First of all, it verifies the existance of CHARNAME in the array ROSTER.   If the name DOES occurs
-  in ROSTER, the position it was found in is returned via the Var parameter, SPOT. }
+{ This function does two things.  First of all, it verifies the existence of CHARNAME in the array ROSTER.   If the name
+  DOES occur in ROSTER, the position it was found in is returned via the Var parameter, SPOT. }
 
 Var
    Roster: [External]Roster_Type;
@@ -791,17 +783,18 @@ Var
 
 Begin { Character Exists }
    Found:=False;                                                                { So far, we haven't found it }
-   If CharName<>'' then                                                         { If the name isn't the empty string }
+   If CharName <> '' then                                                       { If the name isn't the empty string }
       For Slot:=1 to 20 do                                                      { For each slot in the roster... }
-         If Roster[Slot].Status<>Deleted then                                   { If the slot is used... }
+         If Roster[Slot].Status <> Deleted then                                 { If the slot is used... }
             Begin { Not deleted }
-               If (STR$Case_Blind_Compare(Roster[Slot].Name,CharName)=0) then   { If this is the name... }
+               If (STR$Case_Blind_Compare(Roster[Slot].Name,CharName) = 0) then { If this is the name... }
                   Begin { The Same }
-                     Found:=True;                                               { ...we've found it. }
-                     Spot:=Slot;                                                { Mark the position }
+                     Found := True;                                             { ...we've found it. }
+                     Spot := Slot;                                              { Mark the position }
                   End  { The Same }
             End;  { Not deleted }
-   Character_Exists:=Found  { Return the function value }
+
+   Character_Exists := Found  { Return the function value }
 End;  { Character Exists }
 
 (******************************************************************************)
@@ -814,28 +807,32 @@ Var
    Made_It: Boolean;
 
 Begin { Scores Qualify }
-   Made_it:=True;
-   If Class<>AntiPaladin then
-      For X:=1 to 7 do
+   Made_it := True;
+   If Class <> AntiPaladin then
+      For X := 1 to 7 do
          Begin
-            Sum_List[X]:=Scores[X]-MinScore[Class,X];
-            If Sum_List[X]<0 then Made_It:=False;
+            Sum_List[X] := Scores[X] - MinScore[Class, X];
+            If Sum_List[X] < 0 then
+               Made_It:=False;
          End
    Else
       Begin
-         For X:=1 to 5 do
+         For X := 1 to 5 do
             Begin
-               Sum_List[X]:=Scores[X]-MinScore[Class,X];
-               If Sum_List[X]<0 then Made_It:=False;
+               Sum_List[X] := Scores[X] - MinScore[Class, X];
+               If Sum_List[X] < 0 then
+                  Made_It:=False;
             End;
          If Made_It then
             Begin
-               Sum_List[7]:=Scores[7]-MinScore[Class,7];
-               If Sum_List[7]<0 then Made_It:=False;
+               Sum_List[7] := Scores[7] - MinScore[Class,7]; { TODO: LUCK?!?!?!? }
+               If Sum_List[7] < 0 then
+                   Made_It:=False;
             End;
-         Made_It:=Made_It and ((Scores[6]<5) or (Scores[6]>16));
+         Made_It:=Made_It and ((Scores[6] < 5) or (Scores[6] > 16));
       End;
-      Scores_Qualify:=Made_It;
+
+   Scores_Qualify:=Made_It;
 End;  { Scores Qualify }
 
 (******************************************************************************)
@@ -853,7 +850,7 @@ Begin { Class Choices }
 
    For Class:=Cleric to Barbarian do
       If Scores_Qualify (Character.Abilities,Class) then
-         Possibilities:=Possibilities+[Class];
+         Possibilities:=Possibilities + [ Class ];
 
    { Subtract all classes made impossible because of race }
 
@@ -872,9 +869,9 @@ Begin { Class Choices }
    { Subtract all classes made impossible because of alignment }
 
    Case Character.Alignment of { if just making character, will be NoAlign }
-      Good:     Possibilities:=Possibilities-[AntiPaladin,Barbarian,Thief,Assassin,Ninja];
-      Neutral:  Possibilities:=Possibilities-[Paladin,Ranger,Cleric,Assassin,AntiPaladin];
-      Evil:     Possibilities:=Possibilities-[Paladin,Ranger,Barbarian];
+      Good:     Possibilities:=Possibilities - [AntiPaladin,Barbarian,Thief,Assassin,Ninja];
+      Neutral:  Possibilities:=Possibilities - [Paladin,Ranger,Cleric,Assassin,AntiPaladin];
+      Evil:     Possibilities:=Possibilities - [Paladin,Ranger,Barbarian];
       Otherwise ;
    End;
 
@@ -887,11 +884,11 @@ End;  { Class Choices }
 
 [Global]Function Made_Roll (Needed: Integer): [Volatile]Boolean;
 
-{ This function is used to determine percentages. So, if NEEDED is the parameter, there is a NEEDED% chance the function will be
-  TRUE, and the rest of the time the function will be FALSE. }
+{ This function is used to determine percentages. So, if NEEDED is the parameter, there is a NEEDED% chance the function
+  will be TRUE, and the rest of the time the function will be FALSE. }
 
 Begin { Made Roll }
-   Made_Roll:=Roll_die(100)<=Needed
+   Made_Roll:=Roll_die(100) <= Needed
 End;  { Made Roll }
 
 (******************************************************************************)
@@ -900,9 +897,9 @@ End;  { Made Roll }
 
 Begin { Spell Duration }
    Case Spell of
-      DiPr,HgSh: Spell_Duration:=(5 * Caster_Level);
-      Comp,Dets: Spell_Duration:=(2 * Caster_Level);
-      Lght,Levi: Spell_Duration:=(10* Caster_Level);
+      DiPr,HgSh: Spell_Duration:=(5  * Caster_Level);
+      Comp,Dets: Spell_Duration:=(2  * Caster_Level);
+      Lght,Levi: Spell_Duration:=(10 * Caster_Level);
       Coli:      Spell_Duration:=(Maxint - 22000);  { To prevent overflow }
       Wore:      Spell_Duration:=1;
       Otherwise  Spell_Duration:=1;

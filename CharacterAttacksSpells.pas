@@ -195,7 +195,7 @@ Begin
                         Form:=Frost;
                         Last:=Attacker.Caster_Level;
                         For Temp:=1 to Last do
-                           Damage:=Damage+Roll_Die(4)+1;
+                           Damage:=Damage + Roll_Die(4)+1;
 
                         If Monster_Save (Monster,Frost) then
                            Damage:=Round (Damage / 2);

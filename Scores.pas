@@ -25,14 +25,14 @@ Var
 
 Begin { TODO: Add a unique id to each character so we don't have to do this guesswork to identify the same character }
   If Character.Previous_Lvl>0 then
-     Character.Experience:=Character.Experience+XP_Needed (Character.PreviousClass,Character.Previous_Lvl);
+     Character.Experience:=Character.Experience + XP_Needed (Character.PreviousClass,Character.Previous_Lvl);
   If Not Alive(Character) then Character.Experience:=0;
 
   Pos:=0;  X:=0;
   Found:=False;
   Repeat
      Begin
-        X:=X+1;
+        X:=X + 1;
         If (Character.Name=Temp[X].Name) and (Username=Temp[X].User_Name) then
            Found:=True;
      End;
@@ -46,7 +46,7 @@ Begin { TODO: Add a unique id to each character so we don't have to do this gues
         Found:=False;
         Repeat
            Begin
-              X:=X+1;
+              X:=X + 1;
               If (Temp[X].Lvl1=0) or (Temp[X].Experience=0) then
                  Found:=True;
            End;
@@ -124,9 +124,9 @@ Begin
      Begin
         Done:=True;
         For I:=First to Last-1 do
-           If Combined_Score_List[I].experience<Combined_Score_List[I+1].experience then
+           If Combined_Score_List[I].experience<Combined_Score_List[I + 1].experience then
               Begin
-                 Swap (Combined_Score_List, I, I+1);
+                 Swap (Combined_Score_List, I, I + 1);
                  Done:=False;
               End;
      End;
@@ -195,16 +195,16 @@ Begin
 
             C1:=String(Score_List[X].Lvl1);
             If Score_List[X].Lvl2>0 then C1:=C1+'/'+String(Score_List[X].Lvl2);
-            If C1.Length<8 then T:=T+Pad(C1,' ',8)
-            Else                T:=T+C1;
+            If C1.Length<8 then T:=T + Pad(C1,' ',8)
+            Else                T:=T + C1;
 
             C1:=ClassName[Score_List[X].Class1];
             C2:=ClassName[Score_List[X].Class2];
             if Score_List[X].Class2<>NoClass then C1:=C1+'/'+C2;
-            If C1.Length<18 then T:=T+Pad(C1,' ',18)
-            Else                 T:=T+SubStr(C1,1,18);
+            If C1.Length<18 then T:=T + Pad(C1,' ',18)
+            Else                 T:=T + SubStr(C1,1,18);
 
-            T:=T+String(Trunc(Score_List[X].Experience),12);
+            T:=T + String(Trunc(Score_List[X].Experience),12);
 
             Rendition:=0;
             If Score_List[X].Defeated_Barrat then Rendition:=SMG$M_Bold;  { T:=T+'*' }
@@ -214,7 +214,7 @@ Begin
    SMG$Put_Chars (ScoreDisplay,'Characters in ',21,7);
    SMG$Put_Chars (ScoreDisplay,'Boldface',,,,SMG$M_Bold);
    SMG$Put_Chars (ScoreDisplay,' have completed ');
-   SMG$Put_Chars (ScoreDisplay,'the Quest of the Stone',,,,SMG$M_Underline+SMG$M_Reverse);
+   SMG$Put_Chars (ScoreDisplay,'the Quest of the Stone',,,,SMG$M_Underline + SMG$M_Reverse);
 
    SMG$Put_Chars (ScoreDisplay,'Press any key',22,32);
 

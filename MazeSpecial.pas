@@ -76,7 +76,7 @@ Begin { Show Special }
       Begin
          For Person:=1 to Current_Party_Size do
             If Member[Person].Psionics then
-               Psi_Chance:=Psi_Chance+Member[Person].DetectTrap; { TODO: Should check if character is alive and conscious }
+               Psi_Chance:=Psi_Chance + Member[Person].DetectTrap; { TODO: Should check if character is alive and conscious }
          Temp:=Temp or Made_Roll (PSI_Chance);
       End;
    Show_Special:=Temp;
@@ -108,7 +108,7 @@ Begin
                         L:=Messages[Curr];
                         R:=Rendition_Set (L);
                         SMG$Put_Line (MessageDisplay,Messages[Curr],1,R,Wrap_Flag:=SMG$M_WRAP_WORD);
-                        Curr:=Curr+1;   LineP:=LineP+1;  Lines_Printed:=Lines_Printed+1;
+                        Curr:=Curr + 1;   LineP:=LineP + 1;  Lines_Printed:=Lines_Printed + 1;
                      End;
                End;
             Until (LineP=5) or (Messages[Curr]='~');
@@ -348,7 +348,7 @@ Var
 Begin
   Person:=0;
   Repeat
-     Person:=Person+1
+     Person:=Person + 1
   Until (Person=Current_Party_Size) or (Member[Person].No_of_Items<8);
   If Member[Person].No_of_Items>7 then Person:=8;
   Character_With_Room:=Person;
@@ -373,7 +373,7 @@ Var
    Num: Integer;
 
 Begin
-   Character.No_of_Items:=-Character.No_of_Items+1;
+   Character.No_of_Items:=-Character.No_of_Items + 1;
    Num:=Character.No_of_Items;
 
    With Character.Item[Num] do
@@ -426,12 +426,12 @@ Begin
   Person:=0;  Found:=False;
   Repeat
      Begin
-        Person:=Person+1;
+        Person:=Person + 1;
         Slot:=0;
         If Member[Person].No_of_Items>0 then
            Repeat
               Begin
-                Slot:=Slot+1;
+                Slot:=Slot + 1;
                 Found:=(Member[Person].Item[Slot].Item_Num=SearchItem);
               End;
            Until Found or (Slot=Member[Person].No_of_Items);
@@ -672,7 +672,7 @@ Begin
          T:=Messages[Linenum];
          R:=Rendition_Set (T);
          SMG$Put_Line (WinDisplay,T,1,R,Wrap_Flag:=SMG$M_WRAP_WORD);
-         Linenum:=LineNum+1;
+         Linenum:=LineNum + 1;
       End;
 
    SMG$Put_Chars (WinDisplay,'Press any key to continue',21,25,1,1);
@@ -814,7 +814,7 @@ Begin
 
    Number_of_Buttons:=(Bottom - Top)+1;
 
-   TopC:=CHR(Number_of_Buttons+64);
+   TopC:=CHR(Number_of_Buttons + 64);
 
    SMG$Begin_Display_Update (MessageDisplay);
    SMG$Erase_Display (MessageDisplay);
@@ -952,7 +952,7 @@ Var
    Num: Integer;
 
 Begin
-   Character.No_of_Items:=Character.No_of_Items+1;
+   Character.No_of_Items:=Character.No_of_Items + 1;
    Num:=Character.No_of_Items;
    With Character.Item[Num] do
       Begin
@@ -1118,7 +1118,7 @@ Var
 Begin
   TempScore:=Score;
   If Made_Roll(49) and (Score>3) then
-     TempScore:=Min(TempScore+Roll_Die(4),25)
+     TempScore:=Min(TempScore + Roll_Die(4),25)
   Else
      TempScore:=Max(TempScore-Roll_Die(4),3);
 

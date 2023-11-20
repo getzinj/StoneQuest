@@ -56,7 +56,7 @@ Begin
             Else
                T:=T+'#'
          Else
-            T:=T+CHR(Num);
+            T:=T + CHR(Num);
       End;
   If Inverse then
       SMG$Put_Line (ScreenDisplay,Pad(T,' ',80),1,2)
@@ -80,7 +80,7 @@ Begin
          Print_Out (Messages[Position]);
          If Position=Curs then Inverse:=False;
       End;
-   If Bottom=999 then SMG$Erase_Display (ScreenDisplay,Bottom-Top+4);
+   If Bottom=999 then SMG$Erase_Display (ScreenDisplay,Bottom-Top + 4);
    SMG$End_Display_Update (ScreenDisplay);
 End;
 
@@ -116,7 +116,7 @@ Begin
       Begin
          Top:=Temp;
          Curs:=Temp;
-         Bottom:=Min(Top+18,999); { TODO: Make constant for page size }
+         Bottom:=Min(Top + 18,999); { TODO: Make constant for page size }
       End;
 
    SMG$Erase_Display (ScreenDisplay,22,1);
@@ -127,11 +127,11 @@ End;
 Procedure Move_Down (Var Top,Bottom,Curs: Integer);
 
 Begin
-   Curs:=Curs+1;
+   Curs:=Curs + 1;
    If Curs>Bottom then
       Begin
          Top:=Curs-1;
-         Bottom:=Min(Top+18,999);
+         Bottom:=Min(Top + 18,999);
          Print_Messages (Top,Bottom,Curs);
       End;
 
@@ -156,15 +156,15 @@ Begin
    Curs:=Curs-1;
    If Curs>Bottom then
       Begin
-         Bottom:=Curs+1;
+         Bottom:=Curs + 1;
          Top:=Max(Bottom-18,1);
          Print_Messages (Top,Bottom,Curs);
       End;
 
    SMG$Begin_Display_Update (ScreenDisplay);
 
-   SMG$Set_Cursor_ABS (ScreenDisplay,Y_Pos (Top,Curs+1),1);
-   Print_Out (Messages[Curs+1]);
+   SMG$Set_Cursor_ABS (ScreenDisplay,Y_Pos (Top,Curs + 1),1);
+   Print_Out (Messages[Curs + 1]);
 
    SMG$Set_Cursor_ABS (ScreenDisplay,Y_Pos (Top,Curs),1);
    Inverse:=True;

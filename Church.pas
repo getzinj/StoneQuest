@@ -84,7 +84,7 @@ Begin
      SMG$Begin_Display_Update (BottomDisplay);
      SMG$Erase_Line (BottomDisplay,11,1);
 
-     T:=Phrase[Finale+Roll_die(2)-1];
+     T:=Phrase[Finale + Roll_die(2)-1];
      SMG$Put_Chars (BottomDisplay,T,11,40-(T.Length div 2),1,0,1);
 
      SMG$End_Display_Update (BottomDisplay);
@@ -169,7 +169,7 @@ Begin
    End;
 
    Character.Status:=Healthy;
-   Character.Experience:=Character.Experience+100;
+   Character.Experience:=Character.Experience + 100;
 
    SMG$Put_Chars (BottomDisplay,'Jubilations! Thy friend lives again!',11,21);
    Delay (2);
@@ -204,13 +204,13 @@ Var
 Begin
    Case Character.Status of
       Healthy,Deleted: Price:=0;
-      Zombie: Price:=200*Character.Max_HP;
+      Zombie: Price:=200 + Character.Max_HP;
       Dead: Price:=950*(Character.Level + Character.Previous_Lvl);
       Ashes: Price:=Round(1353.3 * (Character.Level + Character.Previous_Lvl));
       Afraid,Asleep: Price:=150*(Character.Level + Character.Previous_Lvl);
       Paralyzed,Petrified: Price:=250*(Character.Level + Character.Previous_Lvl);
       Insane: Price:=200*(Character.Max_HP);
-      Poisoned: Price:=100*Round(1.5 * (Character.Level + Character.Previous_Lvl));
+      Poisoned: Price:=100 + Round(1.5 * (Character.Level + Character.Previous_Lvl));
       Otherwise Price:=0;
    End;
    Cost:=Price + (Roll_Die (Price div 10)-1);

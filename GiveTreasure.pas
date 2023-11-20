@@ -44,7 +44,7 @@ Begin
    Repeat
       Begin
          Looker:=0;
-         Answer:=Make_Choice ([CHR(13),'1'..CHR(Current_Party_Size+ZeroOrd)]);
+         Answer:=Make_Choice ([CHR(13),'1'..CHR(Current_Party_Size + ZeroOrd)]);
          If Answer<>CHR(13) then
             Looker:=Ord(Answer)-ZeroOrd;
          If Looker>0 then
@@ -121,7 +121,7 @@ Begin
                Begin
                   Looked[Looker]:=True;
                   Print_Trap (Trap);
-                  Character.Experience:=Character.Experience+15*Ord(Trap);
+                  Character.Experience:=Character.Experience + 15 + Ord(Trap);
                   Character.SpellPoints[Class,Level]:=Character.SpellPoints[Class,Level]-1;
                   Member[Looker]:=Character;
                End
@@ -158,7 +158,7 @@ Begin
    For Loop:=PoisonNeedle to Stunner do
       If Loop in Possible_Traps then
          Begin
-            Max:=Max+1;
+            Max:=Max + 1;
             List[Max]:=Loop;
          End;
    If Max=0 then
@@ -173,9 +173,9 @@ Function Class_Chance (Class: Class_Type; Level: Integer): Integer;
 
 Begin
    Case Class of
-     Thief,Ninja:            Class_Chance:=15+(5*Level);
-     Antipaladin,Assassin:   Class_Chance:=5+(4*Level);
-     Bard:                   Class_Chance:=3*Level;
+     Thief,Ninja:            Class_Chance:=15+(5 + Level);
+     Antipaladin,Assassin:   Class_Chance:=5+(4 + Level);
+     Bard:                   Class_Chance:=3 + Level;
      NoClass:                Class_Chance:=0;
      Otherwise               Class_Chance:=Level;
    End;
@@ -193,22 +193,22 @@ Begin
                Class_Chance(Character.PreviousClass,Character.Previous_Lvl));
 
    Case Character.Race of
-      Dwarven:              Chance:=Chance+15;
-      Gnome:                Chance:=Chance+10;
-      Hobbit,HfOrc:         Chance:=Chance+5;
+      Dwarven:              Chance:=Chance + 15;
+      Gnome:                Chance:=Chance + 10;
+      Hobbit,HfOrc:         Chance:=Chance + 5;
       HfOgre:               Chance:=Chance-10;
-      Quickling,Drow,Elven: Chance:=Chance+20;
+      Quickling,Drow,Elven: Chance:=Chance + 20;
    End;
 
    Case Character.Abilities[4] of
         3..8: Chance:=Chance-20;
         9,10: Chance:=Chance-10;
           11: Chance:=Chance-5;
-          18: Chance:=Chance+5;
-       19,20: Chance:=Chance+10;
-       21,22: Chance:=Chance+15;
-       23,24: Chance:=Chance+20;
-          25: Chance:=Chance+25;
+          18: Chance:=Chance + 5;
+       19,20: Chance:=Chance + 10;
+       21,22: Chance:=Chance + 15;
+       23,24: Chance:=Chance + 20;
+          25: Chance:=Chance + 25;
    End;
 
    Chance:=Chance - Round(1.25 * Ord(Trap));
@@ -257,7 +257,7 @@ Begin
             TS:=[Trapless .. Stunner]-[Trap];
 
             If Made_Roll (Chance) then
-               Member[looker].Experience:=Member[Looker].Experience+15
+               Member[looker].Experience:=Member[Looker].Experience + 15
             Else
                Trap:=Choose_Trap(TS);  { If didn't make chance, give a false(?) trap }
             Print_Trap (Trap);
@@ -366,7 +366,7 @@ Begin
    End;
 
    T:=T+'!  ';
-   T:=T+TrapName[Trap_Given]+'!';
+   T:=T + TrapName[Trap_Given]+'!';
 
    SMG$Set_Cursor_ABS (OptionsDisplay,3,(27-(T.length div 2)));
    SMG$Put_Line (OptionsDisplay,T,0,1);
@@ -478,7 +478,7 @@ Begin
             Begin
                Trap:=Trapless;
                Print_Message('* * * Thou disarmed it! * * *');
-               Member[Opener].Experience:=Member[Opener].Experience+15*Ord(Trap);
+               Member[Opener].Experience:=Member[Opener].Experience + 15 + Ord(Trap);
             End
          Else
             Begin
@@ -587,7 +587,7 @@ Begin
   SMG$Erase_Display (MessageDisplay);
   Recipient:=Roll_Die (Current_Party_Size);
   SMG$Put_Line (MessageDisplay,Member[Recipient].Name+' found a sack of '+String(Amount)+' gold pieces!');
-  Member[Recipient].Gold:=Member[Recipient].Gold+Amount;
+  Member[Recipient].Gold:=Member[Recipient].Gold + Amount;
   Delay(2);
 End;
 
@@ -602,7 +602,7 @@ Begin
    Person:=0;  Num:=0;
 
    For Person:=1 to Current_Party_Size do
-      Num:=Num+Member[Person].No_of_Items;
+      Num:=Num + Member[Person].No_of_Items;
 
    If Num<>(Current_Party_Size * 8) then
       Repeat
@@ -625,7 +625,7 @@ Begin
    Person:=Character_With_Room (Member,Current_Party_Size);
    If Person<>0 then
       Begin
-         Member[Person].No_of_Items:=Member[Person].No_of_Items+1;
+         Member[Person].No_of_Items:=Member[Person].No_of_Items + 1;
          Num:=Member[Person].No_of_Items;
          With Member[Person].Item[Num] do
             Begin
@@ -657,7 +657,7 @@ Var
 Begin
    If Treasure.Kind=Cash_Given then
       Begin
-         Money:=Treasure.Initial_Base+Random_Number(Treasure.Initial_Random);
+         Money:=Treasure.Initial_Base + Random_Number(Treasure.Initial_Random);
          Temp:=Random_Number(Treasure.Multiplier);
          If Temp <> 0 then
             Money:=Money * Temp;

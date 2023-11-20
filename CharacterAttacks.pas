@@ -133,8 +133,8 @@ Begin
          DamLoop:=0;
          While DamLoop<>Calc do
             Begin
-               Temp:=Temp+Roll_Die(6);
-               DamLoop:=DamLoop+1;
+               Temp:=Temp + Roll_Die(6);
+               DamLoop:=DamLoop + 1;
             End;
       End
    Else
@@ -207,12 +207,12 @@ Begin
    Else
       Temp:=Weapon_Damage (Item_List[Character.Item[WeaponUsed].Item_Num],Group.Monster.Kind);  { TODO: Really should make "Item_List[Character.Item[WeaponUsed].Item_Num]" a function. }
 
-   Temp:=Temp+Class_Bonuses_to_Damage (Class1,Level1,WeaponUsed,Group.Monster.Kind);
-   Temp:=Temp+Class_Bonuses_to_Damage (Class2,Level2,WeaponUsed,Group.Monster.Kind);
+   Temp:=Temp + Class_Bonuses_to_Damage (Class1,Level1,WeaponUsed,Group.Monster.Kind);
+   Temp:=Temp + Class_Bonuses_to_Damage (Class2,Level2,WeaponUsed,Group.Monster.Kind);
 
    If Character.Attack.Berserk then Temp:=Temp * 2;
 
-   Temp:=Temp+Strength_Plus_on_Damage (Character);
+   Temp:=Temp + Strength_Plus_on_Damage (Character);
 
    Damage_Inflicted:=Max(Temp, 0);
 End;
@@ -228,11 +228,11 @@ Begin
   Index:=0; Count:=0;
   Repeat
      Begin
-        Index:=Index+1;
+        Index:=Index + 1;
         If (Group.Status[Index] in [Healthy,Afraid,Poisoned]) then
            Begin
               Group.Status[Index]:=Dead;
-              Count:=Count+1;
+              Count:=Count + 1;
            End;
      End;
   Until (Count=Number) or (Index=Group.Curr_Group_Size);

@@ -435,7 +435,7 @@ Begin { Special Occurance }
         1: If Made_Roll (65) then
               If Not Made_Roll(Character.Level) then
                  Begin { Raise Character's level }
-                     Character.Level:=Character.Level+1;
+                     Character.Level:=Character.Level + 1;
                      Character.Experience:=XP_Needed (Character.Class,Character.Level);
                  End;  { Raise Character's Level }
         2: Begin { Lower character's level }
@@ -451,8 +451,8 @@ Begin { Special Occurance }
                  Character.Experience:=XP_Needed (Character.Class,Character.Level);
            End;  { Lower character's level }
         3: Begin { Reduce a character's age 2-20 years }
-              Character.Age:=Character.Age-(Roll_Die(10)*2*365);
-              If Character.Age<(10*365) then Character.Age:=10*365;
+              Character.Age:=Character.Age-(Roll_Die(10)*2 + 365);
+              If Character.Age<(10 + 365) then Character.Age:=10 + 365;
            End;  { Increase a characters age }
 
            { Raise the ability scores }
@@ -462,7 +462,7 @@ Begin { Special Occurance }
 
         11..17: Change_Score (Character,Number-10,Roll_Die(3)*(-1));
         18: Begin
-               For X:=1 to 12+Roll_Die(12) do
+               For X:=1 to 12 + Roll_Die(12) do
                    If Character.Class=Barbarian then
                       Character.Class:=Cleric
                    Else
@@ -505,7 +505,7 @@ Begin { Show Image }
    SMG$Begin_Display_Update (Display);
    For Y:=1 to 9 do
       For X:=1 to 23 do
-         SMG$Put_Chars (Display,Image[X,Y],Y+0,X+0);
+         SMG$Put_Chars (Display,Image[X,Y],Y + 0,X + 0);
    SMG$End_Display_Update (Display);
 End;  { Show Image }
 
@@ -767,7 +767,7 @@ Procedure Add_Dot (Var X: Integer);
 
 Begin { Add Dot }
    SMG$Put_Chars (ScreenDisplay,'. ',11,X);
-   X:=X+1;
+   X:=X + 1;
 End;  { Add Dot }
 
 {**********************************************************************************************************************************}
@@ -968,13 +968,13 @@ Begin { Rendition_Set }
         '_': Underline:=True;
         '`': Inverse:=True;
         '{': Blinking:=True;
-        Otherwise New_Line:=New_Line+T[Position];
+        Otherwise New_Line:=New_Line + T[Position];
      End;
    T:=New_Line;      Temp:=SMG$M_NORMAL;
-   If Bold then      Temp:=Temp+SMG$M_BOLD;
-   If Inverse then   Temp:=Temp+SMG$M_REVERSE;
-   If Blinking then  Temp:=Temp+SMG$M_BLINK;
-   If Underline then Temp:=Temp+SMG$M_UNDERLINE;
+   If Bold then      Temp:=Temp + SMG$M_BOLD;
+   If Inverse then   Temp:=Temp + SMG$M_REVERSE;
+   If Blinking then  Temp:=Temp + SMG$M_BLINK;
+   If Underline then Temp:=Temp + SMG$M_UNDERLINE;
    Rendition_Set:=Temp;
 End;  { Rendition Set }
 
@@ -1012,7 +1012,7 @@ Begin { View Scenario }
          Rendition:=Rendition_Set (Msg);  { Determine print options for line }
          SMG$Put_Line (ScenarioDisplay,Msg,1,Rendition);
          Readln (Message_File, Msg);
-         LineCount:=LineCount+1;
+         LineCount:=LineCount + 1;
          If LineCount=Length then
             Begin
                LineCount:=0;

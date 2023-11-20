@@ -82,7 +82,7 @@ Begin { Random Ability Score }
    For Die:=1 to 4 do
       Begin
          Dice[Die]:=Roll_Die(6);
-         Sum:=Sum+Dice[Die];  { Sum the dice }
+         Sum:=Sum + Dice[Die];  { Sum the dice }
       End;
 
  { Return the sum minus the lowest die }
@@ -276,12 +276,12 @@ Begin { Choose Race }
    For Choice_Loop:=Human to Numenorean do
       If Choice_Loop in Possibilities then
          Begin
-            Max_Num:=Max_Num+1;
-            Options:=Options+[CHR(Max_Num+64)];
+            Max_Num:=Max_Num + 1;
+            Options:=Options+[CHR(Max_Num + 64)];
             Choices[Max_Num]:=Choice_Loop;
             T:=T+
                 '     ['
-                +CHR(Max_Num+64)
+                +CHR(Max_Num + 64)
                 +']'
                 +'    '
                 +Pad(RaceName[Choices[Max_Num]],' ',13);
@@ -292,7 +292,7 @@ Begin { Choose Race }
                       SMG$Put_Line (ScreenDisplay,T);
                       T:='';
                    End;
-                Pos:=Pos+1;
+                Pos:=Pos + 1;
          End;
    SMG$Put_Line (ScreenDisplay,T,0);
    SMG$End_Display_Update (ScreenDisplay);
@@ -414,12 +414,12 @@ Begin { Choose Class }
    For Choice_Loop:=Cleric to Barbarian do
       If Choice_Loop in Possibilities then
          Begin
-            Max_Num:=Max_Num+1;
-            Options:=Options+[CHR(Max_Num+64)];
+            Max_Num:=Max_Num + 1;
+            Options:=Options+[CHR(Max_Num + 64)];
             Choices[Max_Num]:=Choice_Loop;
             T:=T+
                 '     ['
-                +CHR(Max_Num+64)
+                +CHR(Max_Num + 64)
                 +']'
                 +'    '
                 +Pad(ClassName[Choices[Max_Num]],' ',13);
@@ -430,7 +430,7 @@ Begin { Choose Class }
                       SMG$Put_Line (ScreenDisplay,T);
                       T:='';
                    End;
-                Pos:=Pos+1;
+                Pos:=Pos + 1;
          End;
    SMG$Put_Line (ScreenDisplay,T,0);
    SMG$End_Display_Update (ScreenDisplay);
@@ -505,13 +505,13 @@ Begin
    For Lp:=Good to Evil do
       If Lp in Choices then
          Begin
-            Max_Num:=Max_Num+1;
+            Max_Num:=Max_Num + 1;
             Possibilities[Max_Num]:=Lp;
-            Options:=Options+[CHR(Max_Num+64)];
+            Options:=Options+[CHR(Max_Num + 64)];
             SMG$Set_Cursor_ABS (ScreenDisplay,,17);
             SMG$Put_Line (ScreenDisplay,
                 '['
-                +CHR(Max_Num+64)
+                +CHR(Max_Num + 64)
                 +']    '
                 +AlignName[Possibilities[Max_Num]]);
          End;
@@ -535,17 +535,17 @@ Function Character_Age (Race: Race_Type): [Volatile]Integer;
 
 Begin
    Case Race of
-     Human: Character_age:=17+Roll_Die(4);
-     HfOrc: Character_age:=13+Roll_Die(4);
-     Dwarven,Numenorean: Character_age:=40+(4*Roll_Die(20))+Roll_Die(20);
-     Elven,Drow: Character_age:=100+(5*Roll_Die(6))+Roll_Die(6);
-     HfOgre: Character_age:=12+Roll_Die(4);
-     Gnome: Character_age:=60+(4*Roll_Die(4))+Roll_Die(4);
-     Hobbit: Character_age:=100+Roll_Die(20);
-     HfElf: Character_age:=22+Roll_Die(4)+Roll_Die(4)+Roll_Die(4);
-     LizardMan: Character_age:=24+Roll_Die(5);
-     Centaur: Character_age:=145+Roll_Die(5);
-     Quickling: Character_age:=55+Roll_Die(3);
+     Human: Character_age:=17 + Roll_Die(4);
+     HfOrc: Character_age:=13 + Roll_Die(4);
+     Dwarven,Numenorean: Character_age:=40+(4 + Roll_Die(20))+Roll_Die(20);
+     Elven,Drow: Character_age:=100+(5 + Roll_Die(6))+Roll_Die(6);
+     HfOgre: Character_age:=12 + Roll_Die(4);
+     Gnome: Character_age:=60+(4 + Roll_Die(4))+Roll_Die(4);
+     Hobbit: Character_age:=100 + Roll_Die(20);
+     HfElf: Character_age:=22 + Roll_Die(4)+Roll_Die(4)+Roll_Die(4);
+     LizardMan: Character_age:=24 + Roll_Die(5);
+     Centaur: Character_age:=145 + Roll_Die(5);
+     Quickling: Character_age:=55 + Roll_Die(3);
    End;
 End;
 
@@ -559,7 +559,7 @@ Var
 Begin
    Intelligence:=Character.Abilities[2]-15;  Wisdom:=Character.Abilities[3]-15;  Charisma:=Character.Abilities[6]-15;
 
-   Psionics_Chance:=(2*Intelligence)+(2*Wisdom)+Charisma;
+   Psionics_Chance:=(2 + Intelligence)+(2 + Wisdom)+Charisma;
 End;
 
 {******************************************************************************)
@@ -568,8 +568,8 @@ Procedure Determine_Psionics (Var Character: Character_Type);
 
 Begin
   Character.Psionics:=True;
-  Character.DetectTrap   :=(3*Roll_Die(25))-3;
-  Character.DetectSecret :=(3*Roll_Die(25))-3;
+  Character.DetectTrap   :=(3 + Roll_Die(25))-3;
+  Character.DetectSecret :=(3 + Roll_Die(25))-3;
   Character.Regenerate:=Roll_Die(4)-1;
 End;
 
@@ -737,10 +737,10 @@ Begin { New Stats }
   { New spell books }
 
   If (Character.Class in [Wizard,Bard,Ranger]) then
-     Character.Wizard_Spells:=Character.Wizard_Spells+Spells_Known(Character.Class,Character.Level)
+     Character.Wizard_Spells:=Character.Wizard_Spells + Spells_Known(Character.Class,Character.Level)
   Else
      If (Character.Class in [Cleric,Paladin,Antipaladin]) then
-        Character.Cleric_Spells:=Character.Cleric_Spells+Spells_Known(Character.Class,Character.Level);
+        Character.Cleric_Spells:=Character.Cleric_Spells + Spells_Known(Character.Class,Character.Level);
 
   { Compute misc. other factors }
 
@@ -775,12 +775,12 @@ Begin { Choose Change Class }
    For Choice_Loop:=Cleric to Barbarian do
       If Choice_Loop in Possibilities then
          Begin
-            Max_Num:=Max_Num+1;
-            Options:=Options+[CHR(Max_Num+64)];
+            Max_Num:=Max_Num + 1;
+            Options:=Options+[CHR(Max_Num + 64)];
             Choices[MAX_Num]:=Choice_Loop;
             SMG$Put_Chars (ScreenDisplay,
                 '['
-                +CHR(Max_Num+64)
+                +CHR(Max_Num + 64)
                 +']    '
                 +ClassName[Choices[Max_Num]],,17);
             SMG$Put_Line (ScreenDisplay,'');

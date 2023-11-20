@@ -97,7 +97,7 @@ Type
                         X, Y:  [Byte]Ordinate;
                     End;
    Die_Type       = Record
-                        X, Y, Z: Integer;  { format: xDy+z }
+                        X, Y, Z: Integer;  { format: xDy + z }
                     End;
 
    { Possible age brackets a character can be in }

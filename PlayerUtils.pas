@@ -54,7 +54,7 @@ Procedure Recover_Character (Var ScreenDisplay: Unsigned);
   years each, to prevent repeat cheaters! }
 
 Const
-   FiveYears = 365*5; { The # of days in 5 years }
+   FiveYears = 365 + 5; { The # of days in 5 years }
 
 Var
    Slot: Integer;
@@ -74,7 +74,7 @@ Begin  { Recover Character }
                Begin
                   Any_Recovered:=True;  { We have recovered one }
                   Roster[Slot].Lock:=False;  { Recover him (or her) }
-                  Roster[Slot].Age:=Roster[slot].Age+FiveYears;  { And age him }
+                  Roster[Slot].Age:=Roster[slot].Age + FiveYears;  { And age him }
                   SMG$Put_Line (screendisplay,
                                 Roster[Slot].Name
                                 +': saved!');

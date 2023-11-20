@@ -30,7 +30,7 @@ Begin
   Sum:=Character.Gold;  Character.Gold:=0;
   For N:=1 to Party_Size do
      Begin
-        If Party[N].Name<>Character.Name then Sum:=Sum+Party[N].Gold;
+        If Party[N].Name<>Character.Name then Sum:=Sum + Party[N].Gold;
         Party[N].Gold:=0;
      End;
   Pool_Gold:=Sum;

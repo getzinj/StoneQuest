@@ -28,7 +28,7 @@ Begin { Display Image }
    SMG$Put_Chars (ScreenDisplay,'+-----------------------+',Start_Row,Start_Column);
    For Y:=1 to 9 do
       Begin
-         SMG$Put_Chars (ScreenDisplay,'|',Start_Row+Y,Start_Column);
+         SMG$Put_Chars (ScreenDisplay,'|',Start_Row + Y,Start_Column);
          For X:=1 to 23 do
              Begin
                 C:=0;
@@ -36,14 +36,14 @@ Begin { Display Image }
                 SMG$Put_Chars (ScreenDisplay,
                    Image[X,Y]
                    +'',
-                   Y+Start_Row,
-                   X+Start_Column,
+                   Y + Start_Row,
+                   X + Start_Column,
                    0,
                    C);
              End;
-         SMG$Put_Chars (ScreenDisplay,'|',Start_Row+Y,Start_Column+24);
+         SMG$Put_Chars (ScreenDisplay,'|',Start_Row + Y,Start_Column + 24);
       End;
-   SMG$Put_Chars (ScreenDisplay,'+-----------------------+',Start_Row+10,Start_Column);
+   SMG$Put_Chars (ScreenDisplay,'+-----------------------+',Start_Row + 10,Start_Column);
    SMG$End_Display_Update (ScreenDisplay);
 End;  { Display Image }
 
@@ -162,7 +162,7 @@ Procedure Move_Down (Var CursorY: Ordinate);
 { This procedure moves CursorY down one, and wraps if it goes over }
 
 Begin { Move Down }
-   CursorY:=CursorY+1;
+   CursorY:=CursorY + 1;
    If CursorY > 9 then CursorY:=1;
 End;  { Move Down }
 
@@ -173,7 +173,7 @@ Procedure Move_Right (Var CursorX,CursorY: Ordinate);
 { This procedure moves CursorX right, and wraps if it goes over }
 
 Begin { Move Right }
-   CursorX:=CursorX+1;
+   CursorX:=CursorX + 1;
    If CursorX > 23 then
       Begin
          Move_Down (CursorY);
@@ -276,7 +276,7 @@ Begin { Display Image with Eyes }
    SMG$Put_Chars (ScreenDisplay,'+-----------------------+',Start_Row,Start_Column);
    For Y:=1 to 9 do
       Begin
-         SMG$Put_Chars (ScreenDisplay,'|',Start_Row+Y,Start_Column);
+         SMG$Put_Chars (ScreenDisplay,'|',Start_Row + Y,Start_Column);
          For X:=1 to 23 do
              Begin
                 C:=0;
@@ -284,14 +284,14 @@ Begin { Display Image with Eyes }
                 SMG$Put_Chars (ScreenDisplay,
                    Image[X,Y]
                    +'',
-                   Y+Start_Row,
-                   X+Start_Column,
+                   Y + Start_Row,
+                   X + Start_Column,
                    0,
                    C);
              End;
-         SMG$Put_Chars (ScreenDisplay,'|',Start_Row+Y,Start_Column+24);
+         SMG$Put_Chars (ScreenDisplay,'|',Start_Row + Y,Start_Column + 24);
       End;
-   SMG$Put_Chars (ScreenDisplay,'+-----------------------+',Start_Row+10,Start_Column);
+   SMG$Put_Chars (ScreenDisplay,'+-----------------------+',Start_Row + 10,Start_Column);
    SMG$End_Display_Update (ScreenDisplay);
 End;  { Display Image with Eyes }
 
@@ -333,7 +333,7 @@ Begin { Get Eye Location }
          If (CursorX>0) and (CursorY>0) then
             SMG$Put_Chars (ScreenDisplay,
                 Eye
-                +'',CursorY+StartY,CursorX+StartX,0,1);
+                +'',CursorY + StartY,CursorX + StartX,0,1);
          SMG$Put_Chars (ScreenDisplay,
              'X: '
              +String(CursorX,3),23,1);

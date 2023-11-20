@@ -278,15 +278,15 @@ Begin
       End;
 
    T:=T+' with '+Hair__Color[Person[HairColor]]+' hair and '+Eye__Color[Person[EyeColor]]+' eyes.  ';
-   T:=T+Subject+' has '+Weapon_and_Armor(Person)+' and '+Clothes_String(Person[Clothes])+'.  ';
+   T:=T + Subject+' has '+Weapon_and_Armor(Person)+' and '+Clothes_String(Person[Clothes])+'.  ';
 
    If Roll_Die(100)<=Person[DetectChance] then
       Begin
-         T:=T+Detected_Thief (Person[Job],Subject,Object,Possessive,Person[Race]);
+         T:=T + Detected_Thief (Person[Job],Subject,Object,Possessive,Person[Race]);
          Noticed:=True;
       End
    Else
-      T:=T+Busy_Person (Person[Job],Subject,Object,Possessive);
+      T:=T + Busy_Person (Person[Job],Subject,Object,Possessive);
 
    SMG$Put_Line (BottomDisplay,T,1,Wrap_Flag:=SMG$M_WRAP_WORD);
    SMG$Put_Line (BottomDisplay,'',2);
@@ -371,29 +371,29 @@ Begin
 
   Case Race of
      HumanR,HfElfR:  ;
-     HfOrcR:          Begin  B1:=B1+2;  H1:=H1-1;   W1:=W1+2;   End;
-     DwarfR:          Begin  B1:=B1+1;  H1:=H1-8;   W1:=W1-4;   End;
+     HfOrcR:          Begin  B1:=B1 + 2;  H1:=H1-1;   W1:=W1 + 2;   End;
+     DwarfR:          Begin  B1:=B1 + 1;  H1:=H1-8;   W1:=W1-4;   End;
      ElvenR,DrowR:    Begin  B1:=B1-1;  H1:=H1-2;   W1:=W1-2;   End;
-     HfOgreR:         Begin  B1:=B1+4;  H1:=H1+4;   W1:=W1+8;   End;
+     HfOgreR:         Begin  B1:=B1 + 4;  H1:=H1 + 4;   W1:=W1 + 8;   End;
      GnomeR,HobbitR:  Begin  B1:=B1-2;  H1:=H1-8;   W1:=W1-6;   End;
-     LizardManR:      Begin  B1:=B1+2;  H1:=H1+1;   W1:=W1+1;   End;
-     CentaurR:        Begin  B1:=B1+1;  H1:=H1-1;   W1:=W1+4;   End;
-     QuicklingR:      Begin  B1:=B1+6;  H1:=H1-12;  W1:=W1-12;  End;
+     LizardManR:      Begin  B1:=B1 + 2;  H1:=H1 + 1;   W1:=W1 + 1;   End;
+     CentaurR:        Begin  B1:=B1 + 1;  H1:=H1-1;   W1:=W1 + 4;   End;
+     QuicklingR:      Begin  B1:=B1 + 6;  H1:=H1-12;  W1:=W1-12;  End;
      NumenoreanR:     Begin  W1:=W1-2;  End;
      Otherwise ;
   End;
 
   Case Sex of
-     MaleS:  Begin  B1:=B1+1;    H1:=H1+1;  W1:=W1+1;  End;
+     MaleS:  Begin  B1:=B1 + 1;    H1:=H1 + 1;  W1:=W1 + 1;  End;
      FemaleS:  Begin  B1:=B1-1;  H1:=H1-1;  W1:=W1-1;  End;
   End;
 
   Case Job of
      Beggar,Drunk,Prostitute,CommonThief,Bully,Gambler,Gentleman,Lady,Official,Magus: ;
-     Jester: Begin  B1:=B1+1;  W1:=8;  End;
-     Brawler,Cleric_c,Soldier,Militia: B1:=B1+2;
+     Jester: Begin  B1:=B1 + 1;  W1:=8;  End;
+     Brawler,Cleric_c,Soldier,Militia: B1:=B1 + 2;
      Clerk:  B1:=B1-1;
-     Nobleman,Royalty: W1:=W1+3;
+     Nobleman,Royalty: W1:=W1 + 3;
      Otherwise ;
   End;
 
@@ -411,7 +411,7 @@ Begin
       Beggar: Get_Money:=2-Roll_Die(2);
       Jester: Get_Money:=Roll_Die(3)*Roll_Die(6);
       Pimp,Prostitute: Get_Money:=(Roll_Die(8)*Roll_Die(100))-1;
-      CommonThief: Get_Money:=2*Roll_Die(20)-2;
+      CommonThief: Get_Money:=2 + Roll_Die(20)-2;
       Bully,Brawler: Get_Money:=Roll_Die(3)*Roll_Die(20);
       Clerk: Get_Money:=3 * Roll_Die(7);
       Soldier,Militia: Get_Money:=Roll_Die(20)+Roll_Die(20);
@@ -431,17 +431,17 @@ Begin
        Beggar:                   Begin  Temp[Armors]:=0;   Temp[Weapons]:=0;  Temp[Clothes]:=3;   End;
        Jester:                   Begin  Temp[Armors]:=0;   Temp[Weapons]:=0;  Temp[Clothes]:=9;   End;
        Drunk:                    Begin  Temp[Armors]:=0;   Temp[Weapons]:=0;  Temp[Clothes]:=3;   End;
-       Prostitute:               Begin  Temp[Armors]:=0;   Temp[Weapons]:=0;  Temp[Clothes]:=3+Roll_Die(3);   End;
+       Prostitute:               Begin  Temp[Armors]:=0;   Temp[Weapons]:=0;  Temp[Clothes]:=3 + Roll_Die(3);   End;
        Pimp:                     Begin  Temp[Armors]:=0;   Temp[Weapons]:=3;  Temp[Clothes]:=21;   End;
        CommonThief:              Begin  Temp[Armors]:=3;   Temp[Weapons]:=3;  Temp[Clothes]:=8;   End;
        Bully:                    Begin  Temp[Armors]:=(Roll_Die(2)-1)*(Roll_Die(6)*3);
                                         Temp[Weapons]:=(Roll_Die(2)-1)*(Roll_Die(6)*3);
                                         Temp[Clothes]:=9;
                                  End;
-       Gambler:                  Begin  Temp[Armors]:=0;   Temp[Weapons]:=3;  Temp[Clothes]:=7+Roll_Die(Temp[Money] div 10);   End;
+       Gambler:                  Begin  Temp[Armors]:=0;   Temp[Weapons]:=3;  Temp[Clothes]:=7 + Roll_Die(Temp[Money] div 10);   End;
        Brawler:                  Begin  Temp[Armors]:=0;   Temp[Weapons]:=0;  Temp[Clothes]:=9;   End;
        Clerk:                    Begin  Temp[Armors]:=0;   Temp[Weapons]:=0;  Temp[Clothes]:=8;   End;
-       Cleric_c,Soldier,Militia: Begin  Temp[Armors]:=16;  Temp[Weapons]:=16; Temp[Clothes]:=5+Roll_Die(9);   End;
+       Cleric_c,Soldier,Militia: Begin  Temp[Armors]:=16;  Temp[Weapons]:=16; Temp[Clothes]:=5 + Roll_Die(9);   End;
        Gentleman,Lady,Official:  Begin  Temp[Armors]:=0;   Temp[Weapons]:=0;  Temp[Clothes]:=16;   End;
        Nobleman,Royalty:         Begin  Temp[Armors]:=0;   Temp[Weapons]:=0;  Temp[Clothes]:=18;   End;
        Magus:                    Begin  Temp[Armors]:=0;   Temp[Weapons]:=3;  Temp[Clothes]:=15;   End;
@@ -460,19 +460,19 @@ Begin
    D1:=Roll_Die(6)+Roll_Die(6)+Roll_Die(6);
 
    Case Job of
-     Beggar: D1:=D1+3;
+     Beggar: D1:=D1 + 3;
      Jester: D1:=3;
-     Drunk: D1:=D1+12;
+     Drunk: D1:=D1 + 12;
      Prostitute: D1:=3;
      Pimp: D1:=D1-1;
      CommonThief: D1:=-12;
-     Bully,Brawler,Cleric_C: D1:=D1+2;
+     Bully,Brawler,Cleric_C: D1:=D1 + 2;
      Clerk,Soldier,Militia: ;
-     Gambler: D1:=D1+1;
-     Gentleman,Lady: D1:=D1+3;
-     Nobleman: D1:=D1+1;
-     Official: D1:=D1+2;
-     Royalty,Magus: D1:=D1+10;
+     Gambler: D1:=D1 + 1;
+     Gentleman,Lady: D1:=D1 + 3;
+     Nobleman: D1:=D1 + 1;
+     Official: D1:=D1 + 2;
+     Royalty,Magus: D1:=D1 + 10;
      Otherwise ;
    End;
    Get_Distraction:=D1;
@@ -548,10 +548,10 @@ Var
 
 Begin
    Case Class of
-      Thief,Ninja:          Chance:=20+(5*Level);
-      Antipaladin,Assassin: Chance:=5+(5*Level);
+      Thief,Ninja:          Chance:=20+(5 + Level);
+      Antipaladin,Assassin: Chance:=5+(5 + Level);
       Paladin:              Chance:=1;
-      Bard:                 Chance:=5*Level;
+      Bard:                 Chance:=5 + Level;
       NoClass:              Chance:=0;
       Otherwise             Chance:=Level;
    End;
@@ -573,29 +573,29 @@ Begin
    Chance:=Max(Class_Chance(Class1,Level1),Class_Chance(Class2,Level2));
 
    Case Character.Race of
-       Dwarven:   Chance:=Chance+15;
-       Gnome:     Chance:=Chance+10;
-       Hobbit,HfOrc: Chance:=Chance+5;
+       Dwarven:   Chance:=Chance + 15;
+       Gnome:     Chance:=Chance + 10;
+       Hobbit,HfOrc: Chance:=Chance + 5;
        HfOgre:    Chance:=Chance-10;
-       Quickling,Drow,Elven:  Chance:=Chance+20;
+       Quickling,Drow,Elven:  Chance:=Chance + 20;
    End;
 
    Case Character.Abilities[4] of
        3..8: Chance:=Chance-20;
        9,10: Chance:=Chance-10;
        11: Chance:=Chance-5;
-       18: Chance:=Chance+5;
-       19,20: Chance:=Chance+10;
-       21,22: Chance:=Chance+15;
-       23,24: Chance:=Chance+20;
-       25: Chance:=Chance+25;
+       18: Chance:=Chance + 5;
+       19,20: Chance:=Chance + 10;
+       21,22: Chance:=Chance + 15;
+       23,24: Chance:=Chance + 20;
+       25: Chance:=Chance + 25;
    End;
 
    Chance:=Chance-Round(1.25 * Person[Job]);
    Chance:=Chance-Person[DetectChance];
    Chance:=Chance+(2*(Character.Abilities[7]-9));  { add luck into it }
    If Noticed then Chance:=Chance-80
-   Else Chance:=Chance+(2*Person[Distraction]);
+   Else Chance:=Chance+(2 + Person[Distraction]);
 
    If Chance>96 then Chance:=95;
    Pick_Pocket_Chance:=Chance;
@@ -636,7 +636,7 @@ Begin
    SMG$Put_Line (BottomDisplay,'',2);
    Sum:=0;
    For Person:=1 to Party_Size do
-      Sum:=Sum+Party[Person].Gold;
+      Sum:=Sum + Party[Person].Gold;
 
    If Sum>=Cost then
       Begin
@@ -755,7 +755,7 @@ Begin
 
    Cost:=Roll_Die(5)+Job;
    Cost:=Cost**Round(Job / 3);
-   Cost:=Cost+Job;
+   Cost:=Cost + Job;
 
    CostS:='';
    WriteV (CostS,Cost:0:0);
@@ -778,7 +778,7 @@ Begin
 
          SMG$End_Display_Update (BottomDisplay);
 
-         Choices:=['1'..CHR(Party_Size+Ord('0')),'+',CHR(13)]-[CHR(Char_Num+Ord('0'))];
+         Choices:=['1'..CHR(Party_Size + Ord('0')),'+',CHR(13)]-[CHR(Char_Num + Ord('0'))];
 
          Answer:=Make_Choice (Choices);
 
@@ -809,7 +809,7 @@ Begin
 
    SMG$Put_Chars (BottomDisplay,'THE CHASE IS ON',,,,1);
 
-   For n:=1 to 10+Roll_Die(20) do
+   For n:=1 to 10 + Roll_Die(20) do
       Begin
          SMG$Put_Chars (BottomDisplay,'.',,,,1);
          Delay (1/4);
@@ -845,7 +845,7 @@ Begin
 
    SMG$Put_Chars (BottomDisplay,'Shhh...  '+Character.Name+' is trying to pick pockets.');
 
-   For n:=1 to 5+Roll_Die(3) do
+   For n:=1 to 5 + Roll_Die(3) do
       Begin
          Delay (1);
          SMG$Put_Chars (BottomDisplay,'.');
@@ -855,7 +855,7 @@ Begin
 
    If Roll_Die(100) <= (Pick_Pocket_Chance (Character,TownsPerson,Noticed)-Reduction) then
       Begin
-         Reduction:=Reduction+5;
+         Reduction:=Reduction + 5;
          SMG$Put_Chars (BottomDisplay,'(SUCCESS!)  ');
 
          Delay(2);
@@ -868,7 +868,7 @@ Begin
                SMG$Put_Chars (BottomDisplay,'  (RATS!)');
             End
          Else
-            Party[Char_Num].Gold:=Party[Char_num].Gold+TownsPerson[Money];
+            Party[Char_Num].Gold:=Party[Char_num].Gold + TownsPerson[Money];
 
          Party[Char_Num].Experience:=Party[Char_Num].Experience+(2**(TownsPerson[Job] div 2));
          Delay(2);
@@ -877,7 +877,7 @@ Begin
    Else
       Begin
          Attempt_to_Pick_Pockets:=Discovered (Char_Num,Party,Party_Size,TownsPerson);
-         Reduction:=Reduction+15;
+         Reduction:=Reduction + 15;
       End;
 End;
 
