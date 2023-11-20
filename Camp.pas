@@ -693,7 +693,7 @@ Begin
             '-'
             +Pad(ClassName[member[CharNo].Class],' ',14));
         SMG$Put_Chars (CampDisplay,
-            String(10-Member[CharNo].Armor_Class,3));
+            String(Member[CharNo].Armor_Class,3));
         SMG$Put_Chars (CampDisplay,
             '   '
             +String(Member[CharNo].Curr_HP,5));

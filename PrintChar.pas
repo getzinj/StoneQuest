@@ -991,7 +991,7 @@ Begin { Print Hit Points and Armor Class }
              +String(Character.Max_HP,5));
          SMG$Put_Chars (ScreenDisplay,
              '  Armor Class: ');
-         SMG$Put_Chars (ScreenDisplay,String(10-Character.Armor_Class,3));
+         SMG$Put_Chars (ScreenDisplay,String(Character.Armor_Class, 3));
       End;
    SMG$Put_Line (ScreenDisplay, '');
 End;  { Print Hit Points and Armor Class }

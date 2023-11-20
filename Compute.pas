@@ -426,110 +426,140 @@ End;  { Restore_Spells }
 
 Function Dexterity_Change (Dexterity: Integer): Integer;
 
-{ This function returns the amount that should be added to the Armor Class of a person whose dexterity is DEXTERITY. }
+{ This function returns the amount that should be subtracted from the Armor Class of a person whose dexterity is DEXTERITY. }
 
 Begin { Dexterity_Change }
    Case Dexterity of  { Dexterity provides base Armor Class }
-                  3: Dexterity_Change:=4;
-                  4: Dexterity_Change:=3;
-                  5: Dexterity_Change:=2;
-                  6: Dexterity_Change:=1;
-              7..14: Dexterity_Change:=0;
-                 15: Dexterity_Change:=(-1);
-                 16: Dexterity_Change:=(-2);
-                 17: Dexterity_Change:=(-3);
-           18,19,20: Dexterity_Change:=(-4);
-           21,22,23: Dexterity_Change:=(-5);
-              24,25: Dexterity_Change:=(-6);
-           Otherwise Dexterity_Change:=0;
+                  3: Dexterity_Change := -4;
+                  4: Dexterity_Change := -3;
+                  5: Dexterity_Change := -2;
+                  6: Dexterity_Change := -1;
+              7..14: Dexterity_Change :=  0;
+                 15: Dexterity_Change :=  1;
+                 16: Dexterity_Change :=  2;
+                 17: Dexterity_Change :=  3;
+           18,19,20: Dexterity_Change :=  4;
+           21,22,23: Dexterity_Change :=  5;
+              24,25: Dexterity_Change :=  6;
+           Otherwise Dexterity_Change :=  0;
    End;
 End;  { Dexterity_Change }
 
 (******************************************************************************)
 
-Function Compute_Monk_Level (Character: Character_Type): Integer;
+Function Compute_Monk_Level (Character: Character_Type; wearingArmor: boolean): Integer;
 
 { This function computes the level of monk-like skills CHARACTER has. }
 
 Begin { Compute Monk Level }
-  If Character.Class in [Monk,Ninja] then
-     If Character.PreviousClass in [Monk,Ninja] then
-        Compute_Monk_Level:=Max (Character.Level,Character.Previous_Lvl)
-     Else
-        Compute_Monk_Level:=Character.Level
-  Else
-     If Character.PreviousClass in [Monk,Ninja] then
-        Compute_Monk_Level:=Character.Previous_Lvl
-     Else
-        Compute_Monk_Level:=0;
+  If wearingArmor or (Character.Status = Zombie) then
+     Compute_Monk_Level := 0
+  Else If Character.Class in [Monk,Ninja] then
+          If Character.PreviousClass in [Monk,Ninja] then
+             Compute_Monk_Level := Max (Character.Level,Character.Previous_Lvl)
+          Else
+             Compute_Monk_Level := Character.Level
+  Else If Character.PreviousClass in [Monk,Ninja] then
+          Compute_Monk_Level := Character.Previous_Lvl
+       Else
+          Compute_Monk_Level := 0;
 End;  { Compute Monk Level }
 
 (******************************************************************************)
 
-[Global]Function Compute_AC (Character: Character_Type; POSZ: Integer:=0): Integer;
+Function Item_AC_Bonus(character: Character_Type; PosZ: Integer; Var Wearing_Armor: Boolean): Integer;
+
+Var
+   plus: Integer;
+   Total_Plus: Integer;
+   Item: Item_Record;
+   ItemNo: Integer;
+
+Begin
+   Total_Plus := 0;
+   If Character.No_of_Items > 0 then
+      For ItemNo:=1 to Character.No_of_Items do
+         If Character.Item[ItemNo].isEquipped then
+            Begin
+               Item:=Item_List[Character.Item[ItemNo].Item_Num];
+
+               If Item.Kind in [ Armor, Helmet, Gloves, Shield ] then
+                  Wearing_Armor:=True;
+
+               Plus:=Item.AC_Plus;
+               Plane_Difference (Plus,PosZ);
+
+               Total_Plus := Total_Plus + Plus;
+            End;
+
+   Item_AC_Bonus := Total_Plus;
+End;
+
+(******************************************************************************)
+
+Function Monk_Armor_Class(Monk_Level: Integer): Integer;
+
+Var
+   Monk_AC: Integer;
+
+Begin
+   If Monk_Level > 0 then
+      Monk_Armor_Class := 10 - (2 * (Monk_Level div 2))
+   Else
+      Monk_Armor_Class := MaxInt;
+End;
+
+(******************************************************************************)
+
+Function Spells_AC_Bonus: [Volatile]Integer;
+
+Var
+   Rounds_Left: [External]Array [Spell_Name] of Unsigned;
+   Bonus: Integer;
+
+Begin
+   Bonus := 0;
+
+   If Rounds_Left[DiPr]>0 then
+       Bonus:=Bonus + 2;
+   If Rounds_Left[HgSh]>0 then
+       Bonus:=Bonus + 4;
+
+   Spells_AC_Bonus := Bonus;
+End;
+
+(******************************************************************************)
+
+[Global]Function Compute_AC (Character: Character_Type; PosZ: Integer:=0): Integer;
 
 { This function will return the Armor Class value for CHARACTER }
 
 Var
-   Rounds_Left:                                  [External]Array [Spell_Name] of Unsigned;
-   Item:                                         Item_Record;
-   Total_Plus,Plus,ItemNo,AC,Monk_Level,Monk_AC: Integer;
-   Wearing_Armor:                                Boolean;
+   Dexterity,AC,Monk_AC: Integer;
+   Wearing_Armor: Boolean;
+   dexterityBonus: integer;
+   itemsBonus: integer;
 
 Begin { Compute AC }
-   Monk_Level:=Compute_Monk_Level (Character);
-
+   Dexterity := Character.Abilities[4];
    If Character.Status=Zombie then
-      Begin
-         Character.Abilities[4]:=5;  { Remember, not a VAR parameter }
-         Monk_Level:=0;
-      End;
-
-   AC:=10;
-
-   { Armor and magic items can lower AC }
+      Dexterity := Min(Dexterity, 5);
 
    Wearing_Armor:=False;
-   Total_Plus:=0;
-   If Character.No_of_Items>0 then  { If CHARACTER has items... }
-      For ItemNo:=1 to Character.No_of_Items do  { For each item... }
-         If Character.Item[ItemNo].isEquipped then { If equipped... }
-            Begin
-               Item:=Item_List[Character.Item[ItemNo].Item_Num];
+   itemsBonus := Item_AC_Bonus(Character, PosZ, Wearing_Armor);
 
-               Plus:=Item.AC_Plus;
-               If Item.Kind in [Armor,Helmet,Gloves,Shield] then
-                  Wearing_Armor:=True;
+   If Character.Status in [Healthy,Poisoned,Zombie,Afraid] then
+      Begin
+        AC := Min (10, Monk_Armor_Class(Compute_Monk_Level (Character, Wearing_Armor)));
+        AC := AC - Dexterity_Change (Dexterity);
+      End
+   Else
+      AC := 12;
 
-               Plane_Difference (Plus,PosZ);
+   AC := AC - itemsBonus;
+   AC := AC - Spells_AC_Bonus; { Everybody gets spells bonuses }
 
-               Total_Plus:=Total_Plus+Plus;
-            End;
-   AC:=AC+Total_Plus;  { Add AC adjustment }
-
-   { Compute what level of class Monk CHARACTER is }
-
-   Monk_AC:=10-(2*(Monk_Level div 2))+Total_Plus;
-   If Wearing_Armor then
-      Monk_AC:=10;
-
-   { If character is monk, choose best AC: Monk's natural AC, or the AC provided by armor and dexterity }
-
-   If Monk_Level>0 then
-      AC:=Min (AC,Monk_AC);
-
-   { If any of the protection spells are still in effect, add their bonuses }
-
-   If Monk_Level=0 then AC:=AC+Dexterity_Change (Character.Abilities[4]);
-
-   If Rounds_Left[DiPr]>0 then AC:=AC-2;
-   If Rounds_Left[HgSh]>0 then AC:=AC-4;
-
-   { Return the Armor Class result }
-
-   If Not (Character.Status in [Healthy,Poisoned,Zombie,Afraid]) then AC:=12;
-   AC:=Max(AC, -15);
-   Compute_AC:=AC;
+   Compute_AC := Max(AC, -15);
 End;  { Compute AC }
 
 (******************************************************************************)

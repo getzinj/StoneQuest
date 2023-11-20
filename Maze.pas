@@ -463,7 +463,7 @@ Begin { Print a Character Line }
        Pad(ClassName[Character.Class],
            ' ',14));
    SMG$Put_Chars (CharacterDisplay,
-       String(10-Character.Armor_Class,3)
+       String(Character.Armor_Class,3)
        +'    '
        +String(Character.Curr_HP,5) );
    If Character.Regenerates>0 then

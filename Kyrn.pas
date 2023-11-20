@@ -167,27 +167,20 @@ Var
 
 Begin
    SMG$Begin_Display_Update (TopDisplay);
-   SMG$Put_Chars (TopDisplay,String(CharNo,1),3+CharNo,2,1);
-   If CharNo<=Party_Size then  { If this position is filled, print data }
+   SMG$Put_Chars (TopDisplay, String(CharNo, 1), 3 + CharNo, 2, 1);
+   If CharNo <= Party_Size then
       Begin { Slot is filled }
-         SMG$Put_Chars (TopDisplay,'  '
-                        +Pad(Party[CharNo].Name,' ',20));
-         SMG$Put_Chars (TopDisplay,'  '
-                        +String(Party[CharNo].Level,3));
-         SMG$Put_Chars (TopDisplay,'    '
-                        +AlignName[Party[CharNo].Alignment][1]);
-         SMG$Put_Chars (TopDisplay,'-'
-                        +Pad(ClassName[Party[CharNo].Class],' ',13));
-         SMG$Put_Chars (TopDisplay,' '
-                        +String(10-Party[CharNo].Armor_Class,3));
-         SMG$Put_Chars (TopDisplay,'   '
-                        +String(Party[CharNo].Curr_HP,5));
-         If Party[CharNo].Status<>Healthy then
-            SMG$Put_Chars (TopDisplay,'     '
-                           +StatusName[Party[CharNo].Status])
+         SMG$Put_Chars (TopDisplay, '  ' + Pad(Party[CharNo].Name, ' ', 20));
+         SMG$Put_Chars (TopDisplay, '  ' + String(Party[CharNo].Level, 3));
+         SMG$Put_Chars (TopDisplay, '    ' + AlignName[Party[CharNo].Alignment][1]);
+         SMG$Put_Chars (TopDisplay, '-' + Pad(ClassName[Party[CharNo].Class], ' ', 13));
+         SMG$Put_Chars (TopDisplay, ' ' + String(Party[CharNo].Armor_Class, 3));
+         SMG$Put_Chars (TopDisplay, '   ' + String(Party[CharNo].Curr_HP, 5));
+         SMG$Put_Chars (TopDisplay, '     ');
+         If Party[CharNo].Status <> Healthy then
+            SMG$Put_Chars (TopDisplay, StatusName[Party[CharNo].Status])
          Else
-            SMG$Put_Chars (TopDisplay,'    '
-                           +String(Party[CharNo].Max_HP,5));
+            SMG$Put_Chars (TopDisplay, String(Party[CharNo].Max_HP, 5));
       End;
    SMG$End_Display_Update (TopDisplay);
 End;
