@@ -65,7 +65,7 @@ Begin
 
 
     { Vertical line }
-    SMG$Draw_Line(ViewDisplay, 1, 3, 7, 3);
+    SMG$Draw_Line(ViewDisplay, 1,  3, 7,  3);
     SMG$Draw_Line(ViewDisplay, 1, 21, 7, 21);
 
     { Horizontal Line }
@@ -368,7 +368,14 @@ End;
 
 Procedure wallFarLeftLeftSide(isDoor: Boolean);
 
+Var
+  renditionSet: Unsigned;
+
 Begin
+    renditionSet := get_rendition_set(isDoor);
+
+    SMG$Put_Chars(ViewDisplay, ' ', 1, 1, , renditionSet);
+
     SMG$Draw_Char(ViewDisplay, Diamond_Join, 1, 2);
     SMG$Put_Chars(ViewDisplay, '/', 2, 1);
 End;
@@ -424,7 +431,15 @@ End;
 
 Procedure wallFarRightRightSide(isDoor: Boolean);
 
+
+Var
+  renditionSet: Unsigned;
+
+
 Begin
+    renditionSet := get_rendition_set(isDoor);
+    SMG$Put_Chars(ViewDisplay, ' ', 1, 23, , renditionSet);
+
     SMG$Put_Chars(ViewDisplay, '\', 2, 23);
     SMG$Draw_Char(ViewDisplay, Diamond_Join, 1, 22);
 End;
