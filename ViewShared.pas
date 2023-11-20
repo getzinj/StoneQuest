@@ -1,7 +1,7 @@
 [Inherit ('SYS$LIBRARY:STARLET','Types','SMGRTL','STRRTL')]Module ViewShared;
 
 Const
-  debug = true;
+  debug = false;
 
 
 Var

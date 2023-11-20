@@ -1,7 +1,7 @@
 [Inherit ('SYS$LIBRARY:STARLET','Types','SMGRTL','STRRTL')]Module Maze;
 
 Const
-   debug = true;
+   debug = false;
    CharY  = 17;  CharX  =  2;
    MonY   =  2;  MonX   = 26;
    SpellsY=  7;  SpellsX= 26;
