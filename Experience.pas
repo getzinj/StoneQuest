@@ -8,7 +8,7 @@ Type
 Function Special_Attacks (Monster: Monster_Record): Boolean;
 
 Begin
-   Special_Attacks:=(Monster.No_of_Attacks>1) or (Monster.Armor_Class<2) or (Monster.Highest.Cleric_Spell>0);
+   Special_Attacks:=(Monster.No_of_Attacks > 1) or (Monster.Armor_Class < 2) or (Monster.Highest.Cleric_Spell > 0);
 End;
 
 (******************************************************************************)
@@ -125,22 +125,22 @@ Function Special_Attacks_XP_Bonus (hd: integer): Integer;
 
 Begin
    Case HD of
-             0: Special_Attacks_XP_Bonus :=     2;
-             1: Special_Attacks_XP_Bonus :=    4;
-             2: Special_Attacks_XP_Bonus :=    8;
-             3: Special_Attacks_XP_Bonus :=    25;
-             4: Special_Attacks_XP_Bonus :=    40;
-             5: Special_Attacks_XP_Bonus :=   75;
-             6: Special_Attacks_XP_Bonus :=   125;
-             7: Special_Attacks_XP_Bonus :=   175;
-             8: Special_Attacks_XP_Bonus :=   450;
-             9: Special_Attacks_XP_Bonus :=   700;
-      10 .. 11: Special_Attacks_XP_Bonus :=  950;
-      12 .. 13: Special_Attacks_XP_Bonus :=  1250;
-      14 .. 15: Special_Attacks_XP_Bonus :=  1550;
-      16 .. 17: Special_Attacks_XP_Bonus :=  2100;
-      18 .. 19: Special_Attacks_XP_Bonus :=  2600;
-      Otherwise Special_Attacks_XP_Bonus :=  3100;
+             0: Special_Attacks_XP_Bonus :=     20;
+             1: Special_Attacks_XP_Bonus :=     40;
+             2: Special_Attacks_XP_Bonus :=     80;
+             3: Special_Attacks_XP_Bonus :=    250;
+             4: Special_Attacks_XP_Bonus :=    400;
+             5: Special_Attacks_XP_Bonus :=    750;
+             6: Special_Attacks_XP_Bonus :=   1250;
+             7: Special_Attacks_XP_Bonus :=   1750;
+             8: Special_Attacks_XP_Bonus :=   4500;
+             9: Special_Attacks_XP_Bonus :=   7000;
+      10 .. 11: Special_Attacks_XP_Bonus :=   9500;
+      12 .. 13: Special_Attacks_XP_Bonus :=  12500;
+      14 .. 15: Special_Attacks_XP_Bonus :=  15500;
+      16 .. 17: Special_Attacks_XP_Bonus :=  17000;
+      18 .. 19: Special_Attacks_XP_Bonus :=  19000;
+      Otherwise Special_Attacks_XP_Bonus :=  21000;
    End;
 End;
 
@@ -150,22 +150,22 @@ Function Exceptional_Attacks_XP_Bonus (hd: integer): Integer;
 
 Begin
    Case HD of
-             0: Exceptional_Attacks_XP_Bonus :=    25;
-             1: Exceptional_Attacks_XP_Bonus :=    35;
-             2: Exceptional_Attacks_XP_Bonus :=    45;
-             3: Exceptional_Attacks_XP_Bonus :=    45;
-             4: Exceptional_Attacks_XP_Bonus :=    75;
-             5: Exceptional_Attacks_XP_Bonus :=   125;
-             6: Exceptional_Attacks_XP_Bonus :=   175;
-             7: Exceptional_Attacks_XP_Bonus :=   275;
-             8: Exceptional_Attacks_XP_Bonus :=   600;
-             9: Exceptional_Attacks_XP_Bonus :=   850;
-      10 .. 11: Exceptional_Attacks_XP_Bonus :=  1200;
-      12 .. 13: Exceptional_Attacks_XP_Bonus :=  1600;
-      14 .. 15: Exceptional_Attacks_XP_Bonus :=  2000;
-      16 .. 17: Exceptional_Attacks_XP_Bonus :=  2500;
-      18 .. 19: Exceptional_Attacks_XP_Bonus :=  3000;
-      Otherwise Exceptional_Attacks_XP_Bonus :=  3500;
+             0: Exceptional_Attacks_XP_Bonus :=    50;
+             1: Exceptional_Attacks_XP_Bonus :=    70;
+             2: Exceptional_Attacks_XP_Bonus :=    90;
+             3: Exceptional_Attacks_XP_Bonus :=    90;
+             4: Exceptional_Attacks_XP_Bonus :=   150;
+             5: Exceptional_Attacks_XP_Bonus :=   250;
+             6: Exceptional_Attacks_XP_Bonus :=   350;
+             7: Exceptional_Attacks_XP_Bonus :=   550;
+             8: Exceptional_Attacks_XP_Bonus :=  1200;
+             9: Exceptional_Attacks_XP_Bonus :=  1500;
+      10 .. 11: Exceptional_Attacks_XP_Bonus :=  1700;
+      12 .. 13: Exceptional_Attacks_XP_Bonus :=  2000;
+      14 .. 15: Exceptional_Attacks_XP_Bonus :=  2300;
+      16 .. 17: Exceptional_Attacks_XP_Bonus :=  2800;
+      18 .. 19: Exceptional_Attacks_XP_Bonus :=  3300;
+      Otherwise Exceptional_Attacks_XP_Bonus :=  3800;
    End;
 End;
 
@@ -227,7 +227,6 @@ Begin { Experience }
   HP:=Group.MAX_HP[Number];
 
   Temp := Hit_Die_XP_Bonus (HD);
-
   Temp := Temp + Max(Maximum_Damage_Bonus(HD, Maximum_Damage(Monster)), 0);
   Temp := Temp + Max(Hit_Points_XP_Bonus(HD, HP), 0);
   Temp := Temp + Max(Resists_XP_Bonus(HD, Monster.Resists), 0);
@@ -239,10 +238,10 @@ Begin { Experience }
      Temp := Temp + Max(Exceptional_Attacks_XP_Bonus(HD), 0);
 
   If Monster.Breath_Weapon in Damaging_Attacks then
-     Temp:=Temp + Breath_and_Gaze_XP_Bonus(HD, HP);
+     Temp:=Temp + Max(Breath_and_Gaze_XP_Bonus(HD, HP), 0);
 
   If Monster.Gaze_Weapon in Damaging_Attacks then
-     Temp:=Temp + Breath_and_Gaze_XP_Bonus(HD, HP);
+     Temp:=Temp + Max(Breath_and_Gaze_XP_Bonus(HD, HP), 0);
 
   Temp:=Temp + (200 * Monster.highest.Cleric_Spell);
   Temp:=Temp + (300 * Monster.highest.Wizard_Spell);
