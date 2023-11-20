@@ -20,7 +20,7 @@ Var
 
 (******************************************************************************)
 [External]Function Show_Special (Member: [Unsafe]Party_Type:=0;  Current_Party_Size: Integer:=0):Boolean;External;
-[External]Function Detected_Secret_Door (Member: Party_Type;  Current_Party_Size: Party_Size_Type;Rounds_Left: Spell_Duration_Listdistance: Integer:=0):[Volatile]Boolean;External;
+[External]Function Detected_Secret_Door (Member: Party_Type;  Current_Party_Size: Party_Size_Type;Rounds_Left: Spell_Duration_List; distance: Integer:=0):[Volatile]Boolean;External;
 (******************************************************************************)
 [External]Function Sight_Blocked (Exit: Exit_Type): Boolean;external;
 [External]Function Is_Special (Spot: Room_Record): Boolean;External;

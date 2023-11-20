@@ -84,8 +84,8 @@ Begin
     renditionSet := get_rendition_set(isDoor);
 
     For col := 1 to 2 do
-      For row := 1 to 16 do
-        if (col = 2) or (row = 16) then
+      For row := 1 to 6 do
+        if (col = 2) or (row = 6) then
           SMG$Put_Chars(ViewDisplay, ' ', row, col, , renditionSet)
         else
           SMG$Put_Chars(ViewDisplay, ' ', row, col);
@@ -107,8 +107,8 @@ Begin
     renditionSet := get_rendition_set(isDoor);
 
     For col := 22 to 23 do
-      For row := 1 to 16 do
-        if (col = 22) or (row = 16) then
+      For row := 1 to 6 do
+        if (col = 22) or (row = 6) then
           SMG$Put_Chars(ViewDisplay, ' ', row, col, , renditionSet)
         else
           SMG$Put_Chars(ViewDisplay, ' ', row, col);
