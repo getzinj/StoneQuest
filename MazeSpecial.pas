@@ -820,6 +820,7 @@ Begin
    SMG$Erase_Display (MessageDisplay);
    SMG$Put_Line (MessageDisplay,'In this room there are buttons labeled "A" to "'+ TopC + '".');
    SMG$Put_Line (MessageDisplay,'Which button wilt thou press?  [Return exits]');
+   SMG$End_Display_Update (MessageDisplay);
 
    Answer:=Make_Choice(['A'..TopC,CHR(13)]);
 
