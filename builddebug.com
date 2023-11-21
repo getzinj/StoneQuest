@@ -14,6 +14,8 @@ $      write sys$output "Compiling Stonequest.pas"
 $      pas/DEBUG/NOOPTIMIZE Stonequest
 $      write sys$output "Compiling AdminUtils.pas"
 $      pas/DEBUG/NOOPTIMIZE AdminUtils
+$      write sys$output "Compiling ArmorClass.pas"
+$      pas/DEBUG/NOOPTIMIZE ArmorClass
 $      write sys$output "Compiling Camp.pas"
 $      pas/DEBUG/NOOPTIMIZE Camp
 $      write sys$output "Compiling Casino.pas"
@@ -124,7 +126,7 @@ $      Link/debug Camp,Casino,Character,CharacterAttacks,Church,Compute,Craps,-
        PlaceStack,PrintChar,Scores,Shell_Out,Slots,SmgRtl,Stonequest,-
        AdminUtils,PlayerUtils,Store,StrRtl,Tavern,Training,Treasure,-
        ViewShared,PriorityQueue,MazeSpecial,Ranges,CharacterAttacksSpells,-
-       MonsterAttackSpells,-
+       MonsterAttackSpells,ArmorClass,-
        PerspectiveGeometry,Types,View,Windows,Handler /EXE=StoneQuest.exe
 $!
 $      write sys$output "Purging old EXE files..."
