@@ -664,7 +664,8 @@ Var
 Begin
    Party_Has_Items:=False;
    For Char_Num:=1 to Party_Size do
-      If Member[Char_Num].No_of_items>0 then Party_Has_Items:=True;
+      If Member[Char_Num].No_of_items>0 then
+          Party_Has_Items:=True;
 End;
 
 (******************************************************************************)
@@ -738,9 +739,7 @@ Procedure Print_Camp_Roster (Member: Party_Type; Party_Size:Integer);
   the status line of each character in the party. }
 
 Const
-   Roster_Heading = ' #  Character '
-       +'Name      Level     Class '
-       +'           AC    Hits   Status';
+   Roster_Heading = ' #  Character Name      Level     Class            AC    Hits   Status';
 
 Var
    Character: 1..6;

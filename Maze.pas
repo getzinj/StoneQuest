@@ -449,12 +449,8 @@ Var
    StatusName: [External,Readonly]Array [Status_Type] of Varying [14] of char;
 
 Begin { Print a Character Line }
-   SMG$Put_Chars (CharacterDisplay,
-       '   '
-       +Pad(Character.Name,' ',20)
-       +'   ');
-   SMG$Put_Chars (CharacterDisplay,
-       '  '
+   SMG$Put_Chars (CharacterDisplay, '   ' + Pad(Character.Name,' ',20) + '   ');
+   SMG$Put_Chars (CharacterDisplay, '  '
        +String(Character.Level,3)
        +'  '
        +AlignName[Character.Alignment][1]
