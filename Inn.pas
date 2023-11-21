@@ -241,7 +241,7 @@ Begin
    Restore_Spells (Character);
 
    If Alive (Character) then
-      Character.Curr_HP:=Min(Character.Curr_HP + Healing[Room_Number]+(Character.Regenerates + 7),Character.MAX_HP);
+      Character.Curr_HP:=Min(Character.Curr_HP+Healing[Room_Number]+(Character.Regenerates*7),Character.MAX_HP);
 
       If (Character.Curr_HP<1) and Alive(Character) then
          Begin

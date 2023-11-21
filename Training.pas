@@ -535,17 +535,17 @@ Function Character_Age (Race: Race_Type): [Volatile]Integer;
 
 Begin
    Case Race of
-     Human: Character_age:=17 + Roll_Die(4);
-     HfOrc: Character_age:=13 + Roll_Die(4);
-     Dwarven,Numenorean: Character_age:=40+(4 + Roll_Die(20))+Roll_Die(20);
-     Elven,Drow: Character_age:=100+(5 + Roll_Die(6))+Roll_Die(6);
-     HfOgre: Character_age:=12 + Roll_Die(4);
-     Gnome: Character_age:=60+(4 + Roll_Die(4))+Roll_Die(4);
-     Hobbit: Character_age:=100 + Roll_Die(20);
-     HfElf: Character_age:=22 + Roll_Die(4)+Roll_Die(4)+Roll_Die(4);
-     LizardMan: Character_age:=24 + Roll_Die(5);
-     Centaur: Character_age:=145 + Roll_Die(5);
-     Quickling: Character_age:=55 + Roll_Die(3);
+     Human: Character_age:=17+Roll_Die(4);
+     HfOrc: Character_age:=13+Roll_Die(4);
+     Dwarven,Numenorean: Character_age:=40+(4*Roll_Die(20))+Roll_Die(20);
+     Elven,Drow: Character_age:=100+(5*Roll_Die(6))+Roll_Die(6);
+     HfOgre: Character_age:=12+Roll_Die(4);
+     Gnome: Character_age:=60+(4*Roll_Die(4))+Roll_Die(4);
+     Hobbit: Character_age:=100+Roll_Die(20);
+     HfElf: Character_age:=22+Roll_Die(4)+Roll_Die(4)+Roll_Die(4);
+     LizardMan: Character_age:=24+Roll_Die(5);
+     Centaur: Character_age:=145+Roll_Die(5);
+     Quickling: Character_age:=55+Roll_Die(3);
    End;
 End;
 
@@ -559,7 +559,7 @@ Var
 Begin
    Intelligence:=Character.Abilities[2]-15;  Wisdom:=Character.Abilities[3]-15;  Charisma:=Character.Abilities[6]-15;
 
-   Psionics_Chance:=(2 + Intelligence)+(2 + Wisdom)+Charisma;
+   Psionics_Chance:=(2*Intelligence)+(2*Wisdom)+Charisma;
 End;
 
 {******************************************************************************)
@@ -568,8 +568,8 @@ Procedure Determine_Psionics (Var Character: Character_Type);
 
 Begin
   Character.Psionics:=True;
-  Character.DetectTrap   :=(3 + Roll_Die(25))-3;
-  Character.DetectSecret :=(3 + Roll_Die(25))-3;
+  Character.DetectTrap   :=(3*Roll_Die(25))-3;
+  Character.DetectSecret :=(3*Roll_Die(25))-3;
   Character.Regenerate:=Roll_Die(4)-1;
 End;
 

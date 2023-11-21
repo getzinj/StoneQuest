@@ -544,7 +544,7 @@ Begin
    SMG$Put_Line (MessageDisplay, 'The ' + Name + ' advance!');
    SMG$End_Display_Update (MessageDisplay);
    Ring_Bell (MessageDisplay, 2);
-   Delay (2 + Delay_Constant);
+   Delay (2*Delay_Constant);
 End;
 
 (******************************************************************************)
@@ -1225,7 +1225,7 @@ Begin
          Curr:=Curr + Group[GroupNum].Curr_Group_Size;
       End;
 
-   If (Current_Party_Size=0) or (Curr=0) or (Curr>(Current_Party_Size + 2)) then
+   If (Current_Party_Size=0) or (Curr=0) or (Curr>(Current_Party_Size*2)) then
       Uh_Oh:=False
    Else
       Begin
@@ -1535,7 +1535,7 @@ Begin
                  End;
       Otherwise SpellList:=[ ];
    End;
-   SpellList:=SpellList + Encounter_Spells;
+   SpellList:=SpellList*Encounter_Spells;
 
    For Level:=1 to 9 do
       Begin
@@ -2318,7 +2318,7 @@ Begin
          24,25: Temp:=6;
          Otherwise Temp:=0;
    End;
-   Dex_Adjustment:=Temp + 500;
+   Dex_Adjustment:=Temp*500;
 End;
 
 (******************************************************************************)
@@ -2330,7 +2330,7 @@ Var
 
 Begin
    Level:=Max(Character.Level,Character.Previous_Lvl);
-   Character_Priority:=Roll_Die (6000)-Dex_Adjustment (Character)-(Level + 200);
+   Character_Priority:=Roll_Die (6000)-Dex_Adjustment (Character)-(Level*200);
 End;
 
 (******************************************************************************)
@@ -2391,7 +2391,7 @@ Begin { Successful Flee }
       Else
          Begin
             Temp:=Temp+(20*(Group[Group_Num].Orig_Group_Size-Group[Group_Num].Curr_Group_Size));
-            Temp:=Temp-(5 + Group[Group_Num].Curr_Group_Size);
+            Temp:=Temp-(5*Group[Group_Num].Curr_Group_Size);
          End;
    If Temp<0 then Temp:=0;
    Successful_Flee_Chance:=Temp;
@@ -2416,7 +2416,7 @@ Begin
             For Monster:=1 to Group[Mon_Group].Curr_Group_Size do
                Begin
                   Dex_Adj:=Monster_Rec.No_of_attacks+(-1 * (10-Monster_Rec.Armor_Class)); { TODO: Make a function }
-                  Individual.Priority:=Roll_Die (6000)-(Dex_Adj + 400)-(Monster_Rec.Hit_Points.X + 200); { TODO: Make a function }
+                  Individual.Priority:=Roll_Die (6000)-(Dex_Adj*400)-(Monster_Rec.Hit_Points.X*200); { TODO: Make a function }
 
                   Individual.Caster_Level:=Monster_Rec.Hit_Points.X;
                   Individual.Group:=Mon_Group;

@@ -319,7 +319,7 @@ Begin
                      Num:=Get_Num(ScreenDisplay);
 
                      Case Ord(Answer)-64 of
-                       8: Character.Age:=Num + 365;
+                       8: Character.Age:=Num*365;
                        9..15: If (Num>2) and (Num<26) then
                           Character.Abilities[Ord(answer)-72]:=Num;
                      End;
@@ -461,7 +461,7 @@ Begin
                   R:=0;
                Y1:=Y;
 
-               SMG$Put_Chars (ScreenDisplay,String(Character.SpellPoints[Y,X]),Y1,7+(X + 2),,R);
+               SMG$Put_Chars (ScreenDisplay,String(Character.SpellPoints[Y,X]),Y1,7+(X*2),,R);
                SMG$Put_Chars (ScreenDisplay,'/');
             End;
          SMG$Put_Line (ScreenDisplay,'');

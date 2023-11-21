@@ -54,7 +54,7 @@ Procedure Recover_Character (Var ScreenDisplay: Unsigned);
   years each, to prevent repeat cheaters! }
 
 Const
-   FiveYears = 365 + 5; { The # of days in 5 years }
+   FiveYears = 365*5; { The # of days in 5 years }
 
 Var
    Slot: Integer;

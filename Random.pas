@@ -60,7 +60,7 @@ Begin { Get Seed }
    { Get a seed from the time }
 
    Seed:=Ord(Timex[8])-ZeroOrd+(ord(timex[7])-ZeroOrd)*10;
-   Seed:=Seed + Ord(Timex[6]);
+   Seed:=Seed*Ord(Timex[6]);
 
    { Return it }
 

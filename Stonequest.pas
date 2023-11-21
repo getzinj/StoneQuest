@@ -451,8 +451,8 @@ Begin { Special Occurance }
                  Character.Experience:=XP_Needed (Character.Class,Character.Level);
            End;  { Lower character's level }
         3: Begin { Reduce a character's age 2-20 years }
-              Character.Age:=Character.Age-(Roll_Die(10)*2 + 365);
-              If Character.Age<(10 + 365) then Character.Age:=10 + 365;
+              Character.Age:=Character.Age-(Roll_Die(10)*2*365);
+              If Character.Age<(10*365) then Character.Age:=10*365;
            End;  { Increase a characters age }
 
            { Raise the ability scores }

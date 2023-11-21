@@ -25,8 +25,8 @@ Var
     functions get VERY SLOW as they reach higher numbers.  One of the problems is that it makes many unnecessary calls. For
     example:
 
-    XP_Needed (Fighter,6) = n + XP_Needed (Fighter,5)-XP_Needed(Fighter,4);
-    XP_Needed (Fighter,5) = n + XP_Needed (Fighter,4)-XP_Needed(Fighter,3);
+    XP_Needed (Fighter,6) = n*XP_Needed (Fighter,5)-XP_Needed(Fighter,4);
+    XP_Needed (Fighter,5) = n*XP_Needed (Fighter,4)-XP_Needed(Fighter,3);
 
     As you notice, XP_N (Fighter,6) and XP_N (Fighter, 5) BOTH make calls to XP_N (Fighter, 4).  This is an example where the same
     value is computed more than once, which makes the function unnecessaril slow.
@@ -601,7 +601,7 @@ Begin { XP Needed Auxiliary }
                XP_Needed_Aux := L1 + (L1 - L2);
             End   { Greater than 13th level }
          Else
-            XP_Needed_Aux := Level_Factor + XP_Needed(Class,Level - 1);
+            XP_Needed_Aux:=Level_Factor*XP_Needed(Class,Level-1);
 End;  { XP Needed Auxiliary }
 
 

@@ -101,11 +101,11 @@ Begin
         i:=1;
         While (i <= (A.Last div 2)) do
            Begin
-              If 2 + i=A.last then J:=2 + i
-              Else If P(A.Contents[2 + i])<P(A.Contents[2 + i + 1]) then
-                      j:=2 + i
+              If 2*i=A.last then J:=2*i
+              Else If P(A.Contents[2*i])<P(A.Contents[2*i+1]) then
+                      j:=2*i
                    Else
-                      j:=2 + i + 1;
+                      j:=2*i+1;
 
               If P(A.Contents[i]) > P(A.Contents[j]) then
                  Begin

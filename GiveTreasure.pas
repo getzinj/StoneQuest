@@ -121,7 +121,7 @@ Begin
                Begin
                   Looked[Looker]:=True;
                   Print_Trap (Trap);
-                  Character.Experience:=Character.Experience + 15 + Ord(Trap);
+                  Character.Experience:=Character.Experience+15*Ord(Trap);
                   Character.SpellPoints[Class,Level]:=Character.SpellPoints[Class,Level]-1;
                   Member[Looker]:=Character;
                End
@@ -173,9 +173,9 @@ Function Class_Chance (Class: Class_Type; Level: Integer): Integer;
 
 Begin
    Case Class of
-     Thief,Ninja:            Class_Chance:=15+(5 + Level);
-     Antipaladin,Assassin:   Class_Chance:=5+(4 + Level);
-     Bard:                   Class_Chance:=3 + Level;
+     Thief,Ninja:            Class_Chance:=15+(5*Level);
+     Antipaladin,Assassin:   Class_Chance:=5+(4*Level);
+     Bard:                   Class_Chance:=3*Level;
      NoClass:                Class_Chance:=0;
      Otherwise               Class_Chance:=Level;
    End;
@@ -478,7 +478,7 @@ Begin
             Begin
                Trap:=Trapless;
                Print_Message('* * * Thou disarmed it! * * *');
-               Member[Opener].Experience:=Member[Opener].Experience + 15 + Ord(Trap);
+               Member[Opener].Experience:=Member[Opener].Experience+15*Ord(Trap);
             End
          Else
             Begin

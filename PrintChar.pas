@@ -652,7 +652,7 @@ Begin
         Chance:=Chance-Round(Hold_Item.Item_Number * (1/8));
 
         If Character.Items_Seen[Hold_Item.Item_Number] then
-           Chance:=Chance + Trunc(Chance + 15/100);
+           Chance:=Chance+Trunc(Chance*15/100);
 
         If Made_Roll (Chance) then
            Begin

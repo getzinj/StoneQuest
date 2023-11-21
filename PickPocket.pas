@@ -411,7 +411,7 @@ Begin
       Beggar: Get_Money:=2-Roll_Die(2);
       Jester: Get_Money:=Roll_Die(3)*Roll_Die(6);
       Pimp,Prostitute: Get_Money:=(Roll_Die(8)*Roll_Die(100))-1;
-      CommonThief: Get_Money:=2 + Roll_Die(20)-2;
+      CommonThief: Get_Money:=2*Roll_Die(20)-2;
       Bully,Brawler: Get_Money:=Roll_Die(3)*Roll_Die(20);
       Clerk: Get_Money:=3 * Roll_Die(7);
       Soldier,Militia: Get_Money:=Roll_Die(20)+Roll_Die(20);
@@ -441,7 +441,7 @@ Begin
        Gambler:                  Begin  Temp[Armors]:=0;   Temp[Weapons]:=3;  Temp[Clothes]:=7 + Roll_Die(Temp[Money] div 10);   End;
        Brawler:                  Begin  Temp[Armors]:=0;   Temp[Weapons]:=0;  Temp[Clothes]:=9;   End;
        Clerk:                    Begin  Temp[Armors]:=0;   Temp[Weapons]:=0;  Temp[Clothes]:=8;   End;
-       Cleric_c,Soldier,Militia: Begin  Temp[Armors]:=16;  Temp[Weapons]:=16; Temp[Clothes]:=5 + Roll_Die(9);   End;
+       Cleric_c,Soldier,Militia: Begin  Temp[Armors]:=16;  Temp[Weapons]:=16; Temp[Clothes]:=5+Roll_Die(9);   End;
        Gentleman,Lady,Official:  Begin  Temp[Armors]:=0;   Temp[Weapons]:=0;  Temp[Clothes]:=16;   End;
        Nobleman,Royalty:         Begin  Temp[Armors]:=0;   Temp[Weapons]:=0;  Temp[Clothes]:=18;   End;
        Magus:                    Begin  Temp[Armors]:=0;   Temp[Weapons]:=3;  Temp[Clothes]:=15;   End;
@@ -548,10 +548,10 @@ Var
 
 Begin
    Case Class of
-      Thief,Ninja:          Chance:=20+(5 + Level);
-      Antipaladin,Assassin: Chance:=5+(5 + Level);
+      Thief,Ninja:          Chance:=20+(5*Level);
+      Antipaladin,Assassin: Chance:=5+(5*Level);
       Paladin:              Chance:=1;
-      Bard:                 Chance:=5 + Level;
+      Bard:                 Chance:=5*Level;
       NoClass:              Chance:=0;
       Otherwise             Chance:=Level;
    End;
@@ -595,7 +595,7 @@ Begin
    Chance:=Chance-Person[DetectChance];
    Chance:=Chance+(2*(Character.Abilities[7]-9));  { add luck into it }
    If Noticed then Chance:=Chance-80
-   Else Chance:=Chance+(2 + Person[Distraction]);
+   Else Chance:=Chance+(2*Person[Distraction]);
 
    If Chance>96 then Chance:=95;
    Pick_Pocket_Chance:=Chance;

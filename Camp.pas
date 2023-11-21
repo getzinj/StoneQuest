@@ -881,7 +881,7 @@ Begin
       Begin
          Member[Slot].Curr_HP:=Member[Slot].Curr_HP + Days;
          If Member[Slot].Curr_HP>Member[Slot].Max_HP then Member[Slot].Curr_HP:=Member[Slot].Max_HP;
-         If Minute_Counter>(3 + 100) then Restore_Spells (Member[Slot]);
+         If Minute_Counter>(3*100) then Restore_Spells (Member[Slot]);
       End;
    Minute_Counter:=Minute_Counter-(100* (Trunc (Minute_Counter / 100)));
 End;

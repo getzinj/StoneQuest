@@ -284,7 +284,7 @@ Var
 
 Begin
   Roll_Slots (First,Second,Third,Character);
-  Temp:=Bet + Pays(First,Second,Third);
+  Temp:=Bet*Pays(First,Second,Third);
   Plays_and_Wins:=Temp;
   If Temp>0 then Player_Won;
 End;
